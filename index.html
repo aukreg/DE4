@@ -938,6 +938,7 @@ function renderSession(){
   setTop(P.o.title || "Alıştırma", true);
   R_MODE[cur.m](cur.it || cur.its, cur);
   quietBar(cur.m);
+  askBar(cur.it);
 }
 function renderSessionEnd(){
   flushSession(); onLeave = null;
@@ -2688,7 +2689,7 @@ Sorular:
 ${qs.map((q, i) => (i + 1) + ". " + q).join("\n")}`;
 }
 async function answerQs(list){
-  const r = await SAMPLE.json(qaPrompt(list.map(x => x.q)), {modelTier: "default", cache: false});
+  const r = await SAMPLE.json(qaPrompt(list.map(x => x.ctx ? `(Çalıştığım kart: "${x.ctx}") ${x.q}` : x.q)), {modelTier: "default", cache: false});
   const arr = Array.isArray(r) ? r : Array.isArray(r.items) ? r.items : [r];
   let n = 0;
   list.forEach((x, i) => {
@@ -2706,7 +2707,7 @@ async function answerQs(list){
 function qaCard(x, open){
   const m = x.card && S.mine.find(y => y.id === x.card);
   return `<div class="card fixbox" style="margin-top:12px">
-    <div class="small muted">${trDate(x.d)} · Sorun</div><div style="font-weight:700;margin:2px 0 8px">${esc(x.q)}</div>
+    <div class="small muted">${trDate(x.d)} · Sorun</div>${x.ctx ? `<div class="small muted">Kart: ${esc(x.ctx)}</div>` : ""}<div style="font-weight:700;margin:2px 0 8px">${esc(x.q)}</div>
     ${x.a ? `<div style="line-height:1.55;white-space:pre-line">${esc(x.a)}</div>
       ${m ? `<div class="card" style="margin-top:10px;padding:10px 12px;background:var(--bg3)"><div class="small muted">Örnek kart · destende</div>
         <div style="display:flex;gap:8px;align-items:center"><b style="flex:1">${esc(m.de)}</b><button class="say spq" data-t="${esc(m.de)}" aria-label="Dinle">${ICON_SPK}</button></div>
@@ -2770,6 +2771,42 @@ Doktora gidiyorum derken zum mu bei mi?"></textarea>
     if (SAMPLE && p.length) { renderQA(); run($("#ansq"), p.slice(0, 6), "Hepsini cevapla"); }
     else { renderQA(); toast(SAMPLE ? "Bekleyen soru yok" : "Cevaplar geldi ✓"); }
   });
+}
+
+/* ================= alıştırmada kartla ilgili soru ================= */
+function askBar(it){
+  const ph = document.querySelector(".phase");
+  if (!it || !ph) return;
+  ph.insertAdjacentHTML("beforeend", `<button id="qask" aria-label="Bu kartla ilgili soru sor" style="float:right;font-size:12.5px;font-weight:500;color:var(--tx3);text-transform:none;letter-spacing:0;padding:0 2px">❓ Sor</button>`);
+  $("#qask").onclick = () => askAbout(it);
+}
+function askAbout(it){
+  const ctx = it.de + " = " + it.tr;
+  const quick = ["Neden böyle söyleniyor?", "Kelime kelime açıkla", "Başka nasıl denir?", "Ne zaman kullanılır?"];
+  $("#sheetIn").innerHTML = `<h2>❓ Bu kartla ilgili sor</h2>
+    <div class="card" style="padding:10px 12px;margin:6px 0 10px"><b>${esc(it.de)}</b><div class="small muted">${esc(it.tr)}</div></div>
+    <div class="chips" id="qk">${quick.map(q => `<button class="chip">${q}</button>`).join("")}</div>
+    <textarea class="imp" id="aq" style="margin-top:8px;min-height:70px" placeholder="Sorunu yaz${SR ? " ya da 🎤" : ""}"></textarea>
+    <div class="row2" style="margin-top:8px">${SR ? `<button class="btn2" id="aqm">🎤 Söyle</button>` : ""}<button class="cta" id="aqgo">${SAMPLE ? "Sor" : "Kaydet, sonra sor"}</button></div>
+    <div id="aqres"></div>
+    <button class="linkbtn" id="aqx" style="width:100%">Kapat, alıştırmaya dön</button>`;
+  $("#sheet").classList.add("show");
+  $$("#qk .chip").forEach(b => b.onclick = () => { $("#aq").value = b.textContent; });
+  if ($("#aqm")) $("#aqm").onclick = () => { toast("Dinliyorum…"); listen(a => { const v = (a[0] || "").trim(); if (v) $("#aq").value = v.charAt(0).toUpperCase() + v.slice(1) + (/[?.!]$/.test(v) ? "" : "?"); }, () => toast("Duyamadım"), "tr-TR"); };
+  $("#aqx").onclick = () => $("#sheet").classList.remove("show");
+  $("#aqgo").onclick = async () => {
+    const q = $("#aq").value.trim();
+    if (q.length < 3) { toast("Önce sorunu yaz ya da bir öneriye dokun"); return; }
+    const x = {id: "a" + Date.now().toString(36), q, ctx, d: TODAY};
+    if (!SAMPLE) { S.qa.push(x); save(); toast("Kaydedildi. Soru sor ekranından Claude'a gönderebilirsin."); $("#sheet").classList.remove("show"); return; }
+    const b = $("#aqgo"); b.disabled = true; b.textContent = "Claude düşünüyor…";
+    try {
+      await answerQs([x]);
+      $("#aqres").innerHTML = qaCard(x);
+      $$("#aqres .spq").forEach(s => s.onclick = () => speak(s.dataset.t));
+      b.disabled = false; b.textContent = "Bir şey daha sor"; $("#aq").value = "";
+    } catch(e) { $("#aqres").innerHTML = `<p class="small muted">${esc(errText(e))}</p>`; b.disabled = false; b.textContent = "Sor"; }
+  };
 }
 
 /* ================= EŞİTLEME: iki sürüm arasında kodla taşı, birleştir ================= */
