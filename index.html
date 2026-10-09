@@ -279,6 +279,8 @@ textarea.imp{width:100%;min-height:90px;border-radius:12px;border:1.5px solid va
 
 .mic.on{background:var(--bad);animation:micp 1s ease-in-out infinite}
 @keyframes micp{50%{transform:scale(1.08)}}
+.autobar{position:absolute;left:0;top:0;bottom:0;width:0;background:rgba(255,255,255,.28);animation:autob linear forwards}
+@keyframes autob{to{width:100%}}
 </style>
 </head>
 <body>
@@ -915,17 +917,34 @@ function flushSession(){
 }
 function answer(it, ok){
   P.total++; if (ok) P.ok++;
+  if (ok) P.okI = P.i; else P.badI = P.i;
   seen(it);
   P.res[it.id] = (P.res[it.id] === undefined ? true : P.res[it.id]) && ok;
   const cur = P.q[P.i];
   // yanlışı oturumun sonuna bir kez daha ekle
   if (!ok && !P.redo.has(it.id)) { P.redo.add(it.id); P.q.push({m: cur.m === "match" ? "quiz" : cur.m, it}); }
 }
-function next(){ P.lock = 0; P.i++; renderSession(); }
+function next(){ clearTimeout(P.autoT); P.lock = 0; P.i++; renderSession(); }
 function head(title){
   return `<div class="ptop"><div class="pbar"><i style="width:${P.i/P.q.length*100}%"></i></div><span class="small muted">${P.i+1}/${P.q.length}</span></div><div class="phase">${MODES[title] ? MODES[title].ic + " " + MODES[title].t : title}</div>`;
 }
-function footNext(){ $(".foot").innerHTML = `<button class="cta" id="nx">Devam</button>`; $(".foot").hidden = false; $("#nx").onclick = next; $("#nx").focus({preventScroll:true}); }
+function footNext(){
+  const a = S.opt.auto || 0, go = a && P.okI === P.i && P.badI !== P.i;
+  $(".foot").innerHTML = `<div style="display:flex;gap:8px;align-items:stretch"><button class="cta" id="nx" style="flex:1;position:relative;overflow:hidden">${go ? `<i class="autobar" style="animation-duration:${a}s"></i>` : ""}<span style="position:relative">Devam</span></button><button class="btn2" id="atm" aria-label="Otomatik geçiş" style="width:58px;padding:0;font-size:14px">⏱${a ? `<small style="display:block;font-size:11px;color:var(--acc)">${a} sn</small>` : ""}</button></div>`;
+  $(".foot").hidden = false; $("#nx").onclick = next; $("#nx").focus({preventScroll:true});
+  const i = P.i;
+  if (go) P.autoT = setTimeout(() => { if (P && P.i === i && screen === renderSession) next(); }, a * 1000);
+  $("#atm").onclick = () => { clearTimeout(P.autoT); autoPick(); };
+}
+// doğru cevaptan sonra kendiliğinden geç: kaç saniye beklensin
+function autoPick(){
+  const opts = [[0, "Kapalı"], [1, "1 saniye"], [2, "2 saniye"], [3, "3 saniye"], [5, "5 saniye"]];
+  $("#sheetIn").innerHTML = `<h2>⏱ Otomatik geçiş</h2>
+    <p class="small muted" style="margin:4px 2px 12px">Doğru cevapladığında Devam'a basmana gerek kalmaz; seçtiğin süre sonra sıradaki soruya geçer. Yanlışta durur, doğrusunu okuyabilirsin.</p>
+    ${opts.map(([v, t]) => `<button class="${(S.opt.auto || 0) === v ? "cta" : "btn2"}" data-v="${v}" style="width:100%;margin-top:8px">${t}</button>`).join("")}`;
+  $("#sheet").classList.add("show");
+  $$("#sheetIn [data-v]").forEach(b => b.onclick = () => { S.opt.auto = +b.dataset.v; save(); $("#sheet").classList.remove("show"); toast(S.opt.auto ? "Doğru cevapta " + S.opt.auto + " sn sonra geçer" : "Otomatik geçiş kapalı"); if (P && screen === renderSession && $("#nx")) footNext(); });
+}
 function verdict(ok, it, said, extra){
   return `<div class="verdict ${ok ? "good" : "bad"}">${ok ? pick(["Doğru!","Harika!","Süper!","Aynen!"]) : (said ? "Tam olmadı." : "Doğrusu:")}${said ? ` <span class="muted">(“${esc(said)}”)</span>` : ""}<b>${esc(it.de)}</b>${extra || `<span class="muted small">${esc(it.tr)}</span>`}${it.note ? `<span class="small" style="display:block;margin-top:6px;color:var(--tx2)">💡 ${esc(it.note)}</span>` : ""}</div>`;
 }
