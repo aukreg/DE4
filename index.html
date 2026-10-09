@@ -622,7 +622,7 @@ let ITEMS = [], BYID = {};
 function buildItems(){
   ITEMS = []; BYID = {};
   const add = it => { if (!BYID[it.id]) { ITEMS.push(it); BYID[it.id] = it; } };
-  D.phrases.forEach(p => add({id:p.id, src:"ph", de:p.de, tr:p.tr, ex:p.ex, d:p.d, cat:p.cat}));
+  D.phrases.forEach(p => add({id:p.id, src:"ph", de:p.de, tr:p.tr, ex:p.ex, d:p.d, cat:p.cat, note:p.note}));
   D.book.chapters.forEach(c => {
     (c.k || []).forEach((k, j) => add({id:`k${c.n}.${j}`, src:"bk", de:k[0], tr:k[1], ch:c.n}));
     c.lines.forEach((l, j) => add({id:`b${c.n}.${j}`, src:"bl", de:l[1], tr:l[2], ch:c.n, sp:l[0]}));
@@ -633,9 +633,9 @@ function buildItems(){
   });
   // kelimeler: isim, fiil, sıfat
   const rows = t => t.trim().split("\n").map(l => l.split("|"));
-  rows(W_NOUNS).forEach(([aw, pl, tr, cat], i) => { const [art, w] = aw.split(" "); add({id:"n:" + w, src:"wd", kind:"n", de:aw, w, art, pl: pl === "–" ? "" : pl, tr, cat, o:i}); });
-  rows(W_VERBS).forEach(([w, tr, pr, pf, pt], i) => add({id:"v:" + w, src:"wd", kind:"v", de:w, w, tr, pr:pr.split(","), pf, pt, o:i + 0.5}));
-  rows(W_ADJ).forEach(([w, tr, opp], i) => add({id:"a:" + w, src:"wd", kind:"a", de:w, w, tr, opp, o:i + 0.7}));
+  rows(W_NOUNS).forEach(([aw, pl, tr, cat, rk], i) => { const [art, w] = aw.split(" "); add({id:"n:" + w, src:"wd", kind:"n", de:aw, w, art, pl: pl === "–" ? "" : pl, tr, cat, o: rk ? +rk : 1000 + i}); });
+  rows(W_VERBS).forEach(([w, tr, pr, pf, pt, rk], i) => add({id:"v:" + w, src:"wd", kind:"v", de:w, w, tr, pr:pr.split(","), pf, pt, o: rk ? +rk : 1000 + i}));
+  rows(W_ADJ).forEach(([w, tr, opp, rk], i) => add({id:"a:" + w, src:"wd", kind:"a", de:w, w, tr, opp, o: rk ? +rk : 1000 + i}));
 }
 const WORDS = () => ITEMS.filter(i => i.src === "wd");
 buildItems();
@@ -687,30 +687,52 @@ function deck(){ return {due: dueItems().slice(0, 40), fresh: newItems()}; }
 /* ---------- ses ---------- */
 let VOICES = [], TRV = null;
 function loadVoices(){
-  if (!("speechSynthesis" in window)) return;
+  if (!(!!window.speechSynthesis)) return;
   const all = speechSynthesis.getVoices();
   VOICES = all.filter(v => /^de(-|_|$)/i.test(v.lang));
   TRV = all.find(v => /^tr(-|_|$)/i.test(v.lang)) || null;
 }
-if ("speechSynthesis" in window) { loadVoices(); speechSynthesis.onvoiceschanged = loadVoices; }
+if (!!window.speechSynthesis) { loadVoices(); speechSynthesis.onvoiceschanged = loadVoices; }
 const cleanSpeech = t => String(t).replace(/…/g, "").replace(/ \/ /g, ". ").replace(/[\u{1F300}-\u{1FAFF}]/gu, "");
+// Telefonlarda ses: iOS ilk dokunuştan önce sesi kilitler, bazı Android'lerde "bitti" haberi gelmez.
+const HAS_TTS = !!window.speechSynthesis && typeof window.SpeechSynthesisUtterance === "function";
+let TTS_OK = null, ttsWarned = false;
+function ttsUnlock(){
+  if (!HAS_TTS || ttsUnlock.done) return; ttsUnlock.done = true;
+  try { const u = new SpeechSynthesisUtterance(" "); u.volume = 0; speechSynthesis.speak(u); } catch(e) {}
+}
+document.addEventListener("pointerdown", ttsUnlock, {once:true, capture:true});
+document.addEventListener("touchend", ttsUnlock, {once:true, capture:true});
+function ttsFail(){
+  if (ttsWarned) return; ttsWarned = true;
+  toast(HAS_TTS ? "Ses çalmadı. Telefon sessizde mi? Olmazsa linki Safari/Chrome'da aç." : "Bu ekranda ses yok. Linki Safari ya da Chrome'da aç.");
+}
 function speak(text, who, onend, opt){
   opt = opt || {};
-  if (!("speechSynthesis" in window)) { if (onend) setTimeout(onend, 600); return; }
-  if (!opt.queue) speechSynthesis.cancel();
-  const u = new SpeechSynthesisUtterance(cleanSpeech(text));
-  u.rate = opt.rate || S.opt.rate;
+  let f = 0; const done = () => { if (!f++ && onend) onend(); };
+  const t = cleanSpeech(text).trim();
+  if (!HAS_TTS || !t) { if (!HAS_TTS) ttsFail(); if (onend) setTimeout(done, t ? 400 + t.length * 60 : 100); return; }
+  if (!VOICES.length) loadVoices();
+  const u = new SpeechSynthesisUtterance(t);
+  const rate = opt.rate || S.opt.rate;
+  u.rate = rate;
   if (opt.tr) { u.lang = "tr-TR"; if (TRV) u.voice = TRV; }
   else {
     u.lang = "de-DE";
     if (VOICES.length) u.voice = VOICES[(who || 0) % VOICES.length];
     if (who && VOICES.length < 2) u.pitch = who % 2 ? 1.25 : 0.9;
   }
-  if (onend) { let f = 0; const fn = () => { if (!f++) onend(); }; u.onend = fn; u.onerror = fn; }
-  speechSynthesis.speak(u);
+  u.onstart = () => { TTS_OK = true; };
+  u.onend = done; u.onerror = e => { if (e && e.error !== "interrupted" && e.error !== "canceled" && !TTS_OK) ttsFail(); done(); };
+  // "bitti" haberi gelmezse akış takılmasın
+  if (onend) setTimeout(done, 2500 + t.length * 110 / rate);
+  setTimeout(() => { if (TTS_OK === null) { TTS_OK = false; ttsFail(); } }, 2500);
+  const go = () => { try { speechSynthesis.resume(); speechSynthesis.speak(u); } catch(e) { ttsFail(); done(); } };
+  if (!opt.queue && (speechSynthesis.speaking || speechSynthesis.pending)) { speechSynthesis.cancel(); setTimeout(go, 80); }
+  else go();
 }
 const speakTR = (t, onend, rate) => speak(t, 0, onend, {tr:1, rate});
-const stopSpeak = () => { if ("speechSynthesis" in window) speechSynthesis.cancel(); };
+const stopSpeak = () => { if (!!window.speechSynthesis) speechSynthesis.cancel(); };
 // mikrofon: Claude içinde yok; telefondaki uygulamada var
 const SR = IN_CLAUDE ? null : (window.SpeechRecognition || window.webkitSpeechRecognition || null);
 function listen(onres, onerr){
@@ -815,7 +837,7 @@ const MODES = {
   prat:   {t:"Präteritum",  ic:"📜", g:1, k:"w", d:"Geçmiş zaman (war, hatte…)", need: it => it.kind === "v"},
   opp:    {t:"Zıt anlam",   ic:"↔️", g:1, k:"w", d:"Sıfatın zıttını bul", need: it => it.kind === "a" && !!it.opp},
   gapw:   {t:"Boşluğu yaz", ic:"✏️", g:2, k:"s", d:"Eksik kelimeyi yaz", need: it => !it.kind && gapCands(it).length > 0 && words(it).length >= 2},
-  scramble:{t:"Harfler",    ic:"🔠", g:2, k:"w", d:"Harflerden kelimeyi kur", need: it => !!it.kind && it.w.length >= 3 && it.w.length <= 13},
+  scramble:{t:"Harfler",    ic:"🔠", g:2, k:"w", d:"Harflerden kelimeyi kur", need: it => !!it.kind && !/\s/.test(it.w) && it.w.length >= 3 && it.w.length <= 13},
   dictate:{t:"Dikte",       ic:"🎧", g:2, d:"Duyduğunu yaz"},
   write:  {t:"Yaz",         ic:"⌨️", g:2, d:"Türkçeden Almancayı yaz"},
   speak:  {t:"Konuş",       ic:"🎙️", g:2, d:"Türkçeden Almanca söyle", need: () => !!SR},
@@ -914,7 +936,7 @@ const R_MODE = {
     $("#view").innerHTML = head("learn") + `
       <div class="card flash"><div class="big">${esc(it.de)}</div><div class="mid">${esc(it.tr)}</div>
         <button class="say" id="spk">${ICON_SPK} Dinle</button>
-        ${it.ex ? `<div class="ex">${esc(it.ex)}</div>` : ""}${wordInfo(it)}</div>
+        ${it.ex ? `<div class="ex">${esc(it.ex)}</div>` : ""}${it.note ? `<div class="small muted">💡 ${esc(it.note)}</div>` : ""}${wordInfo(it)}</div>
       <p class="hint">Yüksek sesle iki kez tekrar et, sonra devam.</p>
       <div class="foot"><button class="cta" id="nx">Devam</button></div>`;
     speak(it.de);
@@ -1168,10 +1190,10 @@ Object.assign(R_MODE, {
   },
   perfekt(it){
     const [aux, part] = [it.pf.split(" ")[0], it.pf.split(" ").slice(1).join(" ")];
-    const alt = aux === "hat" ? "ist" : "hat", stem = it.w.replace(/e?n$/, "");
+    const alt = aux === "hat" ? "ist" : "hat", stem = it.w.replace(/^sich /, "").replace(/ \S+$/, "").replace(/e?n$/, "");
     const reg = (/^(be|ver|er|ent|zer|ge)/.test(it.w) ? "" : "ge") + stem + "t";
     choose(it, "perfekt", `<div class="mid">${esc(it.w)} · ${esc(it.tr)}</div><div class="big">Gestern ___ er …</div><div class="mid">Perfekt</div>`,
-      shuffle([alt + " " + part, aux + " " + reg, alt + " " + reg, aux + " ge" + it.w]), it.pf, 2);
+      shuffle([alt + " " + part, aux + " " + reg, alt + " " + reg, aux + " ge" + it.w.replace(/^sich /, "")]), it.pf, 2);
   },
   prat(it){
     const stem = it.w.replace(/e?n$/, ""), sep = it.pt.includes(" ") ? " " + it.pt.split(" ")[1] : "";
@@ -1781,7 +1803,7 @@ function gHunt(){
 
 /* Harf Çarkı: 8 kelime */
 function gWheel(){
-  const pool = wordPool().filter(w => w.w.length >= 3 && w.w.length <= 8).slice(0, 8);
+  const pool = wordPool().filter(w => !/\s/.test(w.w) && w.w.length >= 3 && w.w.length <= 8).slice(0, 8);
   G = {i:0, sc:0};
   const round = () => {
     const it = pool[G.i];
