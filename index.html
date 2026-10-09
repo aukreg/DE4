@@ -2322,6 +2322,46 @@ function playStep(){
   speak(l[1], R.keys.indexOf(l[0]), () => { if (R && R.play === i) { R.play++; setTimeout(playStep, 350); } });
 }
 
+/* ================= EŞİTLEME: iki sürüm arasında kodla taşı, birleştir ================= */
+const SYNC_TAG = "ALMANCA1:";
+async function syncCode(){
+  const json = JSON.stringify(Object.assign({}, S, {drafts: {}}));
+  try {
+    const st = new Blob([json]).stream().pipeThrough(new CompressionStream("gzip"));
+    const buf = new Uint8Array(await new Response(st).arrayBuffer());
+    let bin = ""; for (let i = 0; i < buf.length; i += 8192) bin += String.fromCharCode.apply(null, buf.subarray(i, i + 8192));
+    return SYNC_TAG + "z" + btoa(bin);
+  } catch(e) { return SYNC_TAG + "j" + btoa(unescape(encodeURIComponent(json))); }
+}
+async function readCode(txt){
+  txt = (txt || "").trim();
+  if (txt[0] === "{") return JSON.parse(txt);  // eski düz yedek
+  const i = txt.indexOf(SYNC_TAG); if (i < 0) throw 0;
+  const body = txt.slice(i + SYNC_TAG.length).replace(/\s+/g, ""), kind = body[0], b64 = body.slice(1);
+  const bin = atob(b64);
+  if (kind === "j") return JSON.parse(decodeURIComponent(escape(bin)));
+  const bytes = Uint8Array.from(bin, c => c.charCodeAt(0));
+  return JSON.parse(await new Response(new Blob([bytes]).stream().pipeThrough(new DecompressionStream("gzip"))).text());
+}
+// iki ilerlemeyi birleştir: her kartta daha çok çalışılmış kayıt kazanır, sayılar en yükseği alır
+function mergeState(a, b){
+  const m = load(JSON.parse(JSON.stringify(a)));
+  b = load(JSON.parse(JSON.stringify(b)));
+  const pick = (x, y) => !x ? y : !y ? x : ((y.n || 0) > (x.n || 0) || ((y.n || 0) === (x.n || 0) && (y.last || "") > (x.last || ""))) ? y : x;
+  Object.keys(b.prog).forEach(k => m.prog[k] = pick(m.prog[k], b.prog[k]));
+  const maxObj = (x, y) => { Object.keys(y || {}).forEach(k => { const v = y[k]; x[k] = typeof v === "number" ? Math.max(x[k] || 0, v) : (x[k] === undefined ? v : x[k]); }); return x; };
+  Object.keys(b.days).forEach(d => m.days[d] = maxObj(m.days[d] || {}, b.days[d]));
+  m.book.read = maxObj(m.book.read || {}, b.book.read); m.book.last = m.book.last || b.book.last;
+  m.scen.done = maxObj(m.scen.done || {}, b.scen.done);
+  maxObj(m.gram, b.gram);
+  Object.keys(b.games).forEach(k => { const x = m.games[k], y = b.games[k], low = GAMES[k] && GAMES[k].low; m.games[k] = x === undefined ? y : low ? Math.min(x, y) : Math.max(x, y); });
+  return m;
+}
+async function importCode(txt){
+  try { const other = await readCode(txt); if (!other || !other.prog) throw 0; S = mergeState(S, other); save(); toast("İlerleme birleştirildi ✓"); $("#sheet").classList.remove("show"); go("today"); return true; }
+  catch(e) { toast("Bu bir eşitleme kodu değil"); return false; }
+}
+
 /* ================= AYARLAR ================= */
 function applyTheme(){ if (IN_CLAUDE) return; const t = S.opt.theme; if (t === "auto") document.documentElement.removeAttribute("data-theme"); else document.documentElement.setAttribute("data-theme", t); }
 applyTheme();
@@ -2340,13 +2380,15 @@ $("#gear").onclick = () => {
     <div class="seg" id="wp">${[0,5,10,15].map(k => `<button data-v="${k}" class="${o.wpace==k?"on":""}">${k || "Yok"}</button>`).join("")}</div>
     <div class="lbl">İlerleme</div>
     <p class="small muted" style="margin:4px 2px">${seen} kart başladı · ${sat} kart oturdu · ${Object.keys(S.days).length} gün çalıştın</p>
-    <p class="small muted" style="margin:4px 2px">${DB ? "İlerlemen hesabına kaydediliyor; telefonda ve bilgisayarda aynı." : "İlerlemen bu cihazda duruyor. Yedeği kopyalayıp saklayabilirsin."}</p>
-    <div class="row2"><button class="btn2" id="exp">Yedeği kopyala</button><button class="btn2" id="imp">Yedek yükle</button></div>
-    <div id="impbox" hidden><textarea class="imp" id="impt" placeholder="Yedek metnini buraya yapıştır"></textarea><button class="btn2" id="impgo" style="width:100%;margin-top:8px">Yükle</button></div>
+    <p class="small muted" style="margin:4px 2px">${DB ? "İlerlemen Claude hesabına kaydediliyor." : "İlerlemen bu cihazda duruyor."}</p>
+    <div class="lbl">Diğer sürümle eşitle</div>
+    <p class="small muted" style="margin:4px 2px">${IN_CLAUDE ? "Mikrofonlu uygulamada çalıştıysan: orada Ayarlar → Kodu kopyala, sonra burada Kodu yapıştır." : "Claude sürümünde çalıştıysan: orada Ayarlar → Kodu kopyala, sonra burada Kodu yapıştır."} İki taraftaki çalışma birleşir, hiçbiri silinmez. Bitince aynısını ters yönde yap.</p>
+    <div class="row2"><button class="btn2" id="exp">Kodu kopyala</button><button class="btn2" id="imp">Kodu yapıştır</button></div>
+    <div id="impbox" hidden><textarea class="imp" id="impt" placeholder="Kodu buraya yapıştır"></textarea><button class="btn2" id="impgo" style="width:100%;margin-top:8px">Birleştir</button></div>
     ${IN_CLAUDE ? `<div class="lbl">Claude</div>
     <p class="small muted" style="margin:4px 2px">${SAMPLE ? "Bağlı: yazı düzeltme ve canlı konuşma açık." : "Bağlı değil: düzeltme için yazını kopyalayıp gönderebilirsin."}</p>` : ""}
     <div class="lbl">Mikrofon</div>
-    <p class="small muted" style="margin:4px 2px">${SR ? "Açık: Konuş modu ve Turbo söylediğini dinleyip düzeltir. İlk kullanımda izin isterse İzin ver de." : SR_CTOR ? "Kapalı: bu ekranda mikrofon açılmadı." : "Bu tarayıcı konuşma tanımayı desteklemiyor."}</p>
+    <p class="small muted" style="margin:4px 2px">${SR ? "Açık: Konuş modu ve Turbo söylediğini dinleyip düzeltir. İlk kullanımda izin isterse İzin ver de." : SR_CTOR ? (IN_CLAUDE ? "Bu ekran mikrofona izin vermiyor. Mikrofonlu sürüm: aukreg.github.io/DE4 (Safari/Chrome)." : "Kapalı: bu ekranda mikrofon açılmadı.") : "Bu tarayıcı konuşma tanımayı desteklemiyor."}</p>
     ${!SR && SR_CTOR ? `<button class="btn2" id="mic" style="width:100%">Mikrofonu tekrar dene</button>` : ""}
     <div class="lbl">İçerik</div>
     <p class="small muted" style="margin:4px 2px">${D.phrases.length} kalıp · ${D.book.chapters.length} kitap bölümü · ${D.scenarios.length} senaryo · ${ITEMS.length} çalışılabilir cümle · ${allWritings().length} düzeltilmiş yazı</p>
@@ -2356,12 +2398,12 @@ $("#gear").onclick = () => {
   $$("#rt button").forEach(b => b.onclick = () => { o.rate = +b.dataset.v; save(); speak("Das ist die neue Geschwindigkeit."); $("#gear").onclick(); });
   $$("#pc button").forEach(b => b.onclick = () => { o.pace = +b.dataset.v; save(); $("#gear").onclick(); });
   $$("#wp button").forEach(b => b.onclick = () => { o.wpace = +b.dataset.v; save(); $("#gear").onclick(); });
-  $("#exp").onclick = () => copy(JSON.stringify(S), "Yedek kopyalandı");
-  $("#imp").onclick = () => { $("#impbox").hidden = false; $("#impt").focus(); };
-  $("#impgo").onclick = () => {
-    try { const s = JSON.parse($("#impt").value); if (!s.prog) throw 0; S = load(s); save(); toast("Yedek yüklendi"); $("#sheet").classList.remove("show"); go("today"); }
-    catch(e) { toast("Bu metin bir yedek değil"); }
+  $("#exp").onclick = async () => copy(await syncCode(), IN_CLAUDE ? "Kod kopyalandı. Mikrofonlu uygulamada Kodu yapıştır'a dokun." : "Kod kopyalandı. Claude sürümünde Kodu yapıştır'a dokun.");
+  $("#imp").onclick = async () => {
+    try { const t = await navigator.clipboard.readText(); if (t && t.includes(SYNC_TAG) && await importCode(t)) return; } catch(e) {}
+    $("#impbox").hidden = false; $("#impt").focus();
   };
+  $("#impgo").onclick = () => importCode($("#impt").value);
   if ($("#mic")) $("#mic").onclick = () => { toast(micRetry() ? "Mikrofon açık. Konuş modunda dene." : "Bu ekran mikrofona izin vermiyor."); $("#gear").onclick(); };
   $("#cls").onclick = () => $("#sheet").classList.remove("show");
 };
