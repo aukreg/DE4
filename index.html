@@ -309,6 +309,24 @@ const esc = s => String(s).replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":
 // Claude içinde mi açıldı? (orada mikrofon yok, ama Claude düzeltme ve hesap kaydı var)
 const IN_CLAUDE = !!(window.claude && window.claude.use);
 
+/* ---------- tarih ---------- */
+const pad = n => String(n).padStart(2, "0");
+function ymd(d){ return d.getFullYear() + "-" + pad(d.getMonth()+1) + "-" + pad(d.getDate()); }
+const TODAY = ymd(new Date());
+const addDays = n => { const d = new Date(); d.setDate(d.getDate() + n); return ymd(d); };
+const AYLAR = ["Ocak","Şubat","Mart","Nisan","Mayıs","Haziran","Temmuz","Ağustos","Eylül","Ekim","Kasım","Aralık"];
+const GUNLER = ["Pazar","Pazartesi","Salı","Çarşamba","Perşembe","Cuma","Cumartesi"];
+const trDate = s => { const [y,m,d] = s.split("-").map(Number); return d + " " + AYLAR[m-1]; };
+const dayNo = () => Math.max(0, Math.round((new Date(TODAY) - new Date(D.start || TODAY)) / 864e5));
+function dayRec(){ return S.days[TODAY] = S.days[TODAY] || {}; }
+function mark(step){ dayRec()[step] = 1; save(); }
+function streak(){
+  let n = 0, d = new Date();
+  if (!Object.keys(S.days[ymd(d)] || {}).length) d.setDate(d.getDate()-1);
+  while (Object.keys(S.days[ymd(d)] || {}).length) { n++; d.setDate(d.getDate()-1); }
+  return n;
+}
+
 /* ---------- kayıt ---------- */
 const KEY = "almanca-gunluk-v1";
 let DB = null, SAMPLE = null, syncT = null;
@@ -333,24 +351,6 @@ function save(){
 let WRITINGS = [];
 const allWritings = () => D.writings.concat(WRITINGS).sort((a, b) => (a.date + (a.at || "")).localeCompare(b.date + (b.at || "")));
 const allMistakes = () => D.mistakes.concat(...WRITINGS.map(w => (w.mistakes || []).map(m => Object.assign({date: w.date}, m))));
-
-/* ---------- tarih ---------- */
-const pad = n => String(n).padStart(2, "0");
-function ymd(d){ return d.getFullYear() + "-" + pad(d.getMonth()+1) + "-" + pad(d.getDate()); }
-const TODAY = ymd(new Date());
-const addDays = n => { const d = new Date(); d.setDate(d.getDate() + n); return ymd(d); };
-const AYLAR = ["Ocak","Şubat","Mart","Nisan","Mayıs","Haziran","Temmuz","Ağustos","Eylül","Ekim","Kasım","Aralık"];
-const GUNLER = ["Pazar","Pazartesi","Salı","Çarşamba","Perşembe","Cuma","Cumartesi"];
-const trDate = s => { const [y,m,d] = s.split("-").map(Number); return d + " " + AYLAR[m-1]; };
-const dayNo = () => Math.max(0, Math.round((new Date(TODAY) - new Date(D.start || TODAY)) / 864e5));
-function dayRec(){ return S.days[TODAY] = S.days[TODAY] || {}; }
-function mark(step){ dayRec()[step] = 1; save(); }
-function streak(){
-  let n = 0, d = new Date();
-  if (!Object.keys(S.days[ymd(d)] || {}).length) d.setDate(d.getDate()-1);
-  while (Object.keys(S.days[ymd(d)] || {}).length) { n++; d.setDate(d.getDate()-1); }
-  return n;
-}
 
 /* ---------- kartlar: tüm çalışılabilir cümleler tek havuzda ---------- */
 // src: ph günlük kalıp · bk kitap kalıbı · bl kitap cümlesi · sc senaryo cümlesi
