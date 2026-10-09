@@ -593,7 +593,7 @@ function load(from){
   if (!s) try { s = JSON.parse(localStorage.getItem(KEY)); } catch(e) {}
   s = s || {};
   s.prog = s.prog || {}; s.days = s.days || {}; s.book = s.book || {}; s.scen = s.scen || {};
-  s.drafts = s.drafts || {}; s.games = s.games || {}; s.gram = s.gram || {};
+  s.drafts = s.drafts || {}; s.games = s.games || {}; s.gram = s.gram || {}; s.mine = s.mine || []; s.weeks = s.weeks || {};
   s.opt = Object.assign({theme:"auto", rate:0.9, pace:10, wpace:5, n:10}, s.opt || {});
   // eski kayıt: puan (s) → kutu (b) ve tekrar tarihi
   Object.values(s.prog).forEach(r => { if (r.b === undefined) { r.b = r.s >= 4 ? 4 : r.s ? 1 : 0; r.due = r.due || ymd(new Date()); } });
@@ -617,6 +617,7 @@ const SRC = {
   bl: {t:"Kitap cümleleri", ic:"📖"},
   sc: {t:"Senaryo cümleleri", ic:"🎭"},
   wd: {t:"Kelimeler", ic:"🔤"},
+  my: {t:"Benim cümlelerim", ic:"🙋"},
 };
 let ITEMS = [], BYID = {};
 function buildItems(){
@@ -631,6 +632,8 @@ function buildItems(){
     s.lines.forEach((l, j) => { if (l[0] === "U") add({id:`${s.id}.${j}`, src:"sc", de:l[1], tr:l[2], sc:s.id}); });
     (s.k || []).forEach((k, j) => add({id:`${s.id}k${j}`, src:"sc", de:k[0], tr:k[1], sc:s.id}));
   });
+  // kendi cümlelerim ("Nasıl derim?")
+  (S.mine || []).forEach(m => add({id:m.id, src:"my", de:m.de, tr:m.tr, ex:m.ex, note:m.note, d:m.d}));
   // kelimeler: isim, fiil, sıfat
   const rows = t => t.trim().split("\n").map(l => l.split("|"));
   rows(W_NOUNS).forEach(([aw, pl, tr, cat, rk], i) => { const [art, w] = aw.split(" "); add({id:"n:" + w, src:"wd", kind:"n", de:aw, w, art, pl: pl === "–" ? "" : pl, tr, cat, o: rk ? +rk : 1000 + i}); });
@@ -645,7 +648,7 @@ const IV = [0, 1, 2, 4, 8, 16, 35, 75, 160];
 const lvl = it => { const r = S.prog[it.id]; return !r ? 0 : r.b >= 4 ? 2 : 1; };
 const LVL_TXT = ["Yeni", "Öğreniyorum", "Oturdu"];
 const isDue = it => { const r = S.prog[it.id]; return r && r.due <= TODAY; };
-function seen(it){ if (!S.prog[it.id]) { S.prog[it.id] = {b:0, due:TODAY}; const k = it.src === "wd" ? "newW" : "newSeen"; dayRec()[k] = (dayRec()[k] || 0) + 1; } }
+function seen(it){ if (!S.prog[it.id]) { S.prog[it.id] = {b:0, due:TODAY, f:TODAY}; const k = it.src === "wd" ? "newW" : "newSeen"; dayRec()[k] = (dayRec()[k] || 0) + 1; } }
 function grade(it, ok){
   const r = S.prog[it.id] = S.prog[it.id] || {b:0, due:TODAY};
   if (ok) { r.b = Math.min(8, r.b + 1); r.due = addDays(IV[r.b]); }
@@ -669,12 +672,13 @@ function poolFor(src){
   if (src === "sc") { const done = Object.keys(S.scen.done || {}); const sc = done.length ? done : [todaysScenario() && todaysScenario().id]; return ITEMS.filter(i => i.src === "sc" && sc.includes(i.sc)); }
   if (src === "due") return dueItems();
   if (src === "wd") return WORDS();
+  if (src === "my") return ITEMS.filter(i => i.src === "my");
   return [];
 }
 const dueItems = () => ITEMS.filter(isDue).sort((a, b) => S.prog[a.id].due.localeCompare(S.prog[b.id].due) || S.prog[a.id].b - S.prog[b.id].b);
 // günün destesi: vadesi gelenler + yeni kartlar (önce günün kalıpları, sonra okunan bölümün kalıpları)
 function newItems(){
-  const out = todaysPhrases().filter(p => !S.prog[p.id]);
+  const out = ITEMS.filter(i => i.src === "my" && !S.prog[i.id]).concat(todaysPhrases().filter(p => !S.prog[p.id]));
   const rc = readChapters();
   const extra = ITEMS.filter(i => i.src === "bk" && rc.includes(i.ch) && !S.prog[i.id]);
   const room = Math.max(0, S.opt.pace - (dayRec().newSeen || 0));
@@ -881,6 +885,9 @@ function startSession(o){
   } else if (o.mode === "mix") {
     shuffle(items).forEach(it => q.push({m: S.prog[it.id] ? modeFor(it) : "learn", it}));
     shuffle(items).filter(it => !S.prog[it.id]).forEach(it => q.push({m:"quiz", it}));
+  } else if (o.mode === "week") {
+    // haftalık kontrol: öğretme yok, her kart bir kez sorulur
+    shuffle(items).forEach(it => { const ms = ["quiz","rquiz","order","gapw","write","artikel","conj","plural"].filter(m => MODES[m] && can(m, it) && (it.src === "wd" ? MODES[m].k !== "s" : MODES[m].k !== "w")); q.push({m: ms.length ? pick(ms) : "quiz", it}); });
   } else if (o.mode === "match") {
     const L = shuffle(items);
     for (let i = 0; i < L.length; i += 5) { const g = L.slice(i, i + 5); if (g.length >= 3 || !q.length) q.push({m:"match", its:g}); }
@@ -922,6 +929,7 @@ function renderSession(){
 function renderSessionEnd(){
   flushSession(); onLeave = null;
   if (P.o.stepKey) mark(P.o.stepKey);
+  if (P.o.done) return P.o.done(P.ok, P.total);
   const pct = P.total ? Math.round(P.ok / P.total * 100) : 100;
   setTop(P.o.title || "Alıştırma", true);
   endCard(pct >= 80 ? "🎉" : "💪", "Bitti!", P.total ? `${P.ok} / ${P.total} doğru · %${pct}` : "Kartlar tamam", P.o.stepKey === "deck" ? "Bugün ekranına dön" : "Tamam", () => go(tab));
@@ -1256,6 +1264,7 @@ function steps(){
   if (ch) out.push({k:"book", ic:"📖", t:"Kitap: " + ch.n + ". bölüm", s:ch.de + " · " + ch.tr, eve:1, run:() => openReader("book", ch.n)});
   if (sc) out.push({k:"scen", ic:"🎭", t:"Senaryo: " + sc.title, s: SAMPLE ? "Oku, sonra Claude ile canlı konuş" : "Rol yap, kendi replikini söyle", eve:1, run:() => openReader("scen", sc.id)});
   out.push({k:"write", ic:"✍️", t:"Günlük yazı", s:pr.tr, eve:1, run:() => open(renderWrite)});
+  if (weekDue()) out.push({k:"week", ic:"📝", t:"Haftalık kontrol", s:"Bu haftanın kartlarından 5 dakikalık test", eve:1, run:() => startWeekly()});
   if (ms.length) out.push({k:"mist", ic:"🩹", t:"Hatalarım", s:ms.length + " hata kartı", eve:1, run:() => startMistakes()});
   out.forEach(s => s.done = !!rec[s.k]);
   if (!n && !rec.deck) out[0].done = true;
@@ -1283,6 +1292,8 @@ function renderToday(){
     <div class="tiles">
       <button class="card tile" id="q1"><span class="ic">⚡</span><b>Turbo</b><span>${SR ? "Duy, söyle, düzelt" : "Duy, aklından söyle"}</span></button>
       <button class="card tile" id="q2"><span class="ic">🎧</span><b>Dinle</b><span>Bulaşıkta, yolda</span></button>
+      <button class="card tile" id="q3"><span class="ic">🙋</span><b>Nasıl derim?</b><span>Aklındaki cümleyi Almanca öğren</span></button>
+      <button class="card tile" id="q4"><span class="ic">🗣️</span><b>Gölgeleme</b><span>${SR ? "Duy, tekrar et, puan al" : "Duy, hemen arkasından tekrar et"}</span></button>
     </div>
     <button class="linkbtn" id="st">📈 İlerlemem</button>
     <p class="hint">${eve ? "21:00 sonrası: yazı, senaryo ve kitap için en iyi zaman." : "Gündüz deste yeter; kitap, senaryo ve yazı akşama kalabilir."}</p>`;
@@ -1290,6 +1301,8 @@ function renderToday(){
   $$(".step").forEach(b => b.onclick = () => st[+b.dataset.i].run());
   $("#q1").onclick = () => startTurbo(srcItems("due").length >= 5 ? "due" : "ph");
   $("#q2").onclick = () => go("listen");
+  $("#q3").onclick = () => open(renderSay);
+  $("#q4").onclick = () => startShadow(srcItems("due").length >= 5 ? "due" : "ph");
   $("#st").onclick = () => open(renderStats);
 }
 
@@ -1297,6 +1310,7 @@ function renderToday(){
 const PSRC = {
   ph:  {t:"Kalıplar"},
   wd:  {t:"Kelimeler"},
+  my:  {t:"Benim cümlelerim"},
   bk:  {t:"Kitap kalıpları"},
   bl:  {t:"Kitap cümleleri"},
   sc:  {t:"Senaryolar"},
@@ -1323,6 +1337,7 @@ function renderPracticeTab(){
     <div class="tiles">
       <button class="card tile" id="cw"><span class="ic">✍️</span><b>Yaz, düzeltsin</b><span>${SAMPLE ? "Günlük yazını Claude düzeltir" : "Yaz, Claude'a gönder"}</span></button>
       <button class="card tile" id="cc"><span class="ic">💬</span><b>Canlı konuş</b><span>Bir senaryoda Claude ile yazış</span></button>
+      <button class="card tile wide" id="cs"><span class="ic">🙋</span><span class="tx"><b>Nasıl derim?</b><span>Türkçe yaz, doğal Almancasını öğren; cümle destene eklenir.</span></span></button>
     </div>
 
     <div class="sec">Kendi kendine</div>
@@ -1339,7 +1354,10 @@ function renderPracticeTab(){
 
     <div class="sec">Eller serbest</div>
     <button class="card tile wide" id="tb"><span class="ic">⚡</span><span class="tx"><b>Turbo</b><span>${SR ? "Türkçeyi duyarsın, Almancasını söylersin; uygulama dinler ve düzeltir." : "Türkçeyi duyarsın, Almancasını yüksek sesle söylersin, sonra doğrusunu duyarsın."} Seçili kaynaktan.</span></span></button>
+    <button class="card tile wide" id="sh" style="margin-top:10px"><span class="ic">🗣️</span><span class="tx"><b>Gölgeleme</b><span>${SR ? "Cümleyi duyarsın, hemen tekrar edersin; uygulama söyleyişini puanlar." : "Cümleyi duyarsın, hemen arkasından aynı tonla tekrar edersin."} Seçili kaynaktan.</span></span></button>
     <div style="height:16px"></div>`;
+  $("#cs").onclick = () => open(renderSay);
+  $("#sh").onclick = () => startShadow(isM ? "ph" : o.psrc);
   $$("#srcs .chip").forEach(b => b.onclick = () => { o.psrc = b.dataset.k; save(); renderPracticeTab(); });
   $$("[data-m]").forEach(b => b.onclick = () => { o.pmode = b.dataset.m; save(); renderPracticeTab(); });
   $$("#cnt button").forEach(b => b.onclick = () => { o.n = +b.dataset.n; save(); renderPracticeTab(); });
@@ -1679,7 +1697,7 @@ function gHear(){
   G = {i:0, sc:0, life:3};
   const draw = () => {
     const it = pool[G.i % pool.length], opts = shuffle([it].concat(distractors(it, 3, "tr")));
-    $("#view").innerHTML = `<div class="hud"><b>${G.sc}</b><span>${"❤️".repeat(G.life)}${"🤍".repeat(3 - G.life)}</span></div>
+    $("#view").innerHTML = `<div class="hud"><b>${G.sc}</b><span>${"❤️".repeat(Math.max(0, G.life))}${"🤍".repeat(3 - Math.max(0, G.life))}</span></div>
       <div class="card flash" style="min-height:130px"><button class="mic" id="spk" style="width:72px;height:72px;margin:6px auto">${ICON_SPK.replace('width="18" height="18"', 'width="30" height="30"')}</button>
         <div class="big" id="txt" style="font-size:19px;visibility:hidden">${esc(it.de)}</div></div>
       <div class="opts">${opts.map(o => `<button class="opt" data-id="${o.id}">${esc(o.tr)}</button>`).join("")}</div>`;
@@ -1754,12 +1772,13 @@ function gHang(){
     const it = pool[G.i % pool.length], W = it.w.toUpperCase(), got = new Set(), miss = new Set();
     const draw = () => {
       const shown = W.split("").map(c => got.has(c) ? c : "_").join(" ");
-      $("#view").innerHTML = `<div class="hud"><b>${G.sc}</b><span>${"❤️".repeat(G.lives)}${"🤍".repeat(6 - G.lives)}</span></div>
+      $("#view").innerHTML = `<div class="hud"><b>${G.sc}</b><span>${"❤️".repeat(Math.max(0, G.lives))}${"🤍".repeat(6 - Math.max(0, G.lives))}</span></div>
         <div class="card flash" style="min-height:150px"><div class="mid">${esc(it.tr)} · ${esc(it.art)} …</div>
           <div class="big" style="letter-spacing:.12em;font-size:28px">${shown}</div></div>
         <div class="pool" style="gap:6px">${KEYS.map(k => `<button class="wd" data-k="${k}" style="min-width:34px;padding:9px 8px;${got.has(k) ? "background:var(--ok-d)" : miss.has(k) ? "opacity:.3" : ""}" ${got.has(k) || miss.has(k) ? "disabled" : ""}>${k}</button>`).join("")}</div>`;
       $$(".pool .wd").forEach(b => b.onclick = () => {
         const k = b.dataset.k;
+        if (G.lives <= 0 || W.split("").every(c => got.has(c))) return;
         if (W.includes(k)) got.add(k); else { miss.add(k); G.lives--; }
         const won = W.split("").every(c => got.has(c));
         if (won) { G.sc++; speak(it.de); toast("✓ " + it.de); G.i++; later(round, 900); draw(); return; }
@@ -2173,6 +2192,7 @@ function renderStats(){
   $("#view").innerHTML = `
     <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:8px">
       ${big("🔥 " + streak(), "gün seri")}${big(Object.keys(S.days).length, "gün çalıştın")}${big(answered ? Math.round(right / answered * 100) + "%" : "–", "doğru oranı")}</div>
+    ${weekBox()}
     <div class="sec">Son 14 gün</div>
     <div class="card" style="padding:14px 12px 8px"><div style="display:flex;align-items:flex-end;gap:5px;height:110px">${days.map(d => { const n = (S.days[d] || {}).n || 0, act = Object.keys(S.days[d] || {}).length; return `<div style="flex:1;display:flex;flex-direction:column;justify-content:flex-end;height:100%" title="${d}: ${n}"><div style="height:${Math.max(act ? 6 : 2, n / mx * 100)}%;border-radius:5px 5px 2px 2px;background:${act ? "var(--acc)" : "var(--bg4)"}"></div></div>`; }).join("")}</div>
       <div style="display:flex;justify-content:space-between;font-size:11.5px;color:var(--tx3);margin-top:6px"><span>${trDate(days[0])}</span><span>Bugün</span></div></div>
@@ -2189,6 +2209,7 @@ function renderStats(){
       <button class="cta" id="wk" style="margin-top:12px">Bunları çalış</button>` : `<div class="card empty">Henüz zorlandığın kart yok.</div>`}
     ${Object.keys(S.games).length ? `<div class="sec">Oyun rekorları</div><div class="card klist">${Object.entries(S.games).filter(([k]) => GAMES[k]).map(([k, v]) => `<div><b>${GAMES[k].ic} ${GAMES[k].t}</b><span>${v} ${GAMES[k].u}</span></div>`).join("")}</div>` : ""}
     <div style="height:20px"></div>`;
+  if ($("#wkt")) $("#wkt").onclick = () => startWeekly();
   if ($("#wk")) $("#wk").onclick = () => startSession({items: weak, mode:"mix", title:"Zorlandıklarım"});
 }
 
@@ -2322,6 +2343,203 @@ function playStep(){
   speak(l[1], R.keys.indexOf(l[0]), () => { if (R && R.play === i) { R.play++; setTimeout(playStep, 350); } });
 }
 
+/* ================= NASIL DERİM? kendi cümlelerin ================= */
+function sayPrompt(text){
+  return `Sen Atakan'ın Almanca öğretmenisin. Atakan Türk, Almanya'da yaşıyor, seviyesi A2 civarı. Eşi Nisa, 2 yaşında kızı Gece. Hedefi günlük hayatta doğal konuşmak.
+Atakan sana bir cümle verecek: ya Türkçe (Almancada nasıl söyleneceğini soruyor) ya da kendi Almanca denemesi.
+Bir Almanın günlük konuşmada gerçekten söyleyeceği doğal, kısa Almancayı ver. Ders kitabı dili değil, gereksiz resmi değil; aksi gerekmedikçe "du" kullan. A2-B1 seviyesinde tut.
+Sadece şu biçimde JSON döndür:
+{"de":"en doğal tek cümle","tr":"cümlenin kısa Türkçe anlamı","alt":"aynı şeyi söylemenin başka yaygın yolu, yoksa boş","ex":"aynı kalıpla başka kısa bir Almanca örnek cümle","note":"Türkçe tek cümle pratik ipucu (kalıp, artikel, kelime sırası). Atakan Almanca yazdıysa hatasını kısaca söyle."}
+
+Atakan'ın cümlesi:
+${text}`;
+}
+function addMine(m){
+  m.id = "my" + Date.now().toString(36); m.d = TODAY;
+  S.mine.push(m); buildItems(); save();
+  return m;
+}
+function renderSay(){
+  setTop("Nasıl derim?", true);
+  const mine = S.mine.slice().reverse();
+  $("#view").innerHTML = `
+    <p class="hint" style="text-align:left;margin:6px 2px 10px">Gün içinde aklına gelen bir cümleyi yaz. ${SAMPLE ? "Claude doğal Almancasını verir, cümle otomatik olarak destene eklenir." : "Almancasını biliyorsan altına yaz, destene eklensin. Bilmiyorsan Claude sürümünde sor."}</p>
+    <textarea class="write" id="say" style="min-height:96px;margin-top:0" placeholder="Örn: Gece'yi kreşten alacağım.${SAMPLE ? " (Almanca denemeni de yazabilirsin, düzeltir.)" : ""}"></textarea>
+    ${SAMPLE ? `<button class="cta" id="ask" style="margin-top:10px">Almancası ne?</button>`
+             : `<textarea class="write" id="sayde" lang="de" style="min-height:70px" placeholder="Almancası"></textarea><button class="cta" id="addm" style="margin-top:10px">Desteme ekle</button>`}
+    <div id="sres"></div>
+    <div class="sec">Benim cümlelerim · ${mine.length}</div>
+    ${mine.length ? `<div class="card plist">${mine.map(m => `
+      <div class="pi" data-id="${m.id}" style="display:flex;gap:10px;align-items:flex-start"><i class="dot s${BYID[m.id] ? lvl(BYID[m.id]) : 0}"></i>
+        <span style="flex:1" class="sp"><div class="de">${esc(m.de)}</div><div class="tr">${esc(m.tr)}</div></span>
+        <button class="del" aria-label="Sil" style="color:var(--tx3);padding:2px 6px;font-size:16px">✕</button></div>`).join("")}</div>
+      <button class="btn2" id="stm" style="width:100%;margin-top:10px">Bunları çalış</button>`
+      : `<div class="card empty">Henüz cümle yok. İlk cümleni yukarıya yaz.</div>`}
+    <div style="height:20px"></div>`;
+  $$(".pi .sp").forEach(b => b.onclick = () => { const m = S.mine.find(x => x.id === b.parentNode.dataset.id); if (m) speak(m.de); });
+  $$(".pi .del").forEach(b => b.onclick = () => { const id = b.parentNode.dataset.id; S.mine = S.mine.filter(x => x.id !== id); delete S.prog[id]; buildItems(); save(); renderSay(); });
+  if ($("#stm")) $("#stm").onclick = () => startSession({items: ITEMS.filter(i => i.src === "my"), mode:"mix", title:"Benim cümlelerim"});
+  if ($("#addm")) $("#addm").onclick = () => {
+    const tr = $("#say").value.trim(), de = $("#sayde").value.trim();
+    if (!tr || !de) { toast("Türkçesini ve Almancasını yaz"); return; }
+    addMine({de, tr, ex:"", note:""}); toast("Destene eklendi ✓"); renderSay();
+  };
+  if ($("#ask")) $("#ask").onclick = async () => {
+    const text = $("#say").value.trim();
+    if (text.length < 3) { toast("Önce bir cümle yaz"); $("#say").focus(); return; }
+    const b = $("#ask"); b.disabled = true; b.textContent = "Claude düşünüyor…";
+    $("#sres").innerHTML = `<div class="card fixbox" style="margin-top:12px"><span class="thinking">Claude doğal Almancasını arıyor…</span></div>`;
+    try {
+      const r = await SAMPLE.json(sayPrompt(text), {modelTier: "default", cache: false});
+      const de = String(r.de || "").trim();
+      if (!de) throw {};
+      const m = addMine({de, tr: String(r.tr || text).trim(), ex: String(r.ex || "").trim(), note: String(r.note || "").trim(), alt: String(r.alt || "").trim()});
+      renderSay();
+      $("#say").value = "";
+      $("#sres").innerHTML = `<div class="card fixbox" style="margin-top:12px">
+        <div class="ai">✓ Destene eklendi</div>
+        <div style="display:flex;gap:10px;align-items:center;margin-top:6px"><div style="flex:1;font-size:20px;font-weight:700;line-height:1.3">${esc(m.de)}</div><button class="say" id="sp1" aria-label="Dinle">${ICON_SPK}</button></div>
+        <div class="muted" style="margin-top:4px">${esc(m.tr)}</div>
+        ${m.alt ? `<div style="margin-top:10px"><span class="small muted">Başka türlü:</span> <b>${esc(m.alt)}</b></div>` : ""}
+        ${m.ex ? `<div style="margin-top:8px"><span class="small muted">Aynı kalıpla:</span> ${esc(m.ex)}</div>` : ""}
+        ${m.note ? `<p class="note" style="margin-top:10px">💡 ${esc(m.note)}</p>` : ""}
+        <button class="linkbtn" id="undo">Ekleme, sil</button></div>`;
+      speak(m.de);
+      $("#sp1").onclick = () => speak(m.alt ? m.de + ". " + m.alt : m.de);
+      $("#undo").onclick = () => { S.mine = S.mine.filter(x => x.id !== m.id); buildItems(); save(); renderSay(); toast("Silindi"); };
+    } catch(e) {
+      $("#sres").innerHTML = `<div class="card fixbox" style="margin-top:12px"><span class="muted">${esc(errText(e))}</span></div>`;
+      b.disabled = false; b.textContent = "Almancası ne?";
+    }
+  };
+}
+
+/* ================= GÖLGELEME: duy, hemen tekrar et ================= */
+let SH = null;
+function startShadow(src){
+  let items = srcItems(src, 15);
+  if (src !== "wd") items = items.filter(it => it.src !== "wd");
+  if (!items.length) items = srcItems("ph", 15);
+  if (!items.length) { toast("Bu kaynakta cümle yok"); return; }
+  SH = {items, i:0, run:true, tok:0, tries:0, res:{}, scores:[]};
+  open(renderShadow);
+  onLeave = stopShadow;
+  wake(true);
+  setTimeout(shadowStep, 400);
+}
+function stopShadow(){
+  if (!SH) return; SH.run = false; SH.tok++; stopSpeak(); wake(false);
+  if (SH.rec) try { SH.rec.abort(); } catch(e) {}
+  Object.entries(SH.res).forEach(([id, ok]) => { if (BYID[id]) { seen(BYID[id]); grade(BYID[id], ok); } }); SH.res = {};
+  if (SH.scores.length) mark("shadow"); else save();
+}
+function renderShadow(){
+  setTop("Gölgeleme", true);
+  const it = SH.items[SH.i], slow = !!S.opt.shslow;
+  $("#view").innerHTML = `
+    <div class="seg" id="shs" style="margin-top:6px"><button data-v="0" class="${slow ? "" : "on"}">Normal hız</button><button data-v="1" class="${slow ? "on" : ""}">Yavaş</button></div>
+    <div class="ptop"><div class="pbar"><i style="width:${SH.i/SH.items.length*100}%"></i></div><span class="small muted">${SH.i+1}/${SH.items.length}</span></div>
+    <div class="card player">
+      <div class="phase2" id="ph">Hazır ol</div>
+      <div class="de" id="q">${it ? plain(it).split(" ").map(w => `<span>${esc(w)}</span>`).join(" ") : ""}</div>
+      <div class="tr">${it ? esc(it.tr) : ""}</div>
+      <div id="vd"></div>
+    </div>
+    <div class="ctrl"><button id="sp" aria-label="Duraklat">${SH.run ? "❚❚" : "▶"}</button><button id="sr" aria-label="Tekrar">🔁</button><button id="sn" aria-label="Sonraki">⏭</button></div>
+    <p class="hint">${SR ? "Cümleyi duy, bitince hemen aynı ritimle tekrar et. Uygulama dinler ve hangi kelimeleri doğru söylediğini gösterir." : "Cümleyi duy, bitince hemen aynı ritim ve tonla yüksek sesle tekrar et. Her cümle iki kez gelir."}</p>`;
+  const restart = () => { SH.tok++; stopSpeak(); if (SH.rec) try { SH.rec.abort(); } catch(e) {} };
+  $$("#shs button").forEach(b => b.onclick = () => { S.opt.shslow = b.dataset.v === "1"; save(); restart(); renderShadow(); if (SH.run) setTimeout(shadowStep, 300); });
+  $("#sp").onclick = () => { SH.run = !SH.run; restart(); renderShadow(); if (SH.run) setTimeout(shadowStep, 300); };
+  $("#sr").onclick = () => { restart(); SH.run = true; renderShadow(); setTimeout(shadowStep, 300); };
+  $("#sn").onclick = () => { restart(); SH.i++; SH.tries = 0; renderShadow(); if (SH.run) setTimeout(shadowStep, 300); };
+}
+function shadowStep(){
+  if (!SH || !SH.run || screen !== renderShadow) return;
+  const it = SH.items[SH.i], tok = ++SH.tok, live = () => SH && SH.run && SH.tok === tok && screen === renderShadow;
+  if (!it) {
+    const n = SH.scores.length, avg = n ? Math.round(SH.scores.reduce((a, b) => a + b, 0) / n) : 0;
+    stopShadow(); setTop("Gölgeleme", true);
+    endCard("🗣️", "Gölgeleme bitti", n ? `${SH.items.length} cümle · ortalama söyleyiş %${avg}` : SH.items.length + " cümle", "Tamam");
+    return;
+  }
+  renderShadow();
+  const ph = t => { const e = $("#ph"); if (e) e.textContent = t; };
+  const text = plain(it), rate = S.opt.shslow ? 0.7 : undefined, nw = text.split(" ").length;
+  const nextIt = ms => setTimeout(() => { if (live()) { SH.i++; SH.tries = 0; shadowStep(); } }, ms);
+  const gap = Math.max(1800, nw * 520 * (S.opt.shslow ? 1.3 : 1));
+  ph("Dinle");
+  speak(text, 0, () => {
+    if (!live()) return;
+    if (SR) {
+      ph("Şimdi sen");
+      SH.rec = listen(alts => {
+        if (!live()) return;
+        const said = alts.sort((a, b) => similar(text, b) - similar(text, a))[0] || "";
+        const score = Math.round(similar(text, said) * 100), ok = score >= 80, got = new Set(norm(said).split(" "));
+        $$("#q span").forEach(s => s.style.color = norm(s.textContent).split(" ").every(x => !x || got.has(x)) ? "var(--ok)" : "var(--bad)");
+        SH.scores.push(score);
+        if (SH.res[it.id] === undefined) SH.res[it.id] = ok;
+        $("#vd").innerHTML = `<div class="verdict ${ok ? "good" : "bad"}" style="margin-top:8px">${score >= 90 ? "Mükemmel" : ok ? "Çok iyi" : score >= 60 ? "Az kaldı" : "Bir daha dinle"} · %${score} <span class="muted small">“${esc(said)}”</span></div>`;
+        if (!ok && SH.tries < 1) { SH.tries++; ph("Bir daha"); setTimeout(() => live() && shadowStep(), 1600); }
+        else { ph(ok ? "Güzel" : "Sonrakine geçiyoruz"); nextIt(1500); }
+      }, () => {
+        if (!live()) return;
+        if (SH.tries < 1) { SH.tries++; ph("Duyamadım, bir daha"); setTimeout(() => live() && shadowStep(), 1200); }
+        else nextIt(800);
+      });
+    } else {
+      ph("Şimdi sen tekrar et");
+      setTimeout(() => {
+        if (!live()) return;
+        ph("Bir daha dinle");
+        speak(text, 0, () => { if (!live()) return; ph("Tekrar et"); nextIt(gap); }, {rate});
+      }, gap);
+    }
+  }, {rate});
+}
+
+/* ================= HAFTALIK KONTROL ================= */
+function weekKey(d){ d = d ? new Date(d) : new Date(); d.setDate(d.getDate() - (d.getDay() + 6) % 7); return ymd(d); }
+function weekItems(){
+  const from = addDays(-6);
+  const L = ITEMS.filter(i => { const r = S.prog[i.id]; return r && ((r.f || r.last || "") >= from || (r.last || "") >= from); });
+  const sent = shuffle(L.filter(i => i.src !== "wd")), wd = shuffle(L.filter(i => i.src === "wd"));
+  const out = sent.slice(0, 10).concat(wd.slice(0, 5));
+  return out.concat(sent.slice(10), wd.slice(5)).slice(0, 15);
+}
+const weekDue = () => new Date().getDay() === 0 && !S.weeks[weekKey()] && weekItems().length >= 5;
+function weekSummary(){
+  let days = 0, fresh = 0, ans = 0;
+  for (let i = 0; i < 7; i++) { const r = S.days[addDays(-i)] || {}; if (Object.keys(r).length) days++; fresh += (r.newSeen || 0) + (r.newW || 0); ans += r.n || 0; }
+  return {days, fresh, ans};
+}
+function startWeekly(){
+  const items = weekItems();
+  if (items.length < 5) { toast("Bu hafta en az 5 kart çalışınca açılır"); return; }
+  startSession({items, mode:"week", title:"Haftalık kontrol", stepKey:"week", done: () => {
+    const n = items.length, ok = n - P.redo.size;
+    const pct = n ? Math.round(ok / n * 100) : 0, key = weekKey(), wrong = Array.from(P.redo).map(id => BYID[id]).filter(Boolean);
+    S.weeks[key] = {ok, n, pct, d:TODAY}; save();
+    const w = weekSummary();
+    setTop("Haftalık kontrol", true);
+    $("#view").innerHTML = `
+      <div class="card flash" style="margin-top:20px"><div style="font-size:48px">${pct >= 85 ? "🏆" : pct >= 65 ? "💪" : "🌱"}</div>
+        <div class="big">%${pct}</div><div class="mid">${ok} / ${n} doğru</div>
+        <p class="small muted" style="margin-top:8px">${pct >= 85 ? "Bu haftanın kartları oturuyor." : pct >= 65 ? "İyi gidiyor; yanlışları bir kez daha çalış." : "Bu hafta biraz yavaşla, tekrarlara ağırlık ver."}</p></div>
+      <div class="card klist" style="margin-top:12px"><div><b>Bu hafta çalıştığın gün</b><span>${w.days} / 7</span></div><div><b>Yeni kart</b><span>${w.fresh}</span></div><div><b>Cevapladığın soru</b><span>${w.ans}</span></div></div>
+      ${wrong.length ? `<div class="sec">Yanlışların</div><div class="card plist">${wrong.map(i => `<div class="pi"><span><div class="de">${esc(i.de)}</div><div class="tr">${esc(i.tr)}</div></span></div>`).join("")}</div>` : ""}
+      <div class="foot"><div class="row2">${wrong.length ? `<button class="btn2" id="ww">Yanlışları çalış</button>` : ""}<button class="cta" id="nx">Tamam</button></div></div><div style="height:90px"></div>`;
+    $("#nx").onclick = () => go(tab);
+    if ($("#ww")) $("#ww").onclick = () => startSession({items: wrong, mode:"mix", title:"Haftanın yanlışları"});
+  }});
+}
+function weekBox(){
+  const ks = Object.keys(S.weeks).sort().reverse().slice(0, 6), can = weekItems().length >= 5, done = S.weeks[weekKey()];
+  return `<div class="sec">Haftalık kontrol</div>
+    <div class="card klist">${ks.length ? ks.map(k => `<div><b>${trDate(k)} haftası</b><span>%${S.weeks[k].pct} · ${S.weeks[k].ok}/${S.weeks[k].n}</span></div>`).join("") : `<div><b>Henüz yok</b><span>Her pazar Bugün ekranına gelir</span></div>`}</div>
+    ${can ? `<button class="btn2" id="wkt" style="width:100%;margin-top:10px">${done ? "Bu haftanınkini tekrar yap" : "Şimdi yap"}</button>` : ""}`;
+}
+
 /* ================= EŞİTLEME: iki sürüm arasında kodla taşı, birleştir ================= */
 const SYNC_TAG = "ALMANCA1:";
 async function syncCode(){
@@ -2354,11 +2572,13 @@ function mergeState(a, b){
   m.book.read = maxObj(m.book.read || {}, b.book.read); m.book.last = m.book.last || b.book.last;
   m.scen.done = maxObj(m.scen.done || {}, b.scen.done);
   maxObj(m.gram, b.gram);
+  b.mine.forEach(x => { if (!m.mine.some(y => y.id === x.id)) m.mine.push(x); });
+  Object.keys(b.weeks).forEach(k => { if (!m.weeks[k] || (b.weeks[k].n || 0) > (m.weeks[k].n || 0)) m.weeks[k] = b.weeks[k]; });
   Object.keys(b.games).forEach(k => { const x = m.games[k], y = b.games[k], low = GAMES[k] && GAMES[k].low; m.games[k] = x === undefined ? y : low ? Math.min(x, y) : Math.max(x, y); });
   return m;
 }
 async function importCode(txt){
-  try { const other = await readCode(txt); if (!other || !other.prog) throw 0; S = mergeState(S, other); save(); toast("İlerleme birleştirildi ✓"); $("#sheet").classList.remove("show"); go("today"); return true; }
+  try { const other = await readCode(txt); if (!other || !other.prog) throw 0; S = mergeState(S, other); buildItems(); save(); toast("İlerleme birleştirildi ✓"); $("#sheet").classList.remove("show"); go("today"); return true; }
   catch(e) { toast("Bu bir eşitleme kodu değil"); return false; }
 }
 
@@ -2430,7 +2650,7 @@ if (IN_CLAUDE) (async () => {
     const st = await db.doc("state/progress").get();
     if (st.exists) {
       const remote = JSON.parse(st.data().json || "{}");
-      if ((remote.ts || 0) > (S.ts || 0)) { try { localStorage.setItem(KEY, JSON.stringify(remote)); } catch(e) {} S = load(remote); }
+      if ((remote.ts || 0) > (S.ts || 0)) { try { localStorage.setItem(KEY, JSON.stringify(remote)); } catch(e) {} S = load(remote); buildItems(); }
       else if ((S.ts || 0) > (remote.ts || 0)) save();
     } else if (S.ts) save();
   } catch(e) {}
