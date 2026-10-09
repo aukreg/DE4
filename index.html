@@ -57,7 +57,7 @@ textarea,input{font:inherit;color:var(--tx)}
 .ib{width:40px;height:40px;border-radius:12px;display:grid;place-items:center;color:var(--tx2)}
 .ib:active{background:var(--bg3)}
 .ib svg{width:22px;height:22px}
-.streak{display:flex;align-items:center;gap:4px;font-weight:700;font-size:15px;color:var(--tx3);padding:0 6px}
+.streak{cursor:pointer;display:flex;align-items:center;gap:4px;font-weight:700;font-size:15px;color:var(--tx3);padding:0 6px}
 .streak.on{color:var(--acc2)}
 
 /* alt menü */
@@ -301,6 +301,263 @@ textarea.imp{width:100%;min-height:90px;border-radius:12px;border:1.5px solid va
 
 <script src="data.js"></script>
 <script>
+/* ================= KELİME LİSTEMİZ =================
+   Sadece kitapta, senaryolarda ve kalıplarda geçen kelimeler.
+   İsim:  artikel kelime | çoğul (– yok) | Türkçe | kategori
+   Fiil:  mastar | Türkçe | ich,du,er,wir,ihr,sie | Perfekt | Präteritum (er)
+   Sıfat: kelime | Türkçe | zıt anlamlısı                                          */
+const W_CATS = {Y:"Yiyecek", E:"Ev", G:"Giyim & eşya", Z:"Zaman", I:"İş & şehir", A:"Aile & beden", D:"Doğa & boş zaman", H:"His & diğer"};
+const W_NOUNS = `
+der Kaffee|Kaffees|kahve|Y
+der Tee|Tees|çay|Y
+das Wasser|–|su|Y
+die Milch|–|süt|Y
+der Käse|Käse|peynir|Y
+das Brot|Brote|ekmek|Y
+die Suppe|Suppen|çorba|Y
+die Zwiebel|Zwiebeln|soğan|Y
+der Reis|–|pirinç|Y
+die Pizza|Pizzas|pizza|Y
+das Ei|Eier|yumurta|Y
+die Banane|Bananen|muz|Y
+der Apfel|Äpfel|elma|Y
+die Tomate|Tomaten|domates|Y
+die Gurke|Gurken|salatalık|Y
+die Olive|Oliven|zeytin|Y
+die Kartoffel|Kartoffeln|patates|Y
+die Erdbeere|Erdbeeren|çilek|Y
+die Zitrone|Zitronen|limon|Y
+das Obst|–|meyve|Y
+das Gemüse|–|sebze|Y
+die Butter|–|tereyağı|Y
+der Honig|–|bal|Y
+der Joghurt|Joghurts|yoğurt|Y
+die Nudel|Nudeln|makarna|Y
+die Linse|Linsen|mercimek|Y
+der Salat|Salate|salata|Y
+das Salz|–|tuz|Y
+der Kuchen|Kuchen|kek, pasta|Y
+der Keks|Kekse|bisküvi|Y
+die Schokolade|Schokoladen|çikolata|Y
+das Hackfleisch|–|kıyma|Y
+das Frühstück|Frühstücke|kahvaltı|Y
+das Essen|Essen|yemek|Y
+die Nuss|Nüsse|fındık, ceviz|Y
+der Tisch|Tische|masa|E
+das Bett|Betten|yatak|E
+der Stuhl|Stühle|sandalye|E
+der Schrank|Schränke|dolap|E
+der Kühlschrank|Kühlschränke|buzdolabı|E
+der Herd|Herde|ocak|E
+der Topf|Töpfe|tencere|E
+die Küche|Küchen|mutfak|E
+das Fenster|Fenster|pencere|E
+der Flur|Flure|koridor|E
+die Wohnung|Wohnungen|daire, ev|E
+das Kissen|Kissen|yastık|E
+das Licht|Lichter|ışık|E
+der Wasserkocher|Wasserkocher|su ısıtıcısı|E
+die Fernbedienung|Fernbedienungen|kumanda|E
+die Maschine|Maschinen|makine|E
+die Wäsche|–|çamaşır|E
+der Korb|Körbe|sepet|E
+der Müll|–|çöp|E
+die Tasche|Taschen|çanta|G
+der Schlüssel|Schlüssel|anahtar|G
+der Geldbeutel|Geldbeutel|cüzdan|G
+das Handy|Handys|cep telefonu|G
+die Karte|Karten|kart|G
+die Tüte|Tüten|poşet|G
+das Spielzeug|Spielzeuge|oyuncak|G
+die Puppe|Puppen|oyuncak bebek|G
+die Windel|Windeln|bebek bezi|G
+der Schuh|Schuhe|ayakkabı|G
+die Socke|Socken|çorap|G
+die Hose|Hosen|pantolon|G
+der Pulli|Pullis|kazak|G
+der Schlafanzug|Schlafanzüge|pijama|G
+das Buch|Bücher|kitap|G
+die Zeit|Zeiten|zaman|Z
+der Tag|Tage|gün|Z
+die Nacht|Nächte|gece|Z
+der Morgen|Morgen|sabah|Z
+der Abend|Abende|akşam|Z
+die Woche|Wochen|hafta|Z
+das Wochenende|Wochenenden|hafta sonu|Z
+die Stunde|Stunden|saat (süre)|Z
+die Minute|Minuten|dakika|Z
+die Uhr|Uhren|saat|Z
+der Samstag|Samstage|cumartesi|Z
+der Sonntag|Sonntage|pazar|Z
+der Moment|Momente|an|Z
+das Ende|Enden|son|Z
+der Feierabend|Feierabende|mesai bitimi|I
+die Arbeit|Arbeiten|iş|I
+der Chef|Chefs|patron|I
+das Meeting|Meetings|toplantı|I
+das Projekt|Projekte|proje|I
+der Termin|Termine|randevu|I
+die Frage|Fragen|soru|I
+das Problem|Probleme|sorun|I
+die Pause|Pausen|mola|I
+die Bahn|Bahnen|tren, metro|I
+der Zug|Züge|tren|I
+das Auto|Autos|araba|I
+die Verspätung|Verspätungen|gecikme|I
+der Supermarkt|Supermärkte|süpermarket|I
+die Kasse|Kassen|kasa|I
+das Angebot|Angebote|indirim, teklif|I
+der Bäcker|Bäcker|fırıncı|I
+der Laden|Läden|dükkân|I
+die Packung|Packungen|paket|I
+die Einkaufsliste|Einkaufslisten|alışveriş listesi|I
+die Mutter|Mütter|anne|A
+der Papa|Papas|baba|A
+das Kind|Kinder|çocuk|A
+der Sohn|Söhne|oğul|A
+der Freund|Freunde|arkadaş|A
+die Lehrerin|Lehrerinnen|öğretmen (kadın)|A
+der Kinderarzt|Kinderärzte|çocuk doktoru|A
+das Fieber|–|ateş|A
+die Hand|Hände|el|A
+das Bein|Beine|bacak|A
+der Arm|Arme|kol|A
+das Auge|Augen|göz|A
+der Mund|Münder|ağız|A
+der Zahn|Zähne|diş|A
+das Haar|Haare|saç|A
+die Stirn|Stirnen|alın|A
+der Park|Parks|park|D
+der See|Seen|göl|D
+die Sonne|Sonnen|güneş|D
+der Regen|–|yağmur|D
+das Wetter|–|hava (durumu)|D
+der Ausflug|Ausflüge|gezi|D
+die Rutsche|Rutschen|kaydırak|D
+der Eimer|Eimer|kova|D
+die Schaufel|Schaufeln|kürek|D
+der Sand|–|kum|D
+die Serie|Serien|dizi|D
+die Folge|Folgen|bölüm (dizi)|D
+das Kino|Kinos|sinema|D
+die Party|Partys|parti|D
+das Picknick|Picknicks|piknik|D
+die Katze|Katzen|kedi|D
+die Ente|Enten|ördek|D
+der Hase|Hasen|tavşan|D
+die Raupe|Raupen|tırtıl|D
+der Stern|Sterne|yıldız|D
+die Idee|Ideen|fikir|H
+die Hilfe|–|yardım|H
+der Hunger|–|açlık|H
+der Stress|–|stres|H
+das Glück|–|şans, mutluluk|H
+der Spaß|–|eğlence|H
+die Lust|–|istek, heves|H
+die Ruhe|–|huzur, sessizlik|H
+die Sorge|Sorgen|endişe|H
+der Kuss|Küsse|öpücük|H
+die Ahnung|Ahnungen|fikir (bilgi)|H`;
+const W_VERBS = `
+machen|yapmak|mache,machst,macht,machen,macht,machen|hat gemacht|machte
+haben|sahip olmak|habe,hast,hat,haben,habt,haben|hat gehabt|hatte
+sein|olmak|bin,bist,ist,sind,seid,sind|ist gewesen|war
+gehen|gitmek|gehe,gehst,geht,gehen,geht,gehen|ist gegangen|ging
+kommen|gelmek|komme,kommst,kommt,kommen,kommt,kommen|ist gekommen|kam
+essen|yemek yemek|esse,isst,isst,essen,esst,essen|hat gegessen|aß
+trinken|içmek|trinke,trinkst,trinkt,trinken,trinkt,trinken|hat getrunken|trank
+schlafen|uyumak|schlafe,schläfst,schläft,schlafen,schlaft,schlafen|hat geschlafen|schlief
+sehen|görmek|sehe,siehst,sieht,sehen,seht,sehen|hat gesehen|sah
+geben|vermek|gebe,gibst,gibt,geben,gebt,geben|hat gegeben|gab
+nehmen|almak|nehme,nimmst,nimmt,nehmen,nehmt,nehmen|hat genommen|nahm
+fahren|(araçla) gitmek|fahre,fährst,fährt,fahren,fahrt,fahren|ist gefahren|fuhr
+laufen|yürümek, koşmak|laufe,läufst,läuft,laufen,lauft,laufen|ist gelaufen|lief
+sprechen|konuşmak|spreche,sprichst,spricht,sprechen,sprecht,sprechen|hat gesprochen|sprach
+lesen|okumak|lese,liest,liest,lesen,lest,lesen|hat gelesen|las
+helfen|yardım etmek|helfe,hilfst,hilft,helfen,helft,helfen|hat geholfen|half
+wissen|bilmek|weiß,weißt,weiß,wissen,wisst,wissen|hat gewusst|wusste
+können|-ebilmek|kann,kannst,kann,können,könnt,können|hat gekonnt|konnte
+müssen|zorunda olmak|muss,musst,muss,müssen,müsst,müssen|hat gemusst|musste
+wollen|istemek|will,willst,will,wollen,wollt,wollen|hat gewollt|wollte
+sollen|-meli|soll,sollst,soll,sollen,sollt,sollen|hat gesollt|sollte
+dürfen|izinli olmak|darf,darfst,darf,dürfen,dürft,dürfen|hat gedurft|durfte
+mögen|sevmek, hoşlanmak|mag,magst,mag,mögen,mögt,mögen|hat gemocht|mochte
+kochen|pişirmek|koche,kochst,kocht,kochen,kocht,kochen|hat gekocht|kochte
+kaufen|satın almak|kaufe,kaufst,kauft,kaufen,kauft,kaufen|hat gekauft|kaufte
+brauchen|ihtiyacı olmak|brauche,brauchst,braucht,brauchen,braucht,brauchen|hat gebraucht|brauchte
+spielen|oynamak|spiele,spielst,spielt,spielen,spielt,spielen|hat gespielt|spielte
+arbeiten|çalışmak|arbeite,arbeitest,arbeitet,arbeiten,arbeitet,arbeiten|hat gearbeitet|arbeitete
+warten|beklemek|warte,wartest,wartet,warten,wartet,warten|hat gewartet|wartete
+zahlen|ödemek|zahle,zahlst,zahlt,zahlen,zahlt,zahlen|hat gezahlt|zahlte
+sagen|söylemek|sage,sagst,sagt,sagen,sagt,sagen|hat gesagt|sagte
+fragen|sormak|frage,fragst,fragt,fragen,fragt,fragen|hat gefragt|fragte
+schreiben|yazmak|schreibe,schreibst,schreibt,schreiben,schreibt,schreiben|hat geschrieben|schrieb
+bleiben|kalmak|bleibe,bleibst,bleibt,bleiben,bleibt,bleiben|ist geblieben|blieb
+lernen|öğrenmek|lerne,lernst,lernt,lernen,lernt,lernen|hat gelernt|lernte
+wohnen|oturmak, yaşamak|wohne,wohnst,wohnt,wohnen,wohnt,wohnen|hat gewohnt|wohnte
+putzen|temizlemek|putze,putzt,putzt,putzen,putzt,putzen|hat geputzt|putzte
+duschen|duş almak|dusche,duschst,duscht,duschen,duscht,duschen|hat geduscht|duschte
+liegen|yatmak, durmak|liege,liegst,liegt,liegen,liegt,liegen|hat gelegen|lag
+legen|koymak (yatırarak)|lege,legst,legt,legen,legt,legen|hat gelegt|legte
+stellen|koymak (dikerek)|stelle,stellst,stellt,stellen,stellt,stellen|hat gestellt|stellte
+bringen|getirmek|bringe,bringst,bringt,bringen,bringt,bringen|hat gebracht|brachte
+denken|düşünmek|denke,denkst,denkt,denken,denkt,denken|hat gedacht|dachte
+finden|bulmak|finde,findest,findet,finden,findet,finden|hat gefunden|fand
+vergessen|unutmak|vergesse,vergisst,vergisst,vergessen,vergesst,vergessen|hat vergessen|vergaß
+waschen|yıkamak|wasche,wäschst,wäscht,waschen,wascht,waschen|hat gewaschen|wusch
+schneiden|kesmek|schneide,schneidest,schneidet,schneiden,schneidet,schneiden|hat geschnitten|schnitt
+weinen|ağlamak|weine,weinst,weint,weinen,weint,weinen|hat geweint|weinte
+lachen|gülmek|lache,lachst,lacht,lachen,lacht,lachen|hat gelacht|lachte
+singen|şarkı söylemek|singe,singst,singt,singen,singt,singen|hat gesungen|sang
+rufen|seslenmek|rufe,rufst,ruft,rufen,ruft,rufen|hat gerufen|rief
+verstehen|anlamak|verstehe,verstehst,versteht,verstehen,versteht,verstehen|hat verstanden|verstand
+treffen|buluşmak|treffe,triffst,trifft,treffen,trefft,treffen|hat getroffen|traf
+aufstehen|kalkmak|stehe auf,stehst auf,steht auf,stehen auf,steht auf,stehen auf|ist aufgestanden|stand auf
+anziehen|giydirmek, giyinmek|ziehe an,ziehst an,zieht an,ziehen an,zieht an,ziehen an|hat angezogen|zog an
+aufräumen|toplamak, düzenlemek|räume auf,räumst auf,räumt auf,räumen auf,räumt auf,räumen auf|hat aufgeräumt|räumte auf
+einkaufen|alışveriş yapmak|kaufe ein,kaufst ein,kauft ein,kaufen ein,kauft ein,kaufen ein|hat eingekauft|kaufte ein
+anrufen|telefonla aramak|rufe an,rufst an,ruft an,rufen an,ruft an,rufen an|hat angerufen|rief an
+mitbringen|yanında getirmek|bringe mit,bringst mit,bringt mit,bringen mit,bringt mit,bringen mit|hat mitgebracht|brachte mit
+aufpassen|dikkat etmek, göz kulak olmak|passe auf,passt auf,passt auf,passen auf,passt auf,passen auf|hat aufgepasst|passte auf
+einladen|davet etmek|lade ein,lädst ein,lädt ein,laden ein,ladet ein,laden ein|hat eingeladen|lud ein
+losfahren|yola çıkmak|fahre los,fährst los,fährt los,fahren los,fahrt los,fahren los|ist losgefahren|fuhr los`;
+const W_ADJ = `
+müde|yorgun|wach
+wach|uyanık|müde
+gut|iyi|schlecht
+schlecht|kötü|gut
+kalt|soğuk|warm
+warm|sıcak, ılık|kalt
+heiß|çok sıcak|kalt
+schnell|hızlı|langsam
+langsam|yavaş|schnell
+spät|geç|früh
+früh|erken|spät
+leise|sessiz, alçak sesle|laut
+laut|gürültülü, yüksek sesle|leise
+groß|büyük|klein
+klein|küçük|groß
+voll|dolu|leer
+leer|boş|voll
+lang|uzun|kurz
+kurz|kısa|lang
+schwer|zor, ağır|leicht
+leicht|kolay, hafif|schwer
+gesund|sağlıklı|krank
+krank|hasta|gesund
+glücklich|mutlu|traurig
+ruhig|sakin|laut
+offen|açık|zu
+lecker|lezzetli|
+süß|tatlı|
+scharf|acı (yemek)|
+fertig|hazır, bitmiş|
+witzig|komik|
+anstrengend|yorucu|
+schön|güzel|
+richtig|doğru|falsch
+sicher|emin, güvenli|`;
+
 "use strict";
 const D = window.DATA || {phrases:[],book:{chapters:[],roles:{}},scenarios:[],prompts:[],writings:[],mistakes:[]};
 const $ = s => document.querySelector(s);
@@ -336,8 +593,8 @@ function load(from){
   if (!s) try { s = JSON.parse(localStorage.getItem(KEY)); } catch(e) {}
   s = s || {};
   s.prog = s.prog || {}; s.days = s.days || {}; s.book = s.book || {}; s.scen = s.scen || {};
-  s.drafts = s.drafts || {}; s.games = s.games || {};
-  s.opt = Object.assign({theme:"auto", rate:0.9, pace:10, n:10}, s.opt || {});
+  s.drafts = s.drafts || {}; s.games = s.games || {}; s.gram = s.gram || {};
+  s.opt = Object.assign({theme:"auto", rate:0.9, pace:10, wpace:5, n:10}, s.opt || {});
   // eski kayıt: puan (s) → kutu (b) ve tekrar tarihi
   Object.values(s.prog).forEach(r => { if (r.b === undefined) { r.b = r.s >= 4 ? 4 : r.s ? 1 : 0; r.due = r.due || ymd(new Date()); } });
   return s;
@@ -359,6 +616,7 @@ const SRC = {
   bk: {t:"Kitap kalıpları", ic:"🔑"},
   bl: {t:"Kitap cümleleri", ic:"📖"},
   sc: {t:"Senaryo cümleleri", ic:"🎭"},
+  wd: {t:"Kelimeler", ic:"🔤"},
 };
 let ITEMS = [], BYID = {};
 function buildItems(){
@@ -373,7 +631,13 @@ function buildItems(){
     s.lines.forEach((l, j) => { if (l[0] === "U") add({id:`${s.id}.${j}`, src:"sc", de:l[1], tr:l[2], sc:s.id}); });
     (s.k || []).forEach((k, j) => add({id:`${s.id}k${j}`, src:"sc", de:k[0], tr:k[1], sc:s.id}));
   });
+  // kelimeler: isim, fiil, sıfat
+  const rows = t => t.trim().split("\n").map(l => l.split("|"));
+  rows(W_NOUNS).forEach(([aw, pl, tr, cat], i) => { const [art, w] = aw.split(" "); add({id:"n:" + w, src:"wd", kind:"n", de:aw, w, art, pl: pl === "–" ? "" : pl, tr, cat, o:i}); });
+  rows(W_VERBS).forEach(([w, tr, pr, pf, pt], i) => add({id:"v:" + w, src:"wd", kind:"v", de:w, w, tr, pr:pr.split(","), pf, pt, o:i + 0.5}));
+  rows(W_ADJ).forEach(([w, tr, opp], i) => add({id:"a:" + w, src:"wd", kind:"a", de:w, w, tr, opp, o:i + 0.7}));
 }
+const WORDS = () => ITEMS.filter(i => i.src === "wd");
 buildItems();
 
 /* ---------- aralıklı tekrar: kutu 0-8, doğru → bir üst kutu ---------- */
@@ -381,12 +645,13 @@ const IV = [0, 1, 2, 4, 8, 16, 35, 75, 160];
 const lvl = it => { const r = S.prog[it.id]; return !r ? 0 : r.b >= 4 ? 2 : 1; };
 const LVL_TXT = ["Yeni", "Öğreniyorum", "Oturdu"];
 const isDue = it => { const r = S.prog[it.id]; return r && r.due <= TODAY; };
-function seen(it){ if (!S.prog[it.id]) { S.prog[it.id] = {b:0, due:TODAY}; dayRec().newSeen = (dayRec().newSeen || 0) + 1; } }
+function seen(it){ if (!S.prog[it.id]) { S.prog[it.id] = {b:0, due:TODAY}; const k = it.src === "wd" ? "newW" : "newSeen"; dayRec()[k] = (dayRec()[k] || 0) + 1; } }
 function grade(it, ok){
   const r = S.prog[it.id] = S.prog[it.id] || {b:0, due:TODAY};
   if (ok) { r.b = Math.min(8, r.b + 1); r.due = addDays(IV[r.b]); }
   else { r.b = Math.max(1, Math.floor(r.b / 2)); r.due = addDays(r.b > 2 ? 1 : 0); }
   r.last = TODAY; r.n = (r.n || 0) + 1; if (!ok) r.x = (r.x || 0) + 1;
+  const d = dayRec(); d.n = (d.n || 0) + 1; if (ok) d.ok = (d.ok || 0) + 1;
 }
 
 function todaysPhrases(){
@@ -403,6 +668,7 @@ function poolFor(src){
   if (src === "bk" || src === "bl") { const rc = readChapters(); return ITEMS.filter(i => i.src === src && rc.includes(i.ch)); }
   if (src === "sc") { const done = Object.keys(S.scen.done || {}); const sc = done.length ? done : [todaysScenario() && todaysScenario().id]; return ITEMS.filter(i => i.src === "sc" && sc.includes(i.sc)); }
   if (src === "due") return dueItems();
+  if (src === "wd") return WORDS();
   return [];
 }
 const dueItems = () => ITEMS.filter(isDue).sort((a, b) => S.prog[a.id].due.localeCompare(S.prog[b.id].due) || S.prog[a.id].b - S.prog[b.id].b);
@@ -412,7 +678,9 @@ function newItems(){
   const rc = readChapters();
   const extra = ITEMS.filter(i => i.src === "bk" && rc.includes(i.ch) && !S.prog[i.id]);
   const room = Math.max(0, S.opt.pace - (dayRec().newSeen || 0));
-  return out.concat(extra.slice(0, Math.max(0, room - out.length)));
+  const wroom = Math.max(0, S.opt.wpace - (dayRec().newW || 0));
+  const ws = WORDS().filter(w => !S.prog[w.id]).sort((a, b) => a.o - b.o).slice(0, wroom);
+  return out.concat(extra.slice(0, Math.max(0, room - out.length)), ws);
 }
 function deck(){ return {due: dueItems().slice(0, 40), fresh: newItems()}; }
 
@@ -537,10 +805,17 @@ const MODES = {
   match:  {t:"Eşleştir",    ic:"🧩", g:0, d:"Almanca ve Türkçeyi eşle", group:true},
   hear:   {t:"Dinle, seç",  ic:"👂", g:0, d:"Duyduğunun anlamını seç"},
   quiz:   {t:"Almancası",   ic:"🇩🇪", g:1, d:"Türkçeden Almancayı seç"},
-  finish: {t:"Tamamla",     ic:"✂️", g:1, d:"Cümlenin sonunu bul", need: it => words(it).length >= 4},
-  gap:    {t:"Boşluk",      ic:"⬜", g:1, d:"Eksik kelimeyi seç", need: it => gapCands(it).length > 0 && words(it).length >= 2},
-  order:  {t:"Sırala",      ic:"🔀", g:1, d:"Kelimeleri sıraya koy", need: it => { const n = words(it).length; return n >= 3 && n <= 11; }},
-  gapw:   {t:"Boşluğu yaz", ic:"✏️", g:2, d:"Eksik kelimeyi yaz", need: it => gapCands(it).length > 0 && words(it).length >= 2},
+  finish: {t:"Tamamla",     ic:"✂️", g:1, k:"s", d:"Cümlenin sonunu bul", need: it => !it.kind && words(it).length >= 4},
+  gap:    {t:"Boşluk",      ic:"⬜", g:1, k:"s", d:"Eksik kelimeyi seç", need: it => !it.kind && gapCands(it).length > 0 && words(it).length >= 2},
+  order:  {t:"Sırala",      ic:"🔀", g:1, k:"s", d:"Kelimeleri sıraya koy", need: it => { const n = words(it).length; return !it.kind && n >= 3 && n <= 11; }},
+  artikel:{t:"Artikel",     ic:"🎯", g:1, k:"w", d:"der, die ya da das", need: it => it.kind === "n"},
+  plural: {t:"Çoğul",       ic:"👥", g:1, k:"w", d:"Çoğul hâlini seç", need: it => it.kind === "n" && !!it.pl},
+  conj:   {t:"Çekim",       ic:"🔧", g:1, k:"w", d:"Fiili kişiye göre çek", need: it => it.kind === "v"},
+  perfekt:{t:"Perfekt",     ic:"⏮️", g:1, k:"w", d:"hat/ist + Partizip", need: it => it.kind === "v"},
+  prat:   {t:"Präteritum",  ic:"📜", g:1, k:"w", d:"Geçmiş zaman (war, hatte…)", need: it => it.kind === "v"},
+  opp:    {t:"Zıt anlam",   ic:"↔️", g:1, k:"w", d:"Sıfatın zıttını bul", need: it => it.kind === "a" && !!it.opp},
+  gapw:   {t:"Boşluğu yaz", ic:"✏️", g:2, k:"s", d:"Eksik kelimeyi yaz", need: it => !it.kind && gapCands(it).length > 0 && words(it).length >= 2},
+  scramble:{t:"Harfler",    ic:"🔠", g:2, k:"w", d:"Harflerden kelimeyi kur", need: it => !!it.kind && it.w.length >= 3 && it.w.length <= 13},
   dictate:{t:"Dikte",       ic:"🎧", g:2, d:"Duyduğunu yaz"},
   write:  {t:"Yaz",         ic:"⌨️", g:2, d:"Türkçeden Almancayı yaz"},
   speak:  {t:"Konuş",       ic:"🎙️", g:2, d:"Türkçeden Almanca söyle", need: () => !!SR},
@@ -551,6 +826,12 @@ const GRADED = Object.keys(MODES).filter(m => m !== "learn" && m !== "match");
 function modeFor(it){
   // kutu küçükse tanıma, büyüdükçe üretme
   const b = (S.prog[it.id] || {}).b || 0;
+  if (it.kind) {
+    const wp = {n: b <= 1 ? ["rquiz","quiz","artikel","hear","match"] : ["artikel","plural","write","scramble","dictate"],
+                v: b <= 1 ? ["rquiz","quiz","conj"] : ["conj","perfekt","prat","write"],
+                a: b <= 1 ? ["rquiz","quiz","opp"] : ["opp","write","scramble"]}[it.kind];
+    return pick(wp.filter(m => m !== "match" && can(m, it))) || "quiz";
+  }
   const pool = b <= 1 ? ["quiz","rquiz","tf","hear","order","gap"] : b <= 3 ? ["quiz","order","gap","finish","gapw","dictate","write"] : ["write","gapw","dictate","order","speak"];
   return pick(pool.filter(m => can(m, it))) || "quiz";
 }
@@ -633,7 +914,7 @@ const R_MODE = {
     $("#view").innerHTML = head("learn") + `
       <div class="card flash"><div class="big">${esc(it.de)}</div><div class="mid">${esc(it.tr)}</div>
         <button class="say" id="spk">${ICON_SPK} Dinle</button>
-        ${it.ex ? `<div class="ex">${esc(it.ex)}</div>` : ""}</div>
+        ${it.ex ? `<div class="ex">${esc(it.ex)}</div>` : ""}${wordInfo(it)}</div>
       <p class="hint">Yüksek sesle iki kez tekrar et, sonra devam.</p>
       <div class="foot"><button class="cta" id="nx">Devam</button></div>`;
     speak(it.de);
@@ -841,6 +1122,91 @@ function startMistakes(){
   open(r);
 }
 
+/* ---------- kelime modları ---------- */
+const PERS = ["ich", "du", "er/sie", "wir", "ihr", "sie/Sie"];
+function wordInfo(it){
+  if (it.kind === "n") return `<div class="ex" style="font-style:normal">Çoğul: <b>${it.pl ? "die " + esc(it.pl) : "çoğulu yok"}</b></div>`;
+  if (it.kind === "v") return `<div class="ex" style="font-style:normal;text-align:left;font-size:14px">${it.pr.map((f, i) => `${PERS[i]} <b>${esc(f)}</b>`).join(" · ")}<br>Perfekt: <b>${esc(it.pf)}</b> · Präteritum: <b>${esc(it.pt)}</b></div>`;
+  if (it.kind === "a" && it.opp) return `<div class="ex" style="font-style:normal">Zıttı: <b>${esc(it.opp)}</b></div>`;
+  return "";
+}
+const umlaut = w => { const m = w.match(/^(.*?)(au|a|o|u)([^aeiouäöü]*(?:e[lnr]?)?)$/i); return m ? m[1] + ({au:"äu",a:"ä",o:"ö",u:"ü"})[m[2].toLowerCase()] + m[3] : w; };
+const uniq = a => a.filter((x, i) => x && a.indexOf(x) === i);
+// ortak seçmeli kart: soru, şıklar, doğru cevap
+function choose(it, m, top, opts, right, cols){
+  opts = shuffle(uniq([right].concat(opts.filter(o => o !== right))).slice(0, 4));
+  if (!opts.includes(right)) opts[0] = right;
+  opts = shuffle(opts);
+  $("#view").innerHTML = head(m) + `
+    <div class="card flash" style="min-height:130px">${top}</div>
+    <div class="${cols ? "opts2" : "opts"}" ${cols === 3 ? 'style="grid-template-columns:repeat(3,1fr)"' : ""}>${opts.map((o, i) => `<button class="opt" data-i="${i}">${esc(o)}</button>`).join("")}</div>
+    <div id="vd"></div><div class="foot" hidden></div>`;
+  $$(".opt").forEach(b => b.onclick = () => {
+    if (P.lock) return; P.lock = 1;
+    const ok = opts[+b.dataset.i] === right;
+    b.classList.add(ok ? "good" : "bad"); if (!ok) $(`.opt[data-i="${opts.indexOf(right)}"]`).classList.add("good");
+    answer(it, ok);
+    $("#vd").innerHTML = `<div class="verdict ${ok ? "good" : "bad"}">${ok ? pick(["Doğru!","Harika!","Aynen!"]) : "Doğrusu:"}<b>${esc(it.de)}</b><span class="muted small">${esc(it.tr)}</span>${wordInfo(it).replace('class="ex"', 'class="small" style="margin-top:6px;color:var(--tx2)"')}</div>`;
+    speak(it.kind === "v" ? it.pr[2] + ". " + it.pf : it.de);
+    footNext();
+  });
+}
+Object.assign(R_MODE, {
+  artikel(it){
+    choose(it, "artikel", `<div class="mid">${esc(it.tr)}</div><div class="big">___ ${esc(it.w)}</div>`, ["der", "die", "das"], it.art, 3);
+  },
+  plural(it){
+    const w = it.w, cand = [w + "e", w + "en", w + "n", w + "s", umlaut(w) + "e", w, w + "er", umlaut(w) + "er", umlaut(w)].filter(x => x !== it.pl);
+    choose(it, "plural", `<div class="mid">${esc(it.tr)}</div><div class="big">${esc(it.de)}</div><div class="mid">→ die ?</div>`, shuffle(cand).slice(0, 3).map(x => x), it.pl, 2);
+    $$(".opt").forEach(b => b.textContent = "die " + b.textContent);
+  },
+  conj(it){
+    const p = Math.random() * 6 | 0, right = it.pr[p];
+    const stem = it.w.replace(/e?n$/, "");
+    const reg = [stem + "e", stem + "st", stem + "t", it.w, stem + "en"].map(f => it.pr[0].includes(" ") ? f + " " + it.pr[0].split(" ")[1] : f);
+    choose(it, "conj", `<div class="mid">${esc(it.w)} · ${esc(it.tr)}</div><div class="big">${PERS[p]} ___</div>`, shuffle(uniq(it.pr.concat(reg))).filter(f => f !== right).slice(0, 3), right, 2);
+  },
+  perfekt(it){
+    const [aux, part] = [it.pf.split(" ")[0], it.pf.split(" ").slice(1).join(" ")];
+    const alt = aux === "hat" ? "ist" : "hat", stem = it.w.replace(/e?n$/, "");
+    const reg = (/^(be|ver|er|ent|zer|ge)/.test(it.w) ? "" : "ge") + stem + "t";
+    choose(it, "perfekt", `<div class="mid">${esc(it.w)} · ${esc(it.tr)}</div><div class="big">Gestern ___ er …</div><div class="mid">Perfekt</div>`,
+      shuffle([alt + " " + part, aux + " " + reg, alt + " " + reg, aux + " ge" + it.w]), it.pf, 2);
+  },
+  prat(it){
+    const stem = it.w.replace(/e?n$/, ""), sep = it.pt.includes(" ") ? " " + it.pt.split(" ")[1] : "";
+    const other = pick(WORDS().filter(x => x.kind === "v" && x.id !== it.id)).pt;
+    choose(it, "prat", `<div class="mid">${esc(it.w)} · ${esc(it.tr)}</div><div class="big">Früher ___ er …</div><div class="mid">Präteritum</div>`,
+      shuffle([stem.replace(sep.trim(), "") + "te" + sep, it.pr[2], other, stem + "ete" + sep]), it.pt, 2);
+  },
+  opp(it){
+    const others = WORDS().filter(x => x.kind === "a" && x.w !== it.opp && x.w !== it.w).map(x => x.w);
+    choose(it, "opp", `<div class="mid">Zıttı ne?</div><div class="big">${esc(it.w)}</div><div class="mid">${esc(it.tr)}</div>`, shuffle(others).slice(0, 3), it.opp, 2);
+  },
+  scramble(it){
+    const L = it.w.split(""), sh = shuffle(L.map((c, i) => ({c, i}))), built = [];
+    if (sh.every((x, i) => x.i === i)) sh.reverse();
+    $("#view").innerHTML = head("scramble") + `
+      <div class="card flash" style="min-height:100px"><div class="mid">${it.art ? esc(it.art) + " …" : ""}</div><div class="big" style="font-size:22px">${esc(it.tr)}</div></div>
+      <div class="built" id="built" style="justify-content:center"></div>
+      <div class="pool" id="pool">${sh.map((x, k) => `<button class="wd" data-k="${k}" style="min-width:42px">${esc(x.c)}</button>`).join("")}</div>
+      <div id="vd"></div>
+      <div class="foot"><div class="row2"><button class="btn2" id="clr">Sil</button><button class="cta" id="ck" disabled>Kontrol et</button></div></div>`;
+    const draw = () => {
+      $("#built").innerHTML = built.map(k => `<span class="wd">${esc(sh[k].c)}</span>`).join("");
+      $$("#pool .wd").forEach(b => b.classList.toggle("used", built.includes(+b.dataset.k)));
+      $("#ck").disabled = built.length !== L.length;
+    };
+    $$("#pool .wd").forEach(b => b.onclick = () => { if (P.lock || built.includes(+b.dataset.k)) return; built.push(+b.dataset.k); draw(); });
+    $("#clr").onclick = () => { if (P.lock) return; built.pop(); draw(); };
+    $("#ck").onclick = () => {
+      if (P.lock) return; P.lock = 1;
+      const said = built.map(k => sh[k].c).join(""), ok = said.toLowerCase() === it.w.toLowerCase();
+      answer(it, ok); $("#vd").innerHTML = verdict(ok, it, ok ? "" : said); speak(it.de); footNext();
+    };
+  },
+});
+
 /* ================= BUGÜN ================= */
 function nextChapter(){
   const ch = D.book.chapters;
@@ -888,16 +1254,19 @@ function renderToday(){
       <button class="card tile" id="q1"><span class="ic">⚡</span><b>Turbo</b><span>${SR ? "Duy, söyle, düzelt" : "Duy, aklından söyle"}</span></button>
       <button class="card tile" id="q2"><span class="ic">🎧</span><b>Dinle</b><span>Bulaşıkta, yolda</span></button>
     </div>
+    <button class="linkbtn" id="st">📈 İlerlemem</button>
     <p class="hint">${eve ? "21:00 sonrası: yazı, senaryo ve kitap için en iyi zaman." : "Gündüz deste yeter; kitap, senaryo ve yazı akşama kalabilir."}</p>`;
   if (nx) $("#go").onclick = nx.run;
   $$(".step").forEach(b => b.onclick = () => st[+b.dataset.i].run());
   $("#q1").onclick = () => startTurbo(srcItems("due").length >= 5 ? "due" : "ph");
   $("#q2").onclick = () => go("listen");
+  $("#st").onclick = () => open(renderStats);
 }
 
 /* ================= ALIŞTIR ================= */
 const PSRC = {
   ph:  {t:"Kalıplar"},
+  wd:  {t:"Kelimeler"},
   bk:  {t:"Kitap kalıpları"},
   bl:  {t:"Kitap cümleleri"},
   sc:  {t:"Senaryolar"},
@@ -916,7 +1285,9 @@ function srcCount(src){ return src === "mist" ? allMistakes().length : poolFor(s
 function renderPracticeTab(){
   setTop("Alıştır");
   const o = S.opt; o.psrc = o.psrc || "ph"; o.pmode = o.pmode || "mix";
-  const isM = o.psrc === "mist";
+  const isM = o.psrc === "mist", isW = o.psrc === "wd";
+  const okMode = (k, m) => (k !== "speak" || SR) && (isW ? m.k !== "s" : m.k !== "w");
+  if (o.pmode !== "mix" && !okMode(o.pmode, MODES[o.pmode] || {})) o.pmode = "mix";
   $("#view").innerHTML = `
     <div class="sec" style="margin-top:8px">Claude ile</div>
     <div class="tiles">
@@ -930,7 +1301,7 @@ function renderPracticeTab(){
     <div id="mwrap" ${isM ? "hidden" : ""}>
       <div class="grp">NASIL?</div>
       <div class="chips" style="margin-bottom:4px"><button class="chip ${o.pmode === "mix" ? "on" : ""}" data-m="mix">🎲 Karışık · önerilen</button></div>
-      ${GROUPS.map((g, gi) => `<div class="grp">${g.toUpperCase()}</div><div class="modes">${Object.entries(MODES).filter(([k, m]) => m.g === gi && (!m.need || k !== "speak" || SR)).map(([k, m]) => `<button class="mode ${o.pmode === k ? "on" : ""}" data-m="${k}"><i>${m.ic}</i>${m.t}</button>`).join("")}</div>`).join("")}
+      ${GROUPS.map((g, gi) => `<div class="grp">${g.toUpperCase()}</div><div class="modes">${Object.entries(MODES).filter(([k, m]) => m.g === gi && okMode(k, m)).map(([k, m]) => `<button class="mode ${o.pmode === k ? "on" : ""}" data-m="${k}"><i>${m.ic}</i>${m.t}</button>`).join("")}</div>`).join("")}
       <div class="grp">KAÇ KART?</div>
       <div class="seg" id="cnt">${[10, 20, 0].map(n => `<button data-n="${n}" class="${o.n === n ? "on" : ""}">${n || "Hepsi"}</button>`).join("")}</div>
     </div>
@@ -944,7 +1315,9 @@ function renderPracticeTab(){
   $$("#cnt button").forEach(b => b.onclick = () => { o.n = +b.dataset.n; save(); renderPracticeTab(); });
   $("#go").onclick = () => {
     if (isM) return startMistakes();
-    const its = srcItems(o.psrc, o.n || 0);
+    let its = srcItems(o.psrc);
+    if (o.pmode !== "mix") { const f = its.filter(it => can(o.pmode, it)); if (f.length) its = f; }
+    its = o.n ? its.slice(0, o.n) : its;
     startSession({items: its, mode: o.pmode, title: (o.pmode === "mix" ? "Karışık" : MODES[o.pmode].t) + " · " + PSRC[o.psrc].t});
   };
   $("#cw").onclick = () => open(renderWrite);
@@ -1138,10 +1511,18 @@ function gamePool(){
   return p.filter((x, i, a) => a.findIndex(y => y.id === x.id) === i);
 }
 const GAMES = {
-  blitz:  {t:"Blitz 60",      ic:"⚡", d:"60 saniyede kaç tane? Türkçeyi gör, doğru Almancaya dokun.", run:() => gBlitz()},
-  memory: {t:"Hafıza",        ic:"🧠", d:"Kartları çevir, Almancayı Türkçesiyle eşle.", run:() => gMemory()},
-  build:  {t:"Cümle Kur",     ic:"🧱", d:"90 saniye: kelimeleri doğru sıraya diz.", run:() => gBuild()},
-  hearit: {t:"Dinle & Seç",   ic:"👂", d:"Duyduğun cümlenin anlamını seç. 3 canın var.", run:() => gHear()},
+  blitz:  {t:"Blitz 60",      ic:"⚡", g:"s", u:"puan", d:"60 saniyede kaç tane? Türkçeyi gör, doğru Almancaya dokun.", run:() => gBlitz()},
+  memory: {t:"Hafıza",        ic:"🧠", g:"s", u:"hamle", low:1, d:"Kartları çevir, Almancayı Türkçesiyle eşle.", run:() => gMemory()},
+  build:  {t:"Cümle Kur",     ic:"🧱", g:"s", u:"puan", d:"90 saniye: kelimeleri doğru sıraya diz.", run:() => gBuild()},
+  hearit: {t:"Dinle & Seç",   ic:"👂", g:"s", u:"doğru", d:"Duyduğun cümlenin anlamını seç. 3 canın var.", run:() => gHear()},
+  artrace:{t:"Artikel Yarışı",ic:"🎯", g:"w", u:"puan", d:"60 saniye: der, die, das?", run:() => gArtikel()},
+  plural: {t:"Çoğul Avı",     ic:"👥", g:"w", u:"puan", d:"60 saniye: doğru çoğulu seç.", run:() => gPlural()},
+  conj:   {t:"Fiil Çekimi",   ic:"🔧", g:"w", u:"puan", d:"60 saniye: fiili kişiye göre çek.", run:() => gConj()},
+  hang:   {t:"Adam Asmaca",   ic:"🪢", g:"w", u:"kelime", d:"Türkçesine bak, harf harf bul. 6 hakkın var.", run:() => gHang()},
+  hunt:   {t:"Kelime Avı",    ic:"🔍", g:"w", u:"sn", low:1, d:"Harf tablosunda 5 kelimeyi bul.", run:() => gHunt()},
+  wheel:  {t:"Harf Çarkı",    ic:"🎡", g:"w", u:"kelime", d:"Çarktaki harflerden kelimeyi kur.", run:() => gWheel()},
+  soli:   {t:"Kelime Solitaire", ic:"🃏", g:"w", u:"çekiş", low:1, d:"Üstteki Türkçenin Almancasını masadan topla.", run:() => gSoli()},
+  cats:   {t:"Kategori Solitaire", ic:"🗂️", g:"w", u:"doğru", d:"Kartları doğru gruba at.", run:() => gCats()},
 };
 function best(id, sc, lowerBetter){
   const b = S.games[id];
@@ -1152,15 +1533,21 @@ function best(id, sc, lowerBetter){
 }
 function renderGames(){
   setTop("Oyun");
-  $("#view").innerHTML = `
-    <p class="hint" style="text-align:left;margin:6px 2px 14px">Oyunlar senin kartlarından gelir: ne kadar çalışırsan o kadar çeşit olur.</p>
-    <div class="tiles">${Object.entries(GAMES).map(([k, g]) => `
+  const tile = ([k, g]) => `
       <button class="card tile" data-k="${k}"><span class="ic">${g.ic}</span><b>${g.t}</b><span>${g.d}</span>
-        ${S.games[k] !== undefined ? `<span class="best">En iyi: ${k === "memory" ? S.games[k] + " hamle" : S.games[k]}</span>` : ""}</button>`).join("")}</div>
-    <p class="hint" style="margin-top:18px">Kelime oyunları (artikel, çoğul, fiil çekimi, adam asmaca…) kelime listemiz gelince eklenecek.</p>`;
+        ${S.games[k] !== undefined ? `<span class="best">En iyi: ${S.games[k]} ${g.u}</span>` : ""}</button>`;
+  const E = Object.entries(GAMES);
+  $("#view").innerHTML = `
+    <p class="hint" style="text-align:left;margin:6px 2px 4px">Oyunlar senin kartlarından ve kelime listemizden gelir.</p>
+    <div class="sec" style="margin-top:14px">Cümle oyunları</div>
+    <div class="tiles">${E.filter(([, g]) => g.g === "s").map(tile).join("")}</div>
+    <div class="sec">Kelime oyunları</div>
+    <div class="tiles">${E.filter(([, g]) => g.g === "w").map(tile).join("")}</div>
+    <div style="height:16px"></div>`;
   $$(".tile").forEach(b => b.onclick = () => GAMES[b.dataset.k].run());
 }
 function gameOver(id, title, sc, unit, lowerBetter){
+  unit = unit || GAMES[id].u; lowerBetter = lowerBetter || GAMES[id].low;
   const nb = best(id, sc, lowerBetter);
   setTop(title, true);
   endCard(nb ? "🏆" : "🎮", nb ? "Yeni rekor!" : "Oyun bitti", `${sc} ${unit}${nb ? "" : " · en iyi " + S.games[id]}`, "Tekrar oyna", () => GAMES[id].run());
@@ -1168,6 +1555,8 @@ function gameOver(id, title, sc, unit, lowerBetter){
   $("#gb").onclick = () => go("games");
 }
 let G = null;
+// oyundan çıkınca ya da yeni oyun başlayınca eski zamanlayıcılar ekrana dokunmasın
+function later(fn, ms){ const me = G; setTimeout(() => { if (G === me && screen) fn(); }, ms); }
 function gameTimer(sec, onEnd){
   G.left = sec;
   G.tm = setInterval(() => {
@@ -1192,7 +1581,7 @@ function gBlitz(){
       const ok = b.dataset.id === it.id;
       b.classList.add(ok ? "good" : "bad");
       if (ok) { G.combo++; G.sc += G.combo >= 5 ? 2 : 1; } else G.combo = 0;
-      G.i++; setTimeout(() => G.left > 0 && draw(), ok ? 180 : 600);
+      G.i++; later(() => G.left > 0 && draw(), ok ? 180 : 600);
     });
   };
   open(() => { setTop("Blitz 60", true); });
@@ -1217,8 +1606,8 @@ function gMemory(){
       G.moves++; $("#gm").textContent = G.moves;
       const [a, x] = G.open, ca = cards[+a.dataset.i], cx = cards[+x.dataset.i];
       if (ca.id === cx.id && ca.k !== cx.k) {
-        setTimeout(() => { a.classList.add("done"); x.classList.add("done"); G.open = []; G.done++; $("#gd").textContent = G.done; if (G.done === 6) setTimeout(() => gameOver("memory", "Hafıza", G.moves, "hamle", true), 500); }, 350);
-      } else setTimeout(() => { a.classList.add("back"); x.classList.add("back"); G.open = []; }, 900);
+        later(() => { a.classList.add("done"); x.classList.add("done"); G.open = []; G.done++; $("#gd").textContent = G.done; if (G.done === 6) later(() => gameOver("memory", "Hafıza", G.moves, "hamle", true), 500); }, 350);
+      } else later(() => { a.classList.add("back"); x.classList.add("back"); G.open = []; }, 900);
     }
   });
 }
@@ -1242,7 +1631,7 @@ function gBuild(){
         const ok = norm(built.map(k => sh[k].x).join(" ")) === norm(w.join(" "));
         $("#built").style.borderColor = ok ? "var(--ok)" : "var(--bad)";
         if (ok) { G.sc += w.length; speak(plain(it)); }
-        setTimeout(() => { if (G.left > 0) { if (ok) G.i++; else { built.length = 0; $("#built").style.borderColor = ""; return redraw(); } draw(); } }, ok ? 500 : 700);
+        later(() => { if (G.left > 0) { if (ok) G.i++; else { built.length = 0; $("#built").style.borderColor = ""; return redraw(); } draw(); } }, ok ? 500 : 700);
       }
     };
     $$(".pool .wd").forEach(b => b.onclick = () => { if (!built.includes(+b.dataset.k) && built.length < w.length) { built.push(+b.dataset.k); redraw(); } });
@@ -1264,7 +1653,7 @@ function gHear(){
       <div class="card flash" style="min-height:130px"><button class="mic" id="spk" style="width:72px;height:72px;margin:6px auto">${ICON_SPK.replace('width="18" height="18"', 'width="30" height="30"')}</button>
         <div class="big" id="txt" style="font-size:19px;visibility:hidden">${esc(it.de)}</div></div>
       <div class="opts">${opts.map(o => `<button class="opt" data-id="${o.id}">${esc(o.tr)}</button>`).join("")}</div>`;
-    const play = () => speak(it.de); setTimeout(play, 300); $("#spk").onclick = play;
+    const play = () => speak(it.de); later(play, 300); $("#spk").onclick = play;
     let lock = 0;
     $$(".opt").forEach(b => b.onclick = () => {
       if (lock++) return;
@@ -1273,10 +1662,213 @@ function gHear(){
       $("#txt").style.visibility = "visible";
       if (ok) G.sc++; else G.life--;
       G.i++;
-      setTimeout(() => G.life > 0 ? draw() : gameOver("hearit", "Dinle & Seç", G.sc, "doğru"), ok ? 700 : 1600);
+      later(() => G.life > 0 ? draw() : gameOver("hearit", "Dinle & Seç", G.sc, "doğru"), ok ? 700 : 1600);
     });
   };
   open(() => setTop("Dinle & Seç", true));
+  draw();
+}
+
+/* ================= KELİME OYUNLARI ================= */
+// önce gördüğün kelimeler, azsa listenin başındakiler
+function wordPool(kind, n){
+  const all = WORDS().filter(w => !kind || w.kind === kind);
+  const seenW = all.filter(w => S.prog[w.id]);
+  return shuffle(seenW.length >= (n || 12) ? seenW : seenW.concat(all.filter(w => !S.prog[w.id]).sort((a, b) => a.o - b.o).slice(0, 40)));
+}
+// 60 saniyelik seçmeli oyun iskeleti
+function timedChoice(id, title, pool, make){
+  G = {i:0, sc:0, combo:0};
+  const draw = () => {
+    const it = pool[G.i % pool.length], q = make(it);
+    $("#view").innerHTML = `<div class="hud"><b>${G.sc}</b><span class="small muted">${G.combo >= 3 ? "🔥 " + G.combo + " seri" : ""}</span><span class="t" id="gt">${G.left}</span></div>
+      <div class="card flash" style="min-height:150px">${q.top}</div>
+      <div class="opts2" ${q.opts.length === 3 ? 'style="grid-template-columns:repeat(3,1fr)"' : ""}>${q.opts.map((o, i) => `<button class="opt" data-i="${i}" style="min-height:62px">${esc(o)}</button>`).join("")}</div>
+      <div id="vd" class="hint"></div>`;
+    $$(".opt").forEach(b => b.onclick = () => {
+      if (G.lock) return; G.lock = 1;
+      const ok = q.opts[+b.dataset.i] === q.right;
+      b.classList.add(ok ? "good" : "bad");
+      if (ok) { G.combo++; G.sc += G.combo >= 5 ? 2 : 1; } else { G.combo = 0; $(`.opt[data-i="${q.opts.indexOf(q.right)}"]`).classList.add("good"); }
+      speak(q.say || it.de);
+      G.i++; later(() => { G.lock = 0; if (G.left > 0) draw(); }, ok ? 300 : 1100);
+    });
+  };
+  open(() => setTop(title, true));
+  gameTimer(60, () => gameOver(id, title, G.sc));
+  draw();
+}
+function gArtikel(){
+  timedChoice("artrace", "Artikel Yarışı", wordPool("n"), it => ({top:`<div class="big">${esc(it.w)}</div><div class="mid">${esc(it.tr)}</div>`, opts:["der","die","das"], right:it.art}));
+}
+function gPlural(){
+  timedChoice("plural", "Çoğul Avı", wordPool("n").filter(w => w.pl), it => {
+    const w = it.w, wrong = pick([w + "e", w + "en", w + "s", umlaut(w) + "e", w + "n", w + "er"].filter(x => x !== it.pl));
+    return {top:`<div class="big">${esc(it.de)}</div><div class="mid">${esc(it.tr)} · çoğulu?</div>`, opts: shuffle(["die " + it.pl, "die " + wrong]), right:"die " + it.pl, say:"die " + it.pl};
+  });
+}
+function gConj(){
+  timedChoice("conj", "Fiil Çekimi", wordPool("v"), it => {
+    const p = Math.random() * 6 | 0, right = it.pr[p];
+    const opts = shuffle(uniq(shuffle(it.pr.filter(f => f !== right))).slice(0, 2).concat(right));
+    return {top:`<div class="mid">${esc(it.w)} · ${esc(it.tr)}</div><div class="big">${PERS[p]} ___</div>`, opts, right, say: PERS[p].split("/")[0] + " " + right};
+  });
+}
+
+/* Adam Asmaca */
+function gHang(){
+  const pool = wordPool("n").filter(w => w.w.length >= 4 && w.w.length <= 11);
+  G = {i:0, sc:0, lives:6};
+  const KEYS = "QWERTZUIOPÜASDFGHJKLÖÄYXCVBNM".split("");
+  const round = () => {
+    const it = pool[G.i % pool.length], W = it.w.toUpperCase(), got = new Set(), miss = new Set();
+    const draw = () => {
+      const shown = W.split("").map(c => got.has(c) ? c : "_").join(" ");
+      $("#view").innerHTML = `<div class="hud"><b>${G.sc}</b><span>${"❤️".repeat(G.lives)}${"🤍".repeat(6 - G.lives)}</span></div>
+        <div class="card flash" style="min-height:150px"><div class="mid">${esc(it.tr)} · ${esc(it.art)} …</div>
+          <div class="big" style="letter-spacing:.12em;font-size:28px">${shown}</div></div>
+        <div class="pool" style="gap:6px">${KEYS.map(k => `<button class="wd" data-k="${k}" style="min-width:34px;padding:9px 8px;${got.has(k) ? "background:var(--ok-d)" : miss.has(k) ? "opacity:.3" : ""}" ${got.has(k) || miss.has(k) ? "disabled" : ""}>${k}</button>`).join("")}</div>`;
+      $$(".pool .wd").forEach(b => b.onclick = () => {
+        const k = b.dataset.k;
+        if (W.includes(k)) got.add(k); else { miss.add(k); G.lives--; }
+        const won = W.split("").every(c => got.has(c));
+        if (won) { G.sc++; speak(it.de); toast("✓ " + it.de); G.i++; later(round, 900); draw(); return; }
+        if (G.lives <= 0) { speak(it.de); toast(it.de); later(() => gameOver("hang", "Adam Asmaca", G.sc), 1200); }
+        draw();
+      });
+    };
+    draw();
+  };
+  open(() => setTop("Adam Asmaca", true));
+  round();
+}
+
+/* Kelime Avı: 8x8 tablo, 5 kelime */
+function gHunt(){
+  const N = 8, AB = "ABDEFGHIKLMNORSTUWZ";
+  const words5 = wordPool("n").filter(w => w.w.length >= 3 && w.w.length <= 8 && /^[A-Za-z]+$/.test(w.w)).slice(0, 5);
+  const grid = Array.from({length:N}, () => Array(N).fill(""));
+  const placed = [];
+  words5.forEach(it => {
+    const W = it.w.toUpperCase();
+    for (let t = 0; t < 200; t++) {
+      const dir = pick([[0,1],[1,0],[1,1]]), r = Math.random() * N | 0, c = Math.random() * N | 0;
+      const cells = W.split("").map((ch, i) => [r + dir[0] * i, c + dir[1] * i, ch]);
+      if (cells.every(([y, x, ch]) => y < N && x < N && (!grid[y][x] || grid[y][x] === ch))) { cells.forEach(([y, x, ch]) => grid[y][x] = ch); placed.push({it, cells}); break; }
+    }
+  });
+  for (let y = 0; y < N; y++) for (let x = 0; x < N; x++) if (!grid[y][x]) grid[y][x] = pick(AB.split(""));
+  G = {found:new Set(), sel:null, t0:Date.now()};
+  const draw = () => {
+    const hit = new Set(placed.filter(p => G.found.has(p.it.id)).flatMap(p => p.cells.map(([y, x]) => y + "," + x)));
+    $("#view").innerHTML = `<div class="hud"><span class="small muted">Bulunan: <b style="font-size:16px">${G.found.size}/${placed.length}</b></span><span class="small muted">İlk ve son harfe dokun</span></div>
+      <div style="display:grid;grid-template-columns:repeat(${N},1fr);gap:4px">${grid.map((row, y) => row.map((ch, x) => `<button class="mc" data-y="${y}" data-x="${x}" style="min-height:40px;padding:0;font-size:17px;${hit.has(y + "," + x) ? "background:var(--ok-d);border-color:var(--ok)" : ""}${G.sel && G.sel[0] === y && G.sel[1] === x ? "border-color:var(--acc);background:var(--acc-d)" : ""}">${ch}</button>`).join("")).join("")}</div>
+      <div class="sec">Bul</div>
+      <div class="chips">${placed.map(p => `<span class="chip ${G.found.has(p.it.id) ? "on" : ""}" style="display:inline-flex;align-items:center">${G.found.has(p.it.id) ? esc(p.it.de) : esc(p.it.tr)}</span>`).join("")}</div>`;
+    $$(".mc").forEach(b => b.onclick = () => {
+      const y = +b.dataset.y, x = +b.dataset.x;
+      if (!G.sel) { G.sel = [y, x]; return draw(); }
+      const [y0, x0] = G.sel; G.sel = null;
+      const p = placed.find(p => !G.found.has(p.it.id) && ((p.cells[0][0] === y0 && p.cells[0][1] === x0 && p.cells.at(-1)[0] === y && p.cells.at(-1)[1] === x) || (p.cells[0][0] === y && p.cells[0][1] === x && p.cells.at(-1)[0] === y0 && p.cells.at(-1)[1] === x0)));
+      if (p) { G.found.add(p.it.id); speak(p.it.de); }
+      draw();
+      if (G.found.size === placed.length) later(() => gameOver("hunt", "Kelime Avı", Math.round((Date.now() - G.t0) / 1000)), 700);
+    });
+  };
+  open(() => setTop("Kelime Avı", true));
+  draw();
+}
+
+/* Harf Çarkı: 8 kelime */
+function gWheel(){
+  const pool = wordPool().filter(w => w.w.length >= 3 && w.w.length <= 8).slice(0, 8);
+  G = {i:0, sc:0};
+  const round = () => {
+    const it = pool[G.i];
+    if (!it) return gameOver("wheel", "Harf Çarkı", G.sc);
+    let L = shuffle(it.w.toUpperCase().split("").map((c, i) => ({c, i}))), built = [], hint = 0;
+    const draw = () => {
+      const R = 108, n = L.length;
+      $("#view").innerHTML = `<div class="hud"><b>${G.sc}</b><span class="small muted">${G.i + 1}/${pool.length}</span></div>
+        <div class="card flash" style="min-height:96px;padding:16px"><div class="mid">${esc(it.tr)}${it.art ? " · " + it.art : ""}</div>
+          <div class="big" style="letter-spacing:.1em">${it.w.toUpperCase().split("").map((c, i) => i < built.length ? L[built[i]].c : i < hint ? `<span style="color:var(--tx3)">${c}</span>` : "_").join(" ")}</div></div>
+        <div style="position:relative;width:${R * 2 + 64}px;height:${R * 2 + 64}px;margin:18px auto 0;border-radius:50%;background:var(--bg2);border:1px solid var(--line)">
+          ${L.map((x, k) => { const a = k / n * 2 * Math.PI - Math.PI / 2; return `<button class="wd" data-k="${k}" style="position:absolute;left:${R + 32 + Math.cos(a) * R - 24}px;top:${R + 32 + Math.sin(a) * R - 24}px;width:48px;height:48px;padding:0;border-radius:50%;font-size:19px;${built.includes(k) ? "visibility:hidden" : ""}">${x.c}</button>`; }).join("")}
+        </div>
+        <div class="row2" style="margin-top:14px"><button class="btn2" id="wsh">🔀 Karıştır</button><button class="btn2" id="whn">💡 İpucu</button></div>
+        <button class="linkbtn" id="wcl">Sil</button>`;
+      $$(".wd[data-k]").forEach(b => b.onclick = () => {
+        built.push(+b.dataset.k); draw();
+        if (built.length === L.length) {
+          const ok = built.map(k => L[k].c).join("") === it.w.toUpperCase();
+          if (ok) { G.sc += hint ? 1 : 2; speak(it.de); G.i++; later(round, 800); }
+          else { toast("Olmadı, tekrar dene"); built = []; later(draw, 500); }
+        }
+      });
+      $("#wsh").onclick = () => { built = []; L = shuffle(L); draw(); };
+      $("#whn").onclick = () => { hint = Math.min(it.w.length - 1, hint + 1); built = []; draw(); };
+      $("#wcl").onclick = () => { built.pop(); draw(); };
+    };
+    draw();
+  };
+  open(() => setTop("Harf Çarkı", true));
+  round();
+}
+
+/* Kelime Solitaire: masada 6 Almanca kart, desteden Türkçe gelir */
+function gSoli(){
+  const all = wordPool().slice(0, 18);
+  const table = all.slice(0, 6), stock = all.slice(6);
+  let deck = shuffle(all.map(w => w.id)), top = null;
+  G = {draws:0, cleared:0};
+  const nextTop = () => { deck = deck.filter(id => !G.gone || !G.gone.has(id)); top = deck.shift(); if (top) deck.push(top); };
+  G.gone = new Set();
+  nextTop();
+  const draw = () => {
+    const t = BYID[top];
+    $("#view").innerHTML = `<div class="hud"><span class="small muted">Toplanan: <b style="font-size:16px">${G.cleared}/${all.length}</b></span><span class="small muted">Çekiş: <b style="font-size:16px">${G.draws}</b></span></div>
+      <div class="card flash" style="min-height:110px;border-color:var(--acc)"><div class="mid">Destedeki kart</div><div class="big" style="font-size:22px">${t ? esc(t.tr) : ""}</div></div>
+      <div class="mgrid" style="grid-template-columns:repeat(3,1fr)">${table.map((w, i) => w ? `<button class="mc" data-i="${i}" style="min-height:74px">${esc(w.de)}</button>` : `<span></span>`).join("")}</div>
+      <button class="btn2" id="sdraw" style="width:100%;margin-top:14px">Masada yok · yeni kart çek</button>`;
+    $$(".mc").forEach(b => b.onclick = () => {
+      const w = table[+b.dataset.i];
+      if (w.id === top) {
+        speak(w.de); G.gone.add(w.id); G.cleared++;
+        table[+b.dataset.i] = stock.shift() || null;
+        if (G.cleared === all.length) return gameOver("soli", "Kelime Solitaire", G.draws);
+        nextTop(); draw();
+      } else { b.classList.add("bad"); later(() => b.classList.remove("bad"), 400); G.draws++; $(".hud b:last-child") && draw(); }
+    });
+    $("#sdraw").onclick = () => { G.draws++; nextTop(); draw(); };
+  };
+  open(() => setTop("Kelime Solitaire", true));
+  draw();
+}
+
+/* Kategori Solitaire: 20 kart, 4 grup */
+function gCats(){
+  const nouns = WORDS().filter(w => w.kind === "n");
+  const cats = shuffle(Object.keys(W_CATS)).slice(0, 4);
+  const pool = shuffle(nouns.filter(w => cats.includes(w.cat))).slice(0, 20);
+  G = {i:0, sc:0};
+  const draw = () => {
+    const it = pool[G.i];
+    if (!it) return gameOver("cats", "Kategori Solitaire", G.sc);
+    $("#view").innerHTML = `<div class="hud"><b>${G.sc}</b><span class="small muted">${G.i + 1}/${pool.length}</span></div>
+      <div class="card flash" style="min-height:140px"><div class="big">${esc(it.de)}</div><div class="mid" id="ctr" style="visibility:hidden">${esc(it.tr)}</div></div>
+      <div class="opts2">${cats.map(c => `<button class="opt" data-c="${c}" style="min-height:70px">${W_CATS[c]}</button>`).join("")}</div>`;
+    speak(it.de);
+    let lock = 0;
+    $$(".opt").forEach(b => b.onclick = () => {
+      if (lock++) return;
+      const ok = b.dataset.c === it.cat;
+      b.classList.add(ok ? "good" : "bad"); if (!ok) $(`.opt[data-c="${it.cat}"]`).classList.add("good");
+      $("#ctr").style.visibility = "visible";
+      if (ok) G.sc++;
+      G.i++; later(draw, ok ? 600 : 1300);
+    });
+  };
+  open(() => setTop("Kategori Solitaire", true));
   draw();
 }
 
@@ -1422,15 +2014,163 @@ async function ask(){
   }
 }
 
+/* ================= KURALLAR: kısa, pratik dilbilgisi kartları =================
+   Ezber yok: her kartta bir kural, bizim içerikten örnekler ve 2 soruluk mini test. */
+const GRAMMAR = [
+  {id:"v2", ic:"2️⃣", t:"Fiil hep 2. sırada", s:"Heute trinke ich… (ich trinke değil)",
+   r:"Düz cümlede çekimli fiil her zaman 2. yerdedir. Cümleye zamanla ya da başka bir şeyle başlarsan özne fiilin arkasına geçer.",
+   ex:[["Ich trinke Kaffee.","Kahve içiyorum."],["Heute trinke ich Tee.","Bugün çay içiyorum."],["Am Samstag gehen wir in den Park.","Cumartesi parka gidiyoruz."]],
+   q:[["Bugün alışverişe gidiyorum.","Heute gehe ich einkaufen.","Heute ich gehe einkaufen.","Heute ich einkaufen gehe."],
+      ["Akşam Gece'yi ben yatırırım.","Am Abend bringe ich Gece ins Bett.","Am Abend ich bringe Gece ins Bett.","Am Abend ich Gece ins Bett bringe."]]},
+  {id:"art", ic:"🎯", t:"der, die, das", s:"İsmi hep artikeliyle öğren", mode:"artikel",
+   r:"Artikeli tahmin etmek zor; kelimeyi hep artikeliyle birlikte öğren. İpuçları: -ung ile bitenler die (die Wohnung), -e ile bitenlerin çoğu die (die Tasche), günler der (der Samstag), -chen ile bitenler das.",
+   ex:[["die Verspätung","gecikme"],["die Tasche","çanta"],["der Samstag","cumartesi"],["das Kind","çocuk"]],
+   q:[["___ Wohnung","die","der","das"],["___ Sonntag","der","die","das"]]},
+  {id:"akk", ic:"➡️", t:"Akkusativ: den, einen", s:"Ich brauche einen Kaffee",
+   r:"Bir şeyi alıyor, istiyor, görüyorsan (nesne) sadece eril artikel değişir: der → den, ein → einen. die ve das aynı kalır.",
+   ex:[["Ich hätte gern einen Cappuccino.","Bir cappuccino alabilir miyim?"],["Hast du den Schlüssel?","Anahtar sende mi?"],["Ich nehme die Suppe.","Çorbayı alıyorum."]],
+   q:[["Bir kahve istiyorum.","Ich hätte gern einen Kaffee.","Ich hätte gern ein Kaffee.","Ich hätte gern der Kaffee."],
+      ["Anahtarı göremiyorum.","Ich sehe den Schlüssel nicht.","Ich sehe der Schlüssel nicht.","Ich sehe dem Schlüssel nicht."]]},
+  {id:"dat", ic:"📍", t:"Dativ: mit dem, bei der", s:"mit, bei, nach, von, zu",
+   r:"mit, bei, nach, von, zu ve aus kelimelerinden sonra Dativ gelir: der/das → dem, die → der. Kısaltmalar: zu dem = zum, zu der = zur, bei dem = beim.",
+   ex:[["Ich fahre mit der Bahn.","Trenle gidiyorum."],["Ich bin noch bei der Arbeit.","Hâlâ işteyim."],["Wir gehen zum Kinderarzt.","Çocuk doktoruna gidiyoruz."],["mit dem Auto","arabayla"]],
+   q:[["Arabayla gidiyoruz.","Wir fahren mit dem Auto.","Wir fahren mit das Auto.","Wir fahren mit den Auto."],
+      ["Fırıncıya gidiyorum.","Ich gehe zum Bäcker.","Ich gehe zu der Bäcker.","Ich gehe zur Bäcker."]]},
+  {id:"perf", ic:"⏮️", t:"Perfekt: konuşurken geçmiş", s:"habe gemacht · bin gegangen", mode:"perfekt",
+   r:"Konuşurken geçmişi çoğunlukla haben/sein + Partizip ile anlatırız. Partizip cümlenin sonuna gider. Hareket ve değişim fiilleri sein alır: gehen, fahren, kommen, aufstehen, bleiben.",
+   ex:[["Ich habe schlecht geschlafen.","Kötü uyudum."],["Wir sind in den Park gegangen.","Parka gittik."],["Hast du schon gegessen?","Yemek yedin mi?"]],
+   q:[["Dün uzun çalıştım.","Gestern habe ich lange gearbeitet.","Gestern bin ich lange gearbeitet.","Gestern habe ich gearbeitet lange."],
+      ["Erken kalktık.","Wir sind früh aufgestanden.","Wir haben früh aufgestanden.","Wir sind früh aufgesteht."]]},
+  {id:"prat", ic:"📜", t:"war, hatte, musste", s:"Kısa geçmiş: konuşmada da var", mode:"prat",
+   r:"sein, haben ve modal fiillerde geçmişi kısa yoldan söyleriz: war, hatte, konnte, musste, wollte. Konuşmada 'ich bin gewesen' yerine çoğu zaman 'ich war' denir.",
+   ex:[["Das war echt anstrengend.","Gerçekten yorucuydu."],["Ich hatte keine Zeit.","Vaktim yoktu."],["Ich musste lange warten.","Uzun süre beklemek zorunda kaldım."]],
+   q:[["Dün yorgundum.","Gestern war ich müde.","Gestern bin ich müde.","Gestern hatte ich müde."],
+      ["Vaktim yoktu.","Ich hatte keine Zeit.","Ich war keine Zeit.","Ich habe keine Zeit gehabt hatte."]]},
+  {id:"mod", ic:"🔑", t:"Modal fiiller: asıl fiil sonda", s:"Ich muss heute länger arbeiten", mode:"conj",
+   r:"können, müssen, wollen, sollen, dürfen ve möchten 2. yerde çekilir; asıl fiil mastar hâliyle en sona gider.",
+   ex:[["Ich muss heute länger arbeiten.","Bugün daha uzun çalışmam lazım."],["Kannst du Brot mitbringen?","Ekmek getirebilir misin?"],["Ich will heute früh schlafen.","Bugün erken yatmak istiyorum."]],
+   q:[["Bugün gelemem.","Ich kann heute nicht kommen.","Ich kann heute nicht komme.","Ich kann kommen heute nicht."],
+      ["Alışveriş yapmam lazım.","Ich muss einkaufen.","Ich muss kaufe ein.","Ich einkaufen muss."]]},
+  {id:"sep", ic:"✂️", t:"Ayrılan fiiller", s:"aufstehen → Ich stehe um 7 auf",
+   r:"aufstehen, einkaufen, anrufen, aufräumen gibi fiillerde ön ek cümlenin sonuna gider. Modal fiille ya da mastar olarak birleşik kalır, Perfekt'te ge- ortaya girer: aufgestanden.",
+   ex:[["Ich stehe um sieben auf.","Yedide kalkarım."],["Ich räume die Küche auf.","Mutfağı topluyorum."],["Kannst du mich später anrufen?","Beni sonra arayabilir misin?"],["Ich habe schon eingekauft.","Alışverişi yaptım bile."]],
+   q:[["Yedide kalkıyorum.","Ich stehe um sieben auf.","Ich aufstehe um sieben.","Ich stehe auf um sieben uhr auf."],
+      ["Seni akşam ararım.","Ich rufe dich am Abend an.","Ich anrufe dich am Abend.","Ich rufe an dich am Abend."]]},
+  {id:"neg", ic:"🚫", t:"nicht mi, kein mi?", s:"Ich habe keine Zeit · Das ist nicht schlimm",
+   r:"İsmin önünde ein varsa ya da hiç artikel yoksa kein kullanılır: keine Zeit, keinen Hunger. Geri kalan her şey nicht ile olumsuz olur.",
+   ex:[["Ich habe keine Zeit.","Vaktim yok."],["Ich habe keinen Hunger.","Aç değilim."],["Das ist nicht schlimm.","Önemli değil."]],
+   q:[["Hiç fikrim yok.","Ich habe keine Ahnung.","Ich habe nicht Ahnung.","Ich nicht habe Ahnung."],
+      ["Bugün gelmiyorum.","Ich komme heute nicht.","Ich komme heute kein.","Ich nicht komme heute."]]},
+  {id:"sub", ic:"🔚", t:"weil, dass, wenn: fiil sona", s:"…, weil die Bahn Verspätung hatte",
+   r:"weil (çünkü), dass (ki/-dığını), wenn (-ince, eğer) ile başlayan yan cümlede çekimli fiil en sona gider.",
+   ex:[["Ich bin spät, weil die Bahn Verspätung hatte.","Geç kaldım çünkü tren gecikti."],["Ich glaube, dass sie schläft.","Sanırım uyuyor."],["Wenn du Zeit hast, ruf mich an.","Vaktin olursa beni ara."]],
+   q:[["Yorgunum çünkü kötü uyudum.","Ich bin müde, weil ich schlecht geschlafen habe.","Ich bin müde, weil ich habe schlecht geschlafen.","Ich bin müde, weil habe ich schlecht geschlafen."],
+      ["Vaktin olursa gel.","Wenn du Zeit hast, komm.","Wenn du hast Zeit, komm.","Wenn hast du Zeit, komm."]]},
+  {id:"ask", ic:"❓", t:"Soru sormak", s:"Hast du Zeit? · Wann kommst du?",
+   r:"Evet/hayır sorusunda fiil başa geçer. W- sorusunda (wann, wo, was, wie, warum) önce soru kelimesi, sonra fiil, sonra özne gelir.",
+   ex:[["Hast du heute Zeit?","Bugün vaktin var mı?"],["Wann kommst du nach Hause?","Eve ne zaman geliyorsun?"],["Was machst du gerade?","Şu an ne yapıyorsun?"]],
+   q:[["Ne zaman geliyorsun?","Wann kommst du?","Wann du kommst?","Wann kommen du?"],
+      ["Aç mısın?","Hast du Hunger?","Du hast Hunger?","Hunger hast du?"]]},
+  {id:"pol", ic:"🙏", t:"Kibar rica", s:"Ich hätte gern… · Könntest du…?",
+   r:"Kafede, dükkânda: 'Ich hätte gern …'. Birinden bir şey isterken: 'Könntest du …?' ya da 'Kannst du bitte …?'. 'Ich will …' kaba duyulabilir.",
+   ex:[["Ich hätte gern einen Cappuccino.","Bir cappuccino alabilir miyim?"],["Könntest du kurz auf Gece aufpassen?","Biraz Gece'ye bakabilir misin?"],["Kann ich mit Karte zahlen?","Kartla ödeyebilir miyim?"]],
+   q:[["(Kafede) Bir çay alabilir miyim?","Ich hätte gern einen Tee.","Ich will einen Tee.","Ich habe gern einen Tee."],
+      ["Ekmek getirebilir misin?","Könntest du Brot mitbringen?","Könntest du Brot bringst mit?","Du kannst Brot mitbringen!"]]},
+  {id:"time", ic:"🕗", t:"Zaman: am, um, im", s:"am Samstag · um acht · im Oktober",
+   r:"Günler ve gün bölümleri: am (am Samstag, am Abend). Saat: um (um acht Uhr). Aylar ve mevsimler: im (im Oktober, im Sommer). Ama: in der Nacht.",
+   ex:[["Am Samstag gehen wir in den Park.","Cumartesi parka gidiyoruz."],["Ich komme um sechs.","Altıda geliyorum."],["Im Oktober ist es kalt.","Ekimde hava soğuk."]],
+   q:[["Cumartesi geliyorum.","Am Samstag komme ich.","Im Samstag komme ich.","Um Samstag komme ich."],
+      ["Saat sekizde başlıyor.","Es fängt um acht an.","Es fängt am acht an.","Es fängt im acht an."]]},
+  {id:"pl", ic:"👥", t:"Çoğul yapmak", s:"Tage · Wochen · Bücher · Autos", mode:"plural",
+   r:"Tek bir kural yok; en sık kalıplar: -e (Tage), -en/-n (Wochen), -er ve çoğu zaman ünlü değişimi (Bücher), -s (Autos, Handys), hiç değişmeyen (Fenster). Çoğulun artikeli hep die.",
+   ex:[["der Tag → die Tage","gün → günler"],["die Woche → die Wochen","hafta → haftalar"],["das Buch → die Bücher","kitap → kitaplar"],["das Fenster → die Fenster","pencere → pencereler"]],
+   q:[["elmalar","die Äpfel","die Apfels","die Apfeln"],["çocuklar","die Kinder","die Kinds","die Kinden"]]},
+  {id:"conj", ic:"🔧", t:"Fiil çekimi", s:"ich -e · du -st · er -t", mode:"conj",
+   r:"Düzenli fiiller: ich mache, du machst, er macht, wir machen, ihr macht, sie machen. Bazı sık fiillerde du ve er'de ünlü değişir: essen → du isst, schlafen → du schläfst, nehmen → du nimmst.",
+   ex:[["Ich mache Frühstück.","Kahvaltı hazırlıyorum."],["Du schläfst schon?","Uyuyor musun bile?"],["Gece isst gern Bananen.","Gece muz yemeyi sever."]],
+   q:[["Sen ne yiyorsun?","Was isst du?","Was esst du?","Was essen du?"],["O (kadın) uyuyor.","Sie schläft.","Sie schlaft.","Sie schlafen."]]},
+];
+
+function renderGrammarList(el){
+  const g = S.gram = S.gram || {};
+  el.innerHTML = `<p class="hint" style="text-align:left;margin:12px 2px">Ezber değil: her kartta bir kural, örnekler ve 2 soruluk mini test.</p>
+    <div class="card">${GRAMMAR.map(c => `
+      <button class="chap ${g[c.id] ? "read" : ""}" data-id="${c.id}"><span class="no">${g[c.id] ? "✓" : c.ic}</span>
+        <span class="tx"><b>${esc(c.t)}</b><span>${esc(c.s)}</span></span></button>`).join("")}</div><div style="height:16px"></div>`;
+  $$(".chap").forEach(b => b.onclick = () => openGrammar(b.dataset.id));
+}
+function openGrammar(id){
+  const c = GRAMMAR.find(x => x.id === id);
+  open(() => {
+    setTop(c.t, true);
+    let ok = 0, done = 0;
+    $("#view").innerHTML = `
+      <div class="card prompt"><div class="k">${c.ic} Kural</div><div style="font-size:16.5px;line-height:1.55;margin-top:6px">${esc(c.r)}</div></div>
+      <div class="sec">Örnekler</div>
+      <div class="card plist">${c.ex.map((e, i) => `<button class="pi" data-i="${i}"><span style="flex:none">${ICON_SPK}</span><span><div class="de">${esc(e[0])}</div><div class="tr">${esc(e[1])}</div></span></button>`).join("")}</div>
+      <div class="sec">Mini test</div>
+      ${c.q.map((q, qi) => { const opts = shuffle(q.slice(1)); return `<div class="card" style="padding:14px;margin-bottom:10px"><div class="muted" style="margin-bottom:8px">${esc(q[0])}</div>
+        <div class="opts" style="margin-top:0">${opts.map(o => `<button class="opt gq" data-q="${qi}" data-ok="${o === q[1] ? 1 : 0}">${esc(o)}</button>`).join("")}</div></div>`; }).join("")}
+      <div id="gres"></div>
+      ${c.mode ? `<button class="btn2" id="gm" style="width:100%;margin-top:6px">${MODES[c.mode].ic} ${MODES[c.mode].t} alıştırması · kelimelerle</button>` : ""}
+      <div style="height:20px"></div>`;
+    $$(".pi").forEach(b => b.onclick = () => speak(c.ex[+b.dataset.i][0].replace(" → ", ". ")));
+    $$(".gq").forEach(b => b.onclick = () => {
+      const qi = b.dataset.q; if ($(`.gq[data-q="${qi}"].good, .gq[data-q="${qi}"].bad`)) return;
+      const good = b.dataset.ok === "1";
+      b.classList.add(good ? "good" : "bad"); if (!good) $(`.gq[data-q="${qi}"][data-ok="1"]`).classList.add("good");
+      speak($(`.gq[data-q="${qi}"][data-ok="1"]`).textContent);
+      done++; if (good) ok++;
+      if (done === c.q.length) {
+        S.gram = S.gram || {}; S.gram[c.id] = Math.max(S.gram[c.id] || 0, ok); mark("gram"); save();
+        $("#gres").innerHTML = `<div class="verdict ${ok === done ? "good" : "bad"}">${ok === done ? "Hepsi doğru, bu kural oturdu 👏" : ok + "/" + done + " doğru. Örneklere bir daha bak, sonra tekrar dene."}</div>`;
+      }
+    });
+    if ($("#gm")) $("#gm").onclick = () => startSession({items: srcItems("wd").filter(it => can(c.mode, it)).slice(0, 10), mode:c.mode, title:MODES[c.mode].t});
+  });
+}
+
+/* ================= İLERLEME ================= */
+function renderStats(){
+  setTop("İlerlemem", true);
+  const days = [];
+  for (let i = 13; i >= 0; i--) { const d = new Date(); d.setDate(d.getDate() - i); days.push(ymd(d)); }
+  const mx = Math.max(10, ...days.map(d => (S.days[d] || {}).n || 0));
+  const groups = [["Kalıplar", i => i.src === "ph"], ["Kelimeler", i => i.src === "wd"], ["Kitap", i => i.src === "bk" || i.src === "bl"], ["Senaryolar", i => i.src === "sc"]];
+  const weak = ITEMS.filter(i => (S.prog[i.id] || {}).x).sort((a, b) => S.prog[b.id].x - S.prog[a.id].x || S.prog[a.id].b - S.prog[b.id].b).slice(0, 8);
+  const answered = Object.values(S.days).reduce((a, d) => a + (d.n || 0), 0), right = Object.values(S.days).reduce((a, d) => a + (d.ok || 0), 0);
+  const big = (n, t) => `<div class="card" style="padding:14px;text-align:center"><div style="font-size:26px;font-weight:700">${n}</div><div class="small muted">${t}</div></div>`;
+  $("#view").innerHTML = `
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:8px">
+      ${big("🔥 " + streak(), "gün seri")}${big(Object.keys(S.days).length, "gün çalıştın")}${big(answered ? Math.round(right / answered * 100) + "%" : "–", "doğru oranı")}</div>
+    <div class="sec">Son 14 gün</div>
+    <div class="card" style="padding:14px 12px 8px"><div style="display:flex;align-items:flex-end;gap:5px;height:110px">${days.map(d => { const n = (S.days[d] || {}).n || 0, act = Object.keys(S.days[d] || {}).length; return `<div style="flex:1;display:flex;flex-direction:column;justify-content:flex-end;height:100%" title="${d}: ${n}"><div style="height:${Math.max(act ? 6 : 2, n / mx * 100)}%;border-radius:5px 5px 2px 2px;background:${act ? "var(--acc)" : "var(--bg4)"}"></div></div>`; }).join("")}</div>
+      <div style="display:flex;justify-content:space-between;font-size:11.5px;color:var(--tx3);margin-top:6px"><span>${trDate(days[0])}</span><span>Bugün</span></div></div>
+    <div class="sec">Kartların</div>
+    <div class="card" style="padding:6px 14px">${groups.map(([t, f]) => { const L = ITEMS.filter(f), c = [0,0,0]; L.forEach(i => c[lvl(i)]++); const w = n => L.length ? n / L.length * 100 : 0; return `
+      <div style="padding:10px 0;border-bottom:1px solid var(--line)"><div style="display:flex;justify-content:space-between;font-size:14.5px"><b>${t}</b><span class="muted small">${c[2]} oturdu · ${c[1]} öğreniyorum · ${L.length} toplam</span></div>
+        <div style="display:flex;height:8px;border-radius:5px;overflow:hidden;background:var(--bg3);margin-top:7px"><i style="width:${w(c[2])}%;background:var(--ok)"></i><i style="width:${w(c[1])}%;background:var(--acc)"></i></div></div>`; }).join("")}
+      <div style="padding:10px 0;font-size:14.5px;display:flex;justify-content:space-between"><b>Kitap</b><span class="muted small">${Object.keys(S.book.read || {}).length}/${D.book.chapters.length} bölüm okundu</span></div>
+      <div style="padding:0 0 10px;font-size:14.5px;display:flex;justify-content:space-between"><b>Senaryolar</b><span class="muted small">${Object.keys(S.scen.done || {}).length}/${D.scenarios.length} yapıldı</span></div>
+      <div style="padding:0 0 10px;font-size:14.5px;display:flex;justify-content:space-between"><b>Kurallar</b><span class="muted small">${Object.keys(S.gram || {}).length}/${GRAMMAR.length} kart</span></div>
+      <div style="padding:0 0 10px;font-size:14.5px;display:flex;justify-content:space-between"><b>Yazılar</b><span class="muted small">${allWritings().length} düzeltildi · ${allMistakes().length} hata kartı</span></div></div>
+    <div class="sec">En çok zorlandıkların</div>
+    ${weak.length ? `<div class="card plist">${weak.map(i => `<div class="pi"><i class="dot s${lvl(i)}"></i><span><div class="de">${esc(i.de)}</div><div class="tr">${esc(i.tr)} · ${S.prog[i.id].x} yanlış</div></span></div>`).join("")}</div>
+      <button class="cta" id="wk" style="margin-top:12px">Bunları çalış</button>` : `<div class="card empty">Henüz zorlandığın kart yok.</div>`}
+    ${Object.keys(S.games).length ? `<div class="sec">Oyun rekorları</div><div class="card klist">${Object.entries(S.games).filter(([k]) => GAMES[k]).map(([k, v]) => `<div><b>${GAMES[k].ic} ${GAMES[k].t}</b><span>${v} ${GAMES[k].u}</span></div>`).join("")}</div>` : ""}
+    <div style="height:20px"></div>`;
+  if ($("#wk")) $("#wk").onclick = () => startSession({items: weak, mode:"mix", title:"Zorlandıklarım"});
+}
+
 /* ================= KİTAPLIK ================= */
-const LIBS = [["book", "Kitap"], ["scen", "Senaryolar"], ["phr", "Kalıplar"], ["write", "Yazılar"]];
+const LIBS = [["book", "Kitap"], ["scen", "Senaryo"], ["phr", "Kalıp"], ["gram", "Kural"], ["write", "Yazı"]];
 function renderLibrary(){
   setTop("Kitaplık");
   const f = S.opt.lib = S.opt.lib || "book";
   const seg = `<div class="seg" id="seg" style="margin-top:6px">${LIBS.map(([k, t]) => `<button data-f="${k}" class="${f === k ? "on" : ""}">${t}</button>`).join("")}</div>`;
   $("#view").innerHTML = seg + `<div id="lib"></div>`;
   $$("#seg button").forEach(b => b.onclick = () => { S.opt.lib = b.dataset.f; save(); renderLibrary(); });
-  ({book: libBook, scen: libScen, phr: libPhrases, write: libWrite})[f]();
+  ({book: libBook, scen: libScen, phr: libPhrases, gram: () => renderGrammarList($("#lib")), write: libWrite})[f]();
 }
 function libBook(){
   const read = S.book.read || {}, nc = nextChapter(), n = Object.keys(read).length;
@@ -1566,6 +2306,8 @@ $("#gear").onclick = () => {
     <div class="lbl">Günde yeni kart</div>
     <div class="seg" id="pc">${[5,10,15,20].map(k => `<button data-v="${k}" class="${o.pace==k?"on":""}">${k}</button>`).join("")}</div>
     <p class="small muted" style="margin:4px 2px">Günün 10 kalıbı her zaman gelir; bu sayı kitap kalıplarından ne kadar ekleneceğini belirler.</p>
+    <div class="lbl">Günde yeni kelime</div>
+    <div class="seg" id="wp">${[0,5,10,15].map(k => `<button data-v="${k}" class="${o.wpace==k?"on":""}">${k || "Yok"}</button>`).join("")}</div>
     <div class="lbl">İlerleme</div>
     <p class="small muted" style="margin:4px 2px">${seen} kart başladı · ${sat} kart oturdu · ${Object.keys(S.days).length} gün çalıştın</p>
     <p class="small muted" style="margin:4px 2px">${DB ? "İlerlemen hesabına kaydediliyor; telefonda ve bilgisayarda aynı." : "İlerlemen bu cihazda duruyor. Yedeği kopyalayıp saklayabilirsin."}</p>
@@ -1580,6 +2322,7 @@ $("#gear").onclick = () => {
   $$("#th button").forEach(b => b.onclick = () => { o.theme = b.dataset.v; save(); applyTheme(); $("#gear").onclick(); });
   $$("#rt button").forEach(b => b.onclick = () => { o.rate = +b.dataset.v; save(); speak("Das ist die neue Geschwindigkeit."); $("#gear").onclick(); });
   $$("#pc button").forEach(b => b.onclick = () => { o.pace = +b.dataset.v; save(); $("#gear").onclick(); });
+  $$("#wp button").forEach(b => b.onclick = () => { o.wpace = +b.dataset.v; save(); $("#gear").onclick(); });
   $("#exp").onclick = () => copy(JSON.stringify(S), "Yedek kopyalandı");
   $("#imp").onclick = () => { $("#impbox").hidden = false; $("#impt").focus(); };
   $("#impgo").onclick = () => {
@@ -1588,6 +2331,7 @@ $("#gear").onclick = () => {
   };
   $("#cls").onclick = () => $("#sheet").classList.remove("show");
 };
+$("#streak").onclick = () => open(renderStats);
 $("#sheet").onclick = e => { if (e.target.id === "sheet") $("#sheet").classList.remove("show"); };
 
 /* ================= AÇILIŞ ================= */

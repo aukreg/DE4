@@ -1,5 +1,5 @@
 /* Almanca Günlük – çevrimdışı önbellek. Sayfa ve içerik önce ağdan denenir, yoksa önbellekten gelir. */
-const C = "almanca-gunluk-v4";
+const C = "almanca-gunluk-v7";
 const FILES = ["./", "./index.html", "./data.js", "./manifest.webmanifest", "./icon-192.png", "./icon-512.png"];
 
 self.addEventListener("install", e => {
