@@ -1020,7 +1020,7 @@ window.DATA = {
      [
       "A",
       "Nimmst du einen Wagen?",
-      "Araba alıyor musun?"
+      "Alışveriş arabası alıyor musun?"
      ],
      [
       "N",
@@ -1997,7 +1997,7 @@ window.DATA = {
      [
       "A",
       "Weißt du was? Ich bestell heute Essen.",
-      "Biliyor musun ne? Bugün yemek sipariş ediyorum."
+      "Bak ne diyeceğim: bugün yemek sipariş ediyorum."
      ],
      [
       "N",
@@ -2079,7 +2079,7 @@ window.DATA = {
      ],
      [
       "Weißt du was?",
-      "biliyor musun ne?"
+      "bak ne diyeceğim"
      ],
      [
       "Mir egal",
@@ -2190,7 +2190,7 @@ window.DATA = {
      [
       "A",
       "Klingt perfekt.",
-      "Harika görünüyor."
+      "Kulağa harika geliyor."
      ],
      [
       "N",
@@ -2234,7 +2234,7 @@ window.DATA = {
      ],
      [
       "Klingt perfekt",
-      "harika görünüyor"
+      "kulağa harika geliyor"
      ],
      [
       "sowieso",
@@ -2755,7 +2755,7 @@ window.DATA = {
      ],
      [
       "Ja, mach.",
-      "yaz, tamam"
+      "evet, yap / olur"
      ],
      [
       "Frag, ob …",
@@ -2974,7 +2974,7 @@ window.DATA = {
     [
      "U",
      "Hier, bitte.",
-     "Burada, lütfen."
+     "Buyurun."
     ],
     [
      "B",
