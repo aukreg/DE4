@@ -2387,32 +2387,60 @@ async function askClaude(lines, done){
   buildItems(); save();
   return added;
 }
+const ART_URL = "https://claude.ai/artifact/1sRnMzWHUJTw5WMaVaLW2H";
+// panodan eşitleme kodu al; olmazsa elle yapıştırma kutusu aç
+async function pasteCode(then){
+  try { const t = await navigator.clipboard.readText(); if (t && t.includes(SYNC_TAG)) { if (await importCode(t, true)) return then(); } } catch(e) {}
+  $("#pbox").hidden = false; $("#pbt").focus();
+  $("#pgo").onclick = async () => { if (await importCode($("#pbt").value, true)) then(); };
+}
 function renderSay(res){
   setTop("Nasıl derim?", true);
   const mine = S.mine.slice().reverse(), q = S.ask;
-  $("#view").innerHTML = `
-    <p class="hint" style="text-align:left;margin:6px 2px 10px">Aklına gelen cümleleri yaz ya da söyle; birden fazlaysa alt alta yaz. ${SAMPLE ? "Claude hepsinin doğal Almancasını verir ve destene ekler." : "Almancasını biliyorsan altına yaz; bilmiyorsan Sonra sor de, Claude sürümünde tek dokunuşla sorulur."}</p>
-    ${SAMPLE && q.length ? `<div class="card fixbox" style="margin:0 0 12px"><b>Bekleyen ${q.length} cümle</b><div class="small muted" style="margin:4px 0 10px">${q.slice(0, 4).map(a => esc(a.tr)).join(" · ")}${q.length > 4 ? " …" : ""}</div><button class="cta" id="askq">Hepsini Claude'a sor</button></div>` : ""}
-    <div style="position:relative">
-      <textarea class="write" id="say" style="min-height:110px;margin-top:0;${SR ? "padding-right:64px" : ""}" placeholder="Örn:\nGece'yi kreşten alacağım.\nBu akşam ne yiyelim?"></textarea>
-      ${SR ? `<button class="mic" id="mic" aria-label="Söyle" style="position:absolute;right:10px;top:10px;width:46px;height:46px;margin:0">${ICON_MIC}</button>` : ""}
-    </div>
-    <p class="small muted" style="margin:6px 2px 0">${SR ? "🎤'a dokun, Türkçe söyle; her söylediğin yeni satır olur." : "Konuşarak girmek için klavyedeki 🎤 tuşuna bas ve söyle; her cümleden sonra alt satıra geç."}</p>
-    ${SAMPLE ? `<button class="cta" id="ask" style="margin-top:10px">Almancası ne?</button>`
-             : `<textarea class="write" id="sayde" lang="de" style="min-height:64px" placeholder="Almancası (tek cümle için, isteğe bağlı)"></textarea>
-                <div class="row2" style="margin-top:10px"><button class="btn2" id="later">Sonra sor${q.length ? " · " + q.length : ""}</button><button class="cta" id="addm">Desteme ekle</button></div>`}
-    <div id="sres">${res || ""}</div>
-    <div class="sec">Benim cümlelerim · ${mine.length}</div>
-    ${mine.length ? `<div class="card plist">${mine.map(m => `
+  const pasteBox = `<div id="pbox" hidden style="margin-top:8px"><textarea class="imp" id="pbt" placeholder="Kodu buraya yapıştır"></textarea><button class="btn2" id="pgo" style="width:100%;margin-top:8px">Tamam</button></div>`;
+  const list = mine.length ? `<div class="card plist">${mine.map(m => `
       <div class="pi" data-id="${m.id}" style="display:flex;gap:10px;align-items:flex-start"><i class="dot s${BYID[m.id] ? lvl(BYID[m.id]) : 0}"></i>
         <span style="flex:1" class="sp"><div class="de">${esc(m.de)}</div><div class="tr">${esc(m.tr)}</div>${m.note ? `<div class="ex">💡 ${esc(m.note)}</div>` : ""}</span>
         <button class="del" aria-label="Sil" style="color:var(--tx3);padding:2px 6px;font-size:16px">✕</button></div>`).join("")}</div>
       <button class="btn2" id="stm" style="width:100%;margin-top:10px">Bunları çalış</button>`
-      : `<div class="card empty">Henüz cümle yok. İlk cümleni yukarıya yaz.</div>`}
-    <div style="height:20px"></div>`;
+      : `<div class="card empty">Henüz cümle yok.</div>`;
+  const input = `<div style="position:relative">
+      <textarea class="write" id="say" style="min-height:110px;margin-top:0;${SR ? "padding-right:64px" : ""}" placeholder="Örn:\nGece'yi kreşten alacağım.\nBu akşam ne yiyelim?"></textarea>
+      ${SR ? `<button class="mic" id="mic" aria-label="Söyle" style="position:absolute;right:10px;top:10px;width:46px;height:46px;margin:0">${ICON_MIC}</button>` : ""}
+    </div>
+    <p class="small muted" style="margin:6px 2px 0">${SR ? "🎤'a dokun ve Türkçe söyle. Her söylediğin alt alta eklenir." : "Konuşarak girmek için klavyedeki 🎤 tuşunu kullan. Birden çok cümleyi alt alta yaz."}</p>`;
+  if (SAMPLE) {
+    // Claude sürümü: sor, çevir, karta dönüştür
+    $("#view").innerHTML = `
+      <p class="hint" style="text-align:left;margin:6px 2px 10px">Türkçe cümlelerini yaz. Claude hepsinin doğal Almancasını verir ve destene ekler.</p>
+      ${q.length ? `<div class="card fixbox" style="margin:0 0 12px"><b>Telefondan gelen ${q.length} cümle</b><div class="small muted" style="margin:4px 0 10px">${q.slice(0, 4).map(a => esc(a.tr)).join(" · ")}${q.length > 4 ? " …" : ""}</div><button class="cta" id="askq">Hepsini çevir</button></div>`
+                 : `<button class="btn2" id="paste" style="width:100%;margin:0 0 12px">📋 Telefondaki uygulamadan gelenleri yapıştır</button>${pasteBox}`}
+      ${input}
+      <button class="cta" id="ask" style="margin-top:10px">Almancası ne?</button>
+      <div id="sres">${res || ""}</div>
+      <div class="sec">Benim cümlelerim · ${mine.length}</div>${list}
+      ${mine.length ? `<button class="linkbtn" id="back2">Bu kartları mikrofonlu uygulamaya götür</button>` : ""}
+      <div style="height:20px"></div>`;
+  } else {
+    // mikrofonlu sürüm: söyle, kaydet, Claude'da çevir
+    $("#view").innerHTML = `
+      <div class="card" style="padding:12px 14px;margin:6px 0 12px;font-size:14px;line-height:1.5"><b>Nasıl çalışır?</b><br>1. Türkçe cümlelerini söyle ya da yaz, <b>Kaydet</b>.<br>2. <b>Claude'da çevir</b>'e dokun. Claude sayfası açılır.<br>3. Orada <b>Nasıl derim → Yapıştır</b>. Almancaları gelir.</div>
+      ${input}
+      <button class="cta" id="later" style="margin-top:10px">Kaydet</button>
+      ${q.length ? `<div class="sec">Çevrilmeyi bekleyen · ${q.length}</div>
+        <div class="card plist">${q.map(a => `<div class="pi" style="display:flex;gap:10px"><span style="flex:1"><div class="tr" style="font-size:15px;color:var(--tx)">${esc(a.tr)}</div></span><button class="delq" data-id="${a.id}" aria-label="Sil" style="color:var(--tx3);padding:2px 6px;font-size:16px">✕</button></div>`).join("")}</div>
+        <button class="cta" id="toc" style="margin-top:10px">Claude'da çevir →</button>` : ""}
+      <button class="linkbtn" id="paste">📋 Claude'dan dönen kartları yapıştır</button>${pasteBox}
+      <div id="sres">${res || ""}</div>
+      <div class="sec">Benim cümlelerim · ${mine.length}</div>${list}
+      <button class="linkbtn" id="own">Almancasını biliyorum, kendim yazacağım</button>
+      <div id="ownbox" hidden><textarea class="write" id="sayde" lang="de" style="min-height:64px" placeholder="Almancası (yukarıdaki tek cümlenin)"></textarea><button class="btn2" id="addm" style="width:100%;margin-top:8px">Desteme ekle</button></div>
+      <div style="height:20px"></div>`;
+  }
   const remove = id => { S.mine = S.mine.filter(x => x.id !== id); delete S.prog[id]; buildItems(); save(); };
   $$(".pi .sp").forEach(b => b.onclick = () => { const m = S.mine.find(x => x.id === b.parentNode.dataset.id); if (m) speak(m.de); });
   $$(".pi .del").forEach(b => b.onclick = () => { remove(b.parentNode.dataset.id); renderSay(); });
+  $$(".delq").forEach(b => b.onclick = () => { S.askDone.push(b.dataset.id); S.ask = S.ask.filter(a => a.id !== b.dataset.id); save(); renderSay(); });
   $$(".spm").forEach(b => b.onclick = () => { const m = S.mine.find(x => x.id === b.dataset.id); if (m) speak(m.alt ? m.de + ". " + m.alt : m.de); });
   $$(".undo").forEach(b => b.onclick = () => { remove(b.dataset.id); b.closest(".fixbox").remove(); renderSay($("#sres") ? $("#sres").innerHTML : ""); toast("Silindi"); });
   if ($("#stm")) $("#stm").onclick = () => startSession({items: ITEMS.filter(i => i.src === "my"), mode:"mix", title:"Benim cümlelerim"});
@@ -2424,13 +2452,19 @@ function renderSay(res){
   };
   if ($("#later")) $("#later").onclick = () => {
     const ls = splitLines($("#say").value);
-    if (!ls.length) { toast("Önce bir cümle yaz ya da söyle"); return; }
+    if (!ls.length) { toast("Önce bir cümle söyle ya da yaz"); return; }
     ls.forEach((t, i) => S.ask.push({id: "q" + Date.now().toString(36) + i, tr: t, d: TODAY}));
-    save(); toast(ls.length + " cümle bekliyor. Claude sürümüne Kodu yapıştır ile geçince sorulur."); renderSay();
+    save(); toast(ls.length + " cümle kaydedildi"); renderSay();
   };
+  if ($("#toc")) $("#toc").onclick = async () => {
+    copy(await syncCode(), "Kopyalandı. Claude sayfasında Nasıl derim → Yapıştır'a dokun.");
+    setTimeout(() => { const l = document.createElement("a"); l.href = ART_URL; l.target = "_blank"; l.rel = "noopener"; document.body.appendChild(l); l.click(); l.remove(); }, 600);
+  };
+  if ($("#back2")) $("#back2").onclick = async () => copy(await syncCode(), "Kopyalandı. Mikrofonlu uygulamada Nasıl derim → Claude'dan dönen kartları yapıştır.");
+  if ($("#own")) $("#own").onclick = () => { $("#ownbox").hidden = false; $("#sayde").focus(); };
   if ($("#addm")) $("#addm").onclick = () => {
     const ls = splitLines($("#say").value), de = $("#sayde").value.trim();
-    if (ls.length !== 1 || !de) { toast(ls.length > 1 ? "Birden çok cümle için Sonra sor'u kullan" : "Türkçesini ve Almancasını yaz"); return; }
+    if (ls.length !== 1 || !de) { toast(ls.length > 1 ? "Kendin yazarken tek cümle gir" : "Yukarıya Türkçesini, buraya Almancasını yaz"); return; }
     addMine({de, tr: ls[0], ex:"", note:""}); buildItems(); save(); toast("Destene eklendi ✓"); renderSay();
   };
   const run = async (btn, lines, done, label) => {
@@ -2445,12 +2479,14 @@ function renderSay(res){
       btn.disabled = false; btn.textContent = label;
     }
   };
+  const askQueue = () => { const qs = S.ask.slice(0, 12); if (qs.length) run($("#askq") || $("#ask"), qs.map(a => a.tr), qs.map(a => a.id), "Hepsini çevir"); };
+  if ($("#paste")) $("#paste").onclick = () => pasteCode(() => { if (SAMPLE && S.ask.length) { renderSay(); askQueue(); } else { renderSay(); toast(SAMPLE ? "Bekleyen cümle yok" : "Kartlar geldi ✓"); } });
   if ($("#ask")) $("#ask").onclick = () => {
     const ls = splitLines($("#say").value);
     if (!ls.length) { toast("Önce bir cümle yaz"); $("#say").focus(); return; }
     run($("#ask"), ls, null, "Almancası ne?");
   };
-  if ($("#askq")) $("#askq").onclick = () => { const qs = S.ask.slice(0, 12); run($("#askq"), qs.map(a => a.tr), qs.map(a => a.id), "Hepsini Claude'a sor"); };
+  if ($("#askq")) $("#askq").onclick = askQueue;
 }
 
 /* ================= GÖLGELEME: duy, hemen tekrar et ================= */
@@ -2619,8 +2655,8 @@ function mergeState(a, b){
   Object.keys(b.games).forEach(k => { const x = m.games[k], y = b.games[k], low = GAMES[k] && GAMES[k].low; m.games[k] = x === undefined ? y : low ? Math.min(x, y) : Math.max(x, y); });
   return m;
 }
-async function importCode(txt){
-  try { const other = await readCode(txt); if (!other || !other.prog) throw 0; S = mergeState(S, other); buildItems(); save(); toast("İlerleme birleştirildi ✓"); $("#sheet").classList.remove("show"); go("today"); return true; }
+async function importCode(txt, stay){
+  try { const other = await readCode(txt); if (!other || !other.prog) throw 0; S = mergeState(S, other); buildItems(); save(); if (stay) return true; toast("İlerleme birleştirildi ✓"); $("#sheet").classList.remove("show"); go("today"); return true; }
   catch(e) { toast("Bu bir eşitleme kodu değil"); return false; }
 }
 
