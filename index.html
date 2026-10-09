@@ -733,13 +733,21 @@ function speak(text, who, onend, opt){
 }
 const speakTR = (t, onend, rate) => speak(t, 0, onend, {tr:1, rate});
 const stopSpeak = () => { if (!!window.speechSynthesis) speechSynthesis.cancel(); };
-// mikrofon: Claude içinde yok; telefondaki uygulamada var
-const SR = IN_CLAUDE ? null : (window.SpeechRecognition || window.webkitSpeechRecognition || null);
+// mikrofon: tarayıcı destekliyorsa ve sayfaya izin verilmişse; ilk denemede reddedilirse kapanır
+const SR_CTOR = window.SpeechRecognition || window.webkitSpeechRecognition || null;
+const micAllowed = () => { try { const fp = document.permissionsPolicy || document.featurePolicy; return !fp || !fp.allowsFeature || fp.allowsFeature("microphone"); } catch(e) { return true; } };
+const micOff = () => { try { return localStorage.getItem("micOff") === "1"; } catch(e) { return false; } };
+let SR = SR_CTOR && micAllowed() && !micOff() ? SR_CTOR : null;
+function micFail(){
+  SR = null; try { localStorage.setItem("micOff", "1"); } catch(e) {}
+  toast("Mikrofon bu ekranda açılmadı. Şimdilik dinleyip kendin söylüyorsun; Ayarlar'dan tekrar deneyebilirsin.");
+}
+function micRetry(){ try { localStorage.removeItem("micOff"); } catch(e) {} SR = SR_CTOR && micAllowed() ? SR_CTOR : null; return !!SR; }
 function listen(onres, onerr){
   const r = new SR(); r.lang = "de-DE"; r.interimResults = false; r.maxAlternatives = 3;
   let got = false;
   r.onresult = e => { got = true; onres(Array.from(e.results[0]).map(a => a.transcript)); };
-  r.onerror = () => { if (!got) { got = true; onerr && onerr(); } };
+  r.onerror = e => { if (e && /not-allowed|service-not-allowed|audio-capture/.test(e.error)) micFail(); if (!got) { got = true; onerr && onerr(); } };
   r.onend = () => { if (!got) { got = true; onerr && onerr(); } };
   try { r.start(); } catch(e) { onerr && onerr(); }
   return r;
@@ -2336,7 +2344,10 @@ $("#gear").onclick = () => {
     <div class="row2"><button class="btn2" id="exp">Yedeği kopyala</button><button class="btn2" id="imp">Yedek yükle</button></div>
     <div id="impbox" hidden><textarea class="imp" id="impt" placeholder="Yedek metnini buraya yapıştır"></textarea><button class="btn2" id="impgo" style="width:100%;margin-top:8px">Yükle</button></div>
     ${IN_CLAUDE ? `<div class="lbl">Claude</div>
-    <p class="small muted" style="margin:4px 2px">${SAMPLE ? "Bağlı: yazı düzeltme ve canlı konuşma açık." : "Bağlı değil: düzeltme için yazını kopyalayıp gönderebilirsin."} Mikrofon burada çalışmaz; Konuş modu ve sesli Turbo telefondaki uygulamada.</p>` : ""}
+    <p class="small muted" style="margin:4px 2px">${SAMPLE ? "Bağlı: yazı düzeltme ve canlı konuşma açık." : "Bağlı değil: düzeltme için yazını kopyalayıp gönderebilirsin."}</p>` : ""}
+    <div class="lbl">Mikrofon</div>
+    <p class="small muted" style="margin:4px 2px">${SR ? "Açık: Konuş modu ve Turbo söylediğini dinleyip düzeltir. İlk kullanımda izin isterse İzin ver de." : SR_CTOR ? "Kapalı: bu ekranda mikrofon açılmadı." : "Bu tarayıcı konuşma tanımayı desteklemiyor."}</p>
+    ${!SR && SR_CTOR ? `<button class="btn2" id="mic" style="width:100%">Mikrofonu tekrar dene</button>` : ""}
     <div class="lbl">İçerik</div>
     <p class="small muted" style="margin:4px 2px">${D.phrases.length} kalıp · ${D.book.chapters.length} kitap bölümü · ${D.scenarios.length} senaryo · ${ITEMS.length} çalışılabilir cümle · ${allWritings().length} düzeltilmiş yazı</p>
     <button class="btn2" id="cls" style="width:100%;margin-top:14px">Kapat</button>`;
@@ -2351,6 +2362,7 @@ $("#gear").onclick = () => {
     try { const s = JSON.parse($("#impt").value); if (!s.prog) throw 0; S = load(s); save(); toast("Yedek yüklendi"); $("#sheet").classList.remove("show"); go("today"); }
     catch(e) { toast("Bu metin bir yedek değil"); }
   };
+  if ($("#mic")) $("#mic").onclick = () => { toast(micRetry() ? "Mikrofon açık. Konuş modunda dene." : "Bu ekran mikrofona izin vermiyor."); $("#gear").onclick(); };
   $("#cls").onclick = () => $("#sheet").classList.remove("show");
 };
 $("#streak").onclick = () => open(renderStats);
