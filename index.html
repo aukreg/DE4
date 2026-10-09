@@ -597,7 +597,7 @@ function load(from){
   if (!s) try { s = JSON.parse(localStorage.getItem(KEY)); } catch(e) {}
   s = s || {};
   s.prog = s.prog || {}; s.days = s.days || {}; s.book = s.book || {}; s.scen = s.scen || {};
-  s.drafts = s.drafts || {}; s.games = s.games || {}; s.gram = s.gram || {}; s.mine = s.mine || []; s.weeks = s.weeks || {}; s.ask = s.ask || []; s.askDone = s.askDone || [];
+  s.drafts = s.drafts || {}; s.games = s.games || {}; s.gram = s.gram || {}; s.mine = s.mine || []; s.weeks = s.weeks || {}; s.ask = s.ask || []; s.askDone = s.askDone || []; s.qa = s.qa || [];
   s.opt = Object.assign({theme:"auto", rate:0.9, pace:10, wpace:5, n:10}, s.opt || {});
   // eski kayıt: puan (s) → kutu (b) ve tekrar tarihi
   Object.values(s.prog).forEach(r => { if (r.b === undefined) { r.b = r.s >= 4 ? 4 : r.s ? 1 : 0; r.due = r.due || ymd(new Date()); } });
@@ -718,6 +718,7 @@ function ttsFail(){
 function speak(text, who, onend, opt){
   opt = opt || {};
   let f = 0; const done = () => { if (!f++ && onend) onend(); };
+  if (noListen()) { if (onend) setTimeout(done, 250); return; }  // "şu an dinleyemem": ses yok
   const t = cleanSpeech(text).trim();
   if (!HAS_TTS || !t) { if (!HAS_TTS) ttsFail(); if (onend) setTimeout(done, t ? 400 + t.length * 60 : 100); return; }
   if (!VOICES.length) loadVoices();
@@ -742,6 +743,11 @@ function speak(text, who, onend, opt){
 const speakTR = (t, onend, rate) => speak(t, 0, onend, {tr:1, rate});
 const stopSpeak = () => { if (!!window.speechSynthesis) speechSynthesis.cancel(); };
 // mikrofon: tarayıcı destekliyorsa ve sayfaya izin verilmişse; ilk denemede reddedilirse kapanır
+// "şu an dinleyemem / konuşamam": bir süre sesli soruları sorma (bu cihazda)
+const quietUntil = k => ((S.opt.quiet || {})[k] || 0);
+const noListen = () => quietUntil("nl") > Date.now();
+const noSpeak = () => quietUntil("ns") > Date.now();
+function setQuiet(k, ms){ S.opt.quiet = S.opt.quiet || {}; S.opt.quiet[k] = ms ? Date.now() + ms : 0; save(); }
 const SR_CTOR = window.SpeechRecognition || window.webkitSpeechRecognition || null;
 const micAllowed = () => { try { const fp = document.permissionsPolicy || document.featurePolicy; return !fp || !fp.allowsFeature || fp.allowsFeature("microphone"); } catch(e) { return true; } };
 const micOff = () => { try { return localStorage.getItem("micOff") === "1"; } catch(e) { return false; } };
@@ -841,7 +847,7 @@ const MODES = {
   rquiz:  {t:"Anlamı",      ic:"🇹🇷", g:0, d:"Almancayı oku, anlamını seç"},
   tf:     {t:"Doğru mu?",   ic:"⚖️", g:0, d:"Çeviri doğru mu, yanlış mı"},
   match:  {t:"Eşleştir",    ic:"🧩", g:0, d:"Almanca ve Türkçeyi eşle", group:true},
-  hear:   {t:"Dinle, seç",  ic:"👂", g:0, d:"Duyduğunun anlamını seç"},
+  hear:   {t:"Dinle, seç",  ic:"👂", g:0, d:"Duyduğunun anlamını seç", need: () => !noListen()},
   quiz:   {t:"Almancası",   ic:"🇩🇪", g:1, d:"Türkçeden Almancayı seç"},
   finish: {t:"Tamamla",     ic:"✂️", g:1, k:"s", d:"Cümlenin sonunu bul", need: it => !it.kind && words(it).length >= 4},
   gap:    {t:"Boşluk",      ic:"⬜", g:1, k:"s", d:"Eksik kelimeyi seç", need: it => !it.kind && gapCands(it).length > 0 && words(it).length >= 2},
@@ -854,9 +860,9 @@ const MODES = {
   opp:    {t:"Zıt anlam",   ic:"↔️", g:1, k:"w", d:"Sıfatın zıttını bul", need: it => it.kind === "a" && !!it.opp},
   gapw:   {t:"Boşluğu yaz", ic:"✏️", g:2, k:"s", d:"Eksik kelimeyi yaz", need: it => !it.kind && gapCands(it).length > 0 && words(it).length >= 2},
   scramble:{t:"Harfler",    ic:"🔠", g:2, k:"w", d:"Harflerden kelimeyi kur", need: it => !!it.kind && !/\s/.test(it.w) && it.w.length >= 3 && it.w.length <= 13},
-  dictate:{t:"Dikte",       ic:"🎧", g:2, d:"Duyduğunu yaz"},
+  dictate:{t:"Dikte",       ic:"🎧", g:2, d:"Duyduğunu yaz", need: () => !noListen()},
   write:  {t:"Yaz",         ic:"⌨️", g:2, d:"Türkçeden Almancayı yaz"},
-  speak:  {t:"Konuş",       ic:"🎙️", g:2, d:"Türkçeden Almanca söyle", need: () => !!SR},
+  speak:  {t:"Konuş",       ic:"🎙️", g:2, d:"Türkçeden Almanca söyle", need: () => !!SR && !noSpeak()},
 };
 const GROUPS = ["Tanı", "Hatırla", "Üret"];
 const can = (m, it) => !MODES[m].need || MODES[m].need(it);
@@ -927,8 +933,11 @@ function verdict(ok, it, said, extra){
 function renderSession(){
   const cur = P.q[P.i];
   if (!cur) return renderSessionEnd();
+  // sessiz mod açıldıysa sesli soruyu sessiz bir türe çevir
+  if (cur.it && !can(cur.m, cur.it)) cur.m = modeFor(cur.it);
   setTop(P.o.title || "Alıştırma", true);
   R_MODE[cur.m](cur.it || cur.its, cur);
+  quietBar(cur.m);
 }
 function renderSessionEnd(){
   flushSession(); onLeave = null;
@@ -1284,6 +1293,7 @@ function renderToday(){
     <div class="hello"><div class="d">${GUNLER[now.getDay()]}, ${trDate(TODAY)} · ${dayNo()+1}. gün</div>
       <div class="t">${greet}, Atakan</div></div>
     <div class="card ring"><div class="bar"><i style="width:${st.length ? done/st.length*100 : 0}%"></i></div><b>${done} / ${st.length}</b></div>
+    ${quietRow()}
     ${nx ? `<button class="cta" id="go">${done ? "Devam et" : "Başla"} · ${esc(nx.t)}</button>`
          : `<div class="card empty">Bugünkü her şey tamam. 🎉<br>Canın isterse aşağıdan dinle ya da oyna.</div>`}
     <div class="steps">${st.map((s, i) => `
@@ -1298,6 +1308,7 @@ function renderToday(){
       <button class="card tile" id="q2"><span class="ic">🎧</span><b>Dinle</b><span>Bulaşıkta, yolda</span></button>
       <button class="card tile" id="q3"><span class="ic">🙋</span><b>Nasıl derim?</b><span>Aklındaki cümleyi Almanca öğren</span></button>
       <button class="card tile" id="q4"><span class="ic">🗣️</span><b>Gölgeleme</b><span>${SR ? "Duy, tekrar et, puan al" : "Duy, hemen arkasından tekrar et"}</span></button>
+      <button class="card tile wide" id="q5"><span class="ic">❓</span><span class="tx"><b>Soru sor</b><span>Almancayla ilgili ne merak ediyorsan sor; cevap ve örnek kart gelir.</span></span></button>
     </div>
     <button class="linkbtn" id="st">📈 İlerlemem</button>
     <p class="hint">${eve ? "21:00 sonrası: yazı, senaryo ve kitap için en iyi zaman." : "Gündüz deste yeter; kitap, senaryo ve yazı akşama kalabilir."}</p>`;
@@ -1306,6 +1317,8 @@ function renderToday(){
   $("#q1").onclick = () => startTurbo(srcItems("due").length >= 5 ? "due" : "ph");
   $("#q2").onclick = () => go("listen");
   $("#q3").onclick = () => open(renderSay);
+  $("#q5").onclick = () => open(renderQA);
+  bindQuiet();
   $("#q4").onclick = () => startShadow(srcItems("due").length >= 5 ? "due" : "ph");
   $("#st").onclick = () => open(renderStats);
 }
@@ -1334,13 +1347,14 @@ function renderPracticeTab(){
   setTop("Alıştır");
   const o = S.opt; o.psrc = o.psrc || "ph"; o.pmode = o.pmode || "mix";
   const isM = o.psrc === "mist", isW = o.psrc === "wd";
-  const okMode = (k, m) => (k !== "speak" || SR) && (isW ? m.k !== "s" : m.k !== "w");
+  const okMode = (k, m) => (!["hear","dictate","speak"].includes(k) || m.need()) && (isW ? m.k !== "s" : m.k !== "w");
   if (o.pmode !== "mix" && !okMode(o.pmode, MODES[o.pmode] || {})) o.pmode = "mix";
   $("#view").innerHTML = `
     <div class="sec" style="margin-top:8px">Claude ile</div>
     <div class="tiles">
       <button class="card tile" id="cw"><span class="ic">✍️</span><b>Yaz, düzeltsin</b><span>${SAMPLE ? "Günlük yazını Claude düzeltir" : "Yaz, Claude'a gönder"}</span></button>
       <button class="card tile" id="cc"><span class="ic">💬</span><b>Canlı konuş</b><span>Bir senaryoda Claude ile yazış</span></button>
+      <button class="card tile wide" id="cq"><span class="ic">❓</span><span class="tx"><b>Soru sor</b><span>Kafana takılanı sor; Claude cevaplar, örnek cümleyi destene ekler.</span></span></button>
       <button class="card tile wide" id="cs"><span class="ic">🙋</span><span class="tx"><b>Nasıl derim?</b><span>Türkçe yaz, doğal Almancasını öğren; cümle destene eklenir.</span></span></button>
     </div>
 
@@ -1361,6 +1375,7 @@ function renderPracticeTab(){
     <button class="card tile wide" id="sh" style="margin-top:10px"><span class="ic">🗣️</span><span class="tx"><b>Gölgeleme</b><span>${SR ? "Cümleyi duyarsın, hemen tekrar edersin; uygulama söyleyişini puanlar." : "Cümleyi duyarsın, hemen arkasından aynı tonla tekrar edersin."} Seçili kaynaktan.</span></span></button>
     <div style="height:16px"></div>`;
   $("#cs").onclick = () => open(renderSay);
+  $("#cq").onclick = () => open(renderQA);
   $("#sh").onclick = () => startShadow(isM ? "ph" : o.psrc);
   $$("#srcs .chip").forEach(b => b.onclick = () => { o.psrc = b.dataset.k; save(); renderPracticeTab(); });
   $$("[data-m]").forEach(b => b.onclick = () => { o.pmode = b.dataset.m; save(); renderPracticeTab(); });
@@ -1394,6 +1409,7 @@ function liveChat(src){
 /* ================= TURBO: duy, söyle, düzelt ================= */
 let T = null;
 function startTurbo(src){
+  if (noListen()) return toast("Şu an dinleyemem açık. Bugün ekranından kapatabilirsin.");
   const items = srcItems(src, 20);
   if (!items.length) { toast("Bu kaynakta cümle yok"); return; }
   T = {items, i:0, dir: S.opt.tdir || "trde", run:true, tok:0, ok:0, n:0, res:{}};
@@ -1444,7 +1460,7 @@ function turboStep(){
   ph("Türkçesi");
   speakTR(it.tr, () => {
     if (!live()) return;
-    if (SR) {
+    if (SR && !noSpeak()) {
       ph("Söyle…");
       T.rec = listen(alts => {
         if (!live()) return;
@@ -1511,6 +1527,7 @@ function renderListen(){
 
 let L = null;
 function startPlayer(s){
+  if (noListen()) return toast("Şu an dinleyemem açık. Bugün ekranından kapatabilirsin.");
   L = {s, list: s.items(), i:0, playing:true, tok:0};
   if (!L.list.length) return toast("Liste boş");
   open(renderPlayer);
@@ -1697,6 +1714,7 @@ function gBuild(){
 
 /* Dinle & Seç: 3 can */
 function gHear(){
+  if (noListen()) return toast("Şu an dinleyemem açık. Bugün ekranından kapatabilirsin.");
   const pool = shuffle(gamePool());
   G = {i:0, sc:0, life:3};
   const draw = () => {
@@ -2492,6 +2510,7 @@ function renderSay(res){
 /* ================= GÖLGELEME: duy, hemen tekrar et ================= */
 let SH = null;
 function startShadow(src){
+  if (noListen() || noSpeak()) return toast("Gölgeleme için hem dinlemen hem konuşman gerekiyor. Bugün ekranından sessiz modu kapatabilirsin.");
   let items = srcItems(src, 15);
   if (src !== "wd") items = items.filter(it => it.src !== "wd");
   if (!items.length) items = srcItems("ph", 15);
@@ -2615,6 +2634,144 @@ function weekBox(){
     ${can ? `<button class="btn2" id="wkt" style="width:100%;margin-top:10px">${done ? "Bu haftanınkini tekrar yap" : "Şimdi yap"}</button>` : ""}`;
 }
 
+/* ================= ŞU AN DİNLEYEMEM / KONUŞAMAM ================= */
+const QUIET_T = {nl: ["🔇", "Şu an dinleyemem", "Dinleyemem"], ns: ["🤐", "Şu an konuşamam", "Konuşamam"]};
+function quietLeft(k){
+  const ms = quietUntil(k) - Date.now(); if (ms <= 0) return "";
+  const h = Math.floor(ms / 36e5), m = Math.ceil(ms % 36e5 / 6e4);
+  return h ? `${h} sa${m ? " " + m + " dk" : ""}` : `${m} dk`;
+}
+function quietRow(){
+  const on = {nl: noListen(), ns: noSpeak()};
+  return `<div class="chips" id="quiet" style="margin-top:14px">${["nl", "ns"].map(k => `<button class="chip ${on[k] ? "on" : ""}" data-q="${k}">${QUIET_T[k][0]} ${on[k] ? QUIET_T[k][2] + " · " + quietLeft(k) : QUIET_T[k][1]}</button>`).join("")}</div>
+    ${on.nl || on.ns ? `<p class="small muted" style="margin:6px 2px 0">${on.nl ? "Sesli sorular ve okuma kapalı" : "Konuşma soruları kapalı"}; yerine sessiz alıştırmalar gelir. Kapatmak için dokun.</p>` : ""}`;
+}
+function quietPick(k, after){
+  const end = new Date(); end.setHours(23, 59, 0, 0);
+  const opts = [["30 dakika", 18e5], ["1 saat", 36e5], ["3 saat", 108e5], ["Bugün boyunca", end - Date.now()]];
+  $("#sheetIn").innerHTML = `<h2>${QUIET_T[k][0]} ${QUIET_T[k][1]}</h2>
+    <p class="small muted" style="margin:4px 2px 12px">${k === "nl" ? "Bu süre boyunca ses çalmaz; dinleme, dikte, Turbo ve Gölgeleme sorulmaz." : "Bu süre boyunca konuşma soruları gelmez; Turbo'da söylemen beklenmez."} Yerine sessiz alıştırmalar gelir.</p>
+    ${opts.map(([t, ms], i) => `<button class="btn2" data-i="${i}" style="width:100%;margin-top:8px">${t}</button>`).join("")}
+    <button class="linkbtn" id="qx" style="width:100%">Vazgeç</button>`;
+  $("#sheet").classList.add("show");
+  $$("#sheetIn [data-i]").forEach(b => b.onclick = () => { if (k === "nl") stopSpeak(); setQuiet(k, opts[+b.dataset.i][1]); $("#sheet").classList.remove("show"); toast(QUIET_T[k][2] + " modu açık"); after && after(); });
+  $("#qx").onclick = () => $("#sheet").classList.remove("show");
+}
+function bindQuiet(){
+  $$("#quiet [data-q]").forEach(b => b.onclick = () => {
+    const k = b.dataset.q;
+    if (quietUntil(k) > Date.now()) { setQuiet(k, 0); toast("Kapandı"); renderToday(); }
+    else quietPick(k, renderToday);
+  });
+}
+// alıştırmada sesli bir soru gelince: "şu an dinleyemem / konuşamam"
+function quietBar(m){
+  const k = m === "speak" ? "ns" : (m === "hear" || m === "dictate") ? "nl" : null;
+  const ph = document.querySelector(".phase");
+  if (!k || !ph) return;
+  ph.insertAdjacentHTML("afterend", `<button class="linkbtn" id="qb" style="margin:-4px 0 6px;padding:2px 0">${QUIET_T[k][0]} ${QUIET_T[k][1]}</button>`);
+  $("#qb").onclick = () => quietPick(k, () => { if (P && screen === renderSession) renderSession(); });
+}
+
+/* ================= SORU SOR ================= */
+function qaPrompt(qs){
+  return `Sen Atakan'ın Almanca öğretmenisin. Atakan Türk, Almanya'da yaşıyor, seviyesi A2 civarı. Eşi Nisa, 2 yaşında kızı Gece. Hedefi günlük hayatta doğal konuşmak; sınav Almancası değil.
+Atakan sana ${qs.length} soru soruyor (sesle girilmiş olabilir; küçük yazım hatalarını anlamına göre düzelt).
+Her soru için:
+- "a": Türkçe, kısa ve net cevap (2-6 cümle). Günlük konuşmada gerçekten nasıl kullanıldığını öne çıkar; gerekiyorsa 1-2 kısa Almanca örnek ver. Ders kitabı terimlerini az kullan, kullanırsan kısaca açıkla.
+- "de": sorunun konusunu en iyi gösteren, günlük hayatta kullanılan doğal tek bir Almanca örnek cümle (Atakan'ın hayatına uygunsa daha iyi).
+- "tr": bu örnek cümlenin Türkçesi.
+- "note": Türkçe tek cümle, bu kartın altında duracak pratik ipucu (en fazla 120 karakter).
+Sadece şu biçimde JSON döndür, sorularla aynı sırada: {"items":[{"a":"...","de":"...","tr":"...","note":"..."}]}
+
+Sorular:
+${qs.map((q, i) => (i + 1) + ". " + q).join("\n")}`;
+}
+async function answerQs(list){
+  const r = await SAMPLE.json(qaPrompt(list.map(x => x.q)), {modelTier: "default", cache: false});
+  const arr = Array.isArray(r) ? r : Array.isArray(r.items) ? r.items : [r];
+  let n = 0;
+  list.forEach((x, i) => {
+    const y = arr[i]; if (!y || !y.a) return;
+    x.a = String(y.a).trim(); x.ad = TODAY;
+    const de = String(y.de || "").trim();
+    if (de) { const m = addMine({de, tr: String(y.tr || "").trim(), ex:"", note: String(y.note || "").trim(), alt:""}); x.card = m.id; }
+    if (!S.qa.includes(x)) S.qa.push(x);
+    n++;
+  });
+  if (!n) throw {};
+  buildItems(); save();
+  return list.filter(x => x.a);
+}
+function qaCard(x, open){
+  const m = x.card && S.mine.find(y => y.id === x.card);
+  return `<div class="card fixbox" style="margin-top:12px">
+    <div class="small muted">${trDate(x.d)} · Sorun</div><div style="font-weight:700;margin:2px 0 8px">${esc(x.q)}</div>
+    ${x.a ? `<div style="line-height:1.55;white-space:pre-line">${esc(x.a)}</div>
+      ${m ? `<div class="card" style="margin-top:10px;padding:10px 12px;background:var(--bg3)"><div class="small muted">Örnek kart · destende</div>
+        <div style="display:flex;gap:8px;align-items:center"><b style="flex:1">${esc(m.de)}</b><button class="say spq" data-t="${esc(m.de)}" aria-label="Dinle">${ICON_SPK}</button></div>
+        <div class="small muted">${esc(m.tr)}</div>${m.note ? `<div class="small" style="margin-top:4px">💡 ${esc(m.note)}</div>` : ""}</div>` : ""}`
+      : `<div class="small muted">Cevap bekliyor${SAMPLE ? "" : ": Claude'da sor'a dokun"}.</div>`}</div>`;
+}
+function renderQA(res){
+  setTop("Soru sor", true);
+  const pend = S.qa.filter(x => !x.a), done = S.qa.filter(x => x.a).slice().reverse();
+  const pasteBox = `<div id="pbox" hidden style="margin-top:8px"><textarea class="imp" id="pbt" placeholder="Kodu buraya yapıştır"></textarea><button class="btn2" id="pgo" style="width:100%;margin-top:8px">Tamam</button></div>`;
+  $("#view").innerHTML = `
+    <p class="hint" style="text-align:left;margin:6px 2px 10px">${SAMPLE ? "Almancayla ilgili ne merak ediyorsan sor. Claude kısaca cevaplar ve konuyu gösteren bir örnek cümleyi açıklamasıyla destene ekler." : "Sorunu söyle ya da yaz, Kaydet. Sonra Claude'da sor'a dokun; Claude sayfasında Soru sor → Yapıştır ile cevaplanır."}</p>
+    ${SAMPLE && pend.length ? `<div class="card fixbox" style="margin:0 0 12px"><b>Bekleyen ${pend.length} soru</b><div class="small muted" style="margin:4px 0 10px">${pend.slice(0, 3).map(x => esc(x.q)).join(" · ")}</div><button class="cta" id="ansq">Hepsini cevapla</button></div>` : ""}
+    ${SAMPLE && !pend.length ? `<button class="btn2" id="paste" style="width:100%;margin:0 0 12px">📋 Telefondaki uygulamadan gelen soruları yapıştır</button>${pasteBox}` : ""}
+    <div style="position:relative">
+      <textarea class="write" id="qq" style="min-height:96px;margin-top:0;${SR ? "padding-right:64px" : ""}" placeholder="Örn: 'doch' ne zaman kullanılır?
+Doktora gidiyorum derken zum mu bei mi?"></textarea>
+      ${SR ? `<button class="mic" id="mic" aria-label="Söyle" style="position:absolute;right:10px;top:10px;width:46px;height:46px;margin:0">${ICON_MIC}</button>` : ""}
+    </div>
+    <p class="small muted" style="margin:6px 2px 0">${SR ? "🎤'a dokun ve sorunu söyle." : "Konuşarak sormak için klavyedeki 🎤 tuşunu kullan."} Birden çok soruyu alt alta yazabilirsin.</p>
+    ${SAMPLE ? `<button class="cta" id="ask" style="margin-top:10px">Sor</button>`
+             : `<button class="cta" id="save" style="margin-top:10px">Kaydet</button>
+                ${pend.length ? `<button class="cta" id="toc" style="margin-top:10px">Claude'da sor → (${pend.length})</button>` : ""}
+                <button class="linkbtn" id="paste">📋 Claude'dan dönen cevapları yapıştır</button>${pasteBox}`}
+    <div id="sres">${res || ""}</div>
+    ${pend.length && !SAMPLE ? `<div class="sec">Bekleyen sorular · ${pend.length}</div>${pend.map(x => qaCard(x)).join("")}` : ""}
+    <div class="sec">Sorduklarım · ${done.length}</div>
+    ${done.length ? done.map(x => qaCard(x)).join("") : `<div class="card empty">Henüz soru yok.</div>`}
+    ${SAMPLE && done.length ? `<button class="linkbtn" id="back2">Cevapları mikrofonlu uygulamaya götür</button>` : ""}
+    <div style="height:20px"></div>`;
+  $$(".spq").forEach(b => b.onclick = () => speak(b.dataset.t));
+  const lines = () => $("#qq").value.split(/\n+/).map(x => x.trim()).filter(x => x.length >= 3).slice(0, 6);
+  if ($("#mic")) $("#mic").onclick = () => {
+    const b = $("#mic"); if (b.classList.contains("on")) return;
+    b.classList.add("on"); toast("Dinliyorum…");
+    listen(alts => { b.classList.remove("on"); const t = $("#qq"); let v = (alts[0] || "").trim(); if (v) { v = v.charAt(0).toUpperCase() + v.slice(1); if (!/[?.!]$/.test(v)) v += "?"; t.value = (t.value.trim() ? t.value.trim() + "\n" : "") + v; } },
+           () => { b.classList.remove("on"); toast("Duyamadım, bir daha dene"); }, "tr-TR");
+  };
+  const run = async (btn, list, label) => {
+    btn.disabled = true; btn.textContent = "Claude düşünüyor…";
+    $("#sres").innerHTML = `<div class="card fixbox" style="margin-top:12px"><span class="thinking">Claude cevaplıyor…</span></div>`;
+    try {
+      const ok = await answerQs(list);
+      renderQA(`<div class="ai" style="margin-top:12px">✓ ${ok.length} soru cevaplandı, örnek kartlar destene eklendi</div>` + ok.map(x => qaCard(x)).join(""));
+    } catch(e) {
+      $("#sres").innerHTML = `<div class="card fixbox" style="margin-top:12px"><span class="muted">${esc(errText(e))}</span></div>`;
+      btn.disabled = false; btn.textContent = label;
+    }
+  };
+  const newQs = ls => ls.map((q, i) => ({id: "a" + Date.now().toString(36) + i, q, d: TODAY}));
+  if ($("#ask")) $("#ask").onclick = () => { const ls = lines(); if (!ls.length) { toast("Önce sorunu yaz"); $("#qq").focus(); return; } run($("#ask"), newQs(ls), "Sor"); };
+  if ($("#ansq")) $("#ansq").onclick = () => run($("#ansq"), S.qa.filter(x => !x.a).slice(0, 6), "Hepsini cevapla");
+  if ($("#save")) $("#save").onclick = () => { const ls = lines(); if (!ls.length) { toast("Önce sorunu söyle ya da yaz"); return; } S.qa.push(...newQs(ls)); save(); toast(ls.length + " soru kaydedildi"); renderQA(); };
+  if ($("#toc")) $("#toc").onclick = async () => {
+    copy(await syncCode(), "Kopyalandı. Claude sayfasında Soru sor → Yapıştır'a dokun.");
+    setTimeout(() => { const l = document.createElement("a"); l.href = ART_URL; l.target = "_blank"; l.rel = "noopener"; document.body.appendChild(l); l.click(); l.remove(); }, 600);
+  };
+  if ($("#back2")) $("#back2").onclick = async () => copy(await syncCode(), "Kopyalandı. Mikrofonlu uygulamada Soru sor → Claude'dan dönen cevapları yapıştır.");
+  if ($("#paste")) $("#paste").onclick = () => pasteCode(() => {
+    const p = S.qa.filter(x => !x.a);
+    if (SAMPLE && p.length) { renderQA(); run($("#ansq"), p.slice(0, 6), "Hepsini cevapla"); }
+    else { renderQA(); toast(SAMPLE ? "Bekleyen soru yok" : "Cevaplar geldi ✓"); }
+  });
+}
+
 /* ================= EŞİTLEME: iki sürüm arasında kodla taşı, birleştir ================= */
 const SYNC_TAG = "ALMANCA1:";
 async function syncCode(){
@@ -2650,6 +2807,7 @@ function mergeState(a, b){
   m.askDone = uniq(m.askDone.concat(b.askDone));
   b.ask.forEach(x => { if (!m.ask.some(y => y.id === x.id)) m.ask.push(x); });
   m.ask = m.ask.filter(x => !m.askDone.includes(x.id));
+  b.qa.forEach(x => { const i = m.qa.findIndex(y => y.id === x.id); if (i < 0) m.qa.push(x); else if (x.a && !m.qa[i].a) m.qa[i] = x; });
   b.mine.forEach(x => { if (!m.mine.some(y => y.id === x.id)) m.mine.push(x); });
   Object.keys(b.weeks).forEach(k => { if (!m.weeks[k] || (b.weeks[k].n || 0) > (m.weeks[k].n || 0)) m.weeks[k] = b.weeks[k]; });
   Object.keys(b.games).forEach(k => { const x = m.games[k], y = b.games[k], low = GAMES[k] && GAMES[k].low; m.games[k] = x === undefined ? y : low ? Math.min(x, y) : Math.max(x, y); });
