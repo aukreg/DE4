@@ -770,7 +770,7 @@ function listen(onres, onerr, lang){
 }
 
 /* ---------- metin karşılaştırma ---------- */
-const norm = s => s.toLowerCase().replace(/ß/g,"ss").replace(/[.,!?¿¡;:"“„”'’()–\-…\/]/g," ").replace(/\s+/g," ").trim();
+const norm = s => s.toLowerCase().replace(/ß/g,"ss").replace(/ä/g,"ae").replace(/ö/g,"oe").replace(/ü/g,"ue").replace(/[.,!?¿¡;:"“„”'’()–\-…\/]/g," ").replace(/\s+/g," ").trim();
 function similar(a, b){
   a = norm(a); b = norm(b);
   if (!a || !b) return 0;
@@ -906,13 +906,18 @@ function startSession(o){
   } else {
     items.forEach(it => q.push({m: can(o.mode, it) ? o.mode : "write", it}));
   }
-  P = {q, i:0, ok:0, total:0, res:{}, redo:new Set(), o};
+  P = {q, i:0, n0:q.length, ok:0, total:0, res:{}, redo:new Set(), redoN:{}, hint:new Set(), o};
   open(renderSession);
   onLeave = flushSession;
 }
 function flushSession(){
   if (!P) return;
-  Object.entries(P.res).forEach(([id, ok]) => BYID[id] && grade(BYID[id], ok));
+  Object.entries(P.res).forEach(([id, ok]) => {
+    if (!BYID[id]) return;
+    // ipucuyla doğru: kutu ilerlemez, yarın yine gelir
+    if (ok && P.hint.has(id)) { const r = S.prog[id] || (S.prog[id] = {b:0}); r.due = addDays(1); r.last = TODAY; r.n = (r.n || 0) + 1; const d = dayRec(); d.n = (d.n || 0) + 1; d.ok = (d.ok || 0) + 1; }
+    else grade(BYID[id], ok);
+  });
   P.res = {}; save();
 }
 function answer(it, ok){
@@ -921,8 +926,26 @@ function answer(it, ok){
   seen(it);
   P.res[it.id] = (P.res[it.id] === undefined ? true : P.res[it.id]) && ok;
   const cur = P.q[P.i];
-  // yanlışı oturumun sonuna bir kez daha ekle
-  if (!ok && !P.redo.has(it.id)) { P.redo.add(it.id); P.q.push({m: cur.m === "match" ? "quiz" : cur.m, it}); }
+  // yanlış kart kolaydan zora basamaklarla geri gelir: seç → sırala → boşluğu yaz → asıl soru
+  if (!ok) {
+    const first = !P.redo.has(it.id), n = P.redoN[it.id] = (P.redoN[it.id] || 0) + 1;
+    P.redo.add(it.id);
+    if (n > 4) return;
+    if (cur.st) { P.q.push(Object.assign({}, cur)); return; }
+    const steps = ladder(it, cur.m);
+    // oturum çok uzamasın: kuyruk ilk hâlinin iki katını geçince basamak yok, tek tekrar
+    if (steps.length > 1 && P.q.length + steps.length <= P.n0 * 2 + 4) P.q.push({m: steps[0], it, lad: steps.slice(1), st: 1, of: steps.length});
+    else if (first) P.q.push({m: cur.m === "match" ? "quiz" : cur.m, it});
+  } else if (cur.st && cur.lad.length && P.q.length < P.n0 * 2 + 8) {
+    P.q.splice(Math.min(P.q.length, P.i + 3), 0, {m: cur.lad[0], it, lad: cur.lad.slice(1), st: cur.st + 1, of: cur.of});
+  }
+}
+const LAD_RANK = {quiz:0, order:1, gapw:2};
+const ladRank = m => m in LAD_RANK ? LAD_RANK[m] : MODES[m].g === 2 ? 3 : 1.5;
+function ladder(it, m){
+  if (!MODES[m] || MODES[m].g === 0 || m === "match") return [];
+  const base = it.kind ? ["quiz"] : ["quiz", "order", "gapw"];
+  return base.filter(x => x !== m && can(x, it) && ladRank(x) < ladRank(m)).concat([m]);
 }
 function next(){ clearTimeout(P.autoT); P.lock = 0; P.i++; renderSession(); }
 function head(title){
@@ -958,8 +981,27 @@ function renderSession(){
   if (cur.it && !can(cur.m, cur.it)) cur.m = modeFor(cur.it);
   setTop(P.o.title || "Alıştırma", true);
   R_MODE[cur.m](cur.it || cur.its, cur);
+  if (cur.st) { const ph = $(".phase"); ph && ph.insertAdjacentHTML("beforeend", ` <span class="small" style="color:var(--acc);text-transform:none;letter-spacing:0">· tekrar ${cur.st}/${cur.of}</span>`); }
   quietBar(cur.m);
   askBar(cur.it);
+}
+// takılınca: önce baş harfler, sonra kelime kelime (ya da harf harf) açılır
+function addHint(it, target, byWord){
+  let k = 0;
+  const w = target.split(" ").filter(Boolean), mask = x => x.replace(/[A-Za-zÄÖÜäöüß]/g, "_");
+  $("#typed").insertAdjacentHTML("afterend", `<div style="display:flex;align-items:center;gap:10px;margin:8px 2px 0"><button class="btn2" id="hint" style="min-height:34px;padding:0 12px;font-size:13px;flex:none">💡 İpucu</button><span id="htx" style="color:var(--tx2);font-family:ui-monospace,Menlo,monospace;font-size:15px;letter-spacing:.5px;line-height:1.5"></span></div>`);
+  $("#hint").onclick = () => {
+    if (P.lock) return;
+    k++; P.hint.add(it.id);
+    $("#htx").textContent = byWord ? w.map((x, i) => i < k - 1 ? x : x[0] + mask(x.slice(1))).join(" ") : target.slice(0, k) + mask(target.slice(k));
+    if (byWord ? k > w.length : k >= target.length - 1) $("#hint").disabled = true;
+    $("#typed").focus({preventScroll:true});
+  };
+}
+// cevapla doğrusu arasındaki farklı kelimeleri işaretle
+function diffWords(said, target){
+  const have = norm(said).split(" ");
+  return target.split(" ").filter(Boolean).map(x => { const n = norm(x), j = have.indexOf(n); if (!n || j >= 0) { if (j >= 0) have.splice(j, 1); return esc(x); } return `<u style="color:var(--acc);font-weight:700">${esc(x)}</u>`; }).join(" ");
 }
 function renderSessionEnd(){
   flushSession(); onLeave = null;
@@ -1138,7 +1180,8 @@ function gapMode(it, cur, typing){
     <div class="foot" ${typing ? "" : "hidden"}>${typing ? `<div class="row2"><button class="btn2" id="sk">Bilmiyorum</button><button class="cta" id="ck">Kontrol et</button></div>` : ""}</div>`;
   const fin = (ok, said) => { answer(it, ok); $("#vd").innerHTML = verdict(ok, it, said); speak(plain(it)); footNext(); };
   if (typing) {
-    const chk = () => { if (P.lock) return; P.lock = 1; const v = $("#typed").value.trim(); fin(!!v && similar(v, c.w) >= (c.w.length > 6 ? 0.8 : 0.99), v); };
+    const chk = () => { if (P.lock) return; P.lock = 1; const v = $("#typed").value.trim(); fin(!!v && similar(v, c.w) >= (c.w.length > 6 ? 0.8 : c.w.length >= 4 ? 0.74 : 0.99), v); };
+    addHint(it, c.w, false);
     $("#ck").onclick = chk; $("#typed").onkeydown = e => { if (e.key === "Enter") chk(); };
     $("#sk").onclick = () => { if (P.lock) return; P.lock = 1; fin(false, ""); };
     setTimeout(() => $("#typed") && $("#typed").focus({preventScroll:true}), 50);
@@ -1160,37 +1203,72 @@ function typed(it, m, top, audio){
     if (P.lock) return; P.lock = 1;
     const sc = bestVariant(it, said), ok = sc >= (audio ? 0.8 : 0.72);
     answer(it, ok);
-    $("#vd").innerHTML = verdict(ok, it, said, ok && sc < 0.97 ? `<span class="muted small">Küçük fark var, doğrusuna bak.</span>` : "");
+    const dw = diffWords(said, plain(it)), df = said.trim() && sc < 0.97 && dw.includes("<u") && /(^|\s)[^<\s]/.test(dw.replace(/<u[^>]*>[^<]*<\/u>/g, "")) ? `<span class="small" style="display:block;margin-top:6px;color:var(--tx2)">${ok ? "Doğru sayıldı, şuna dikkat: " : "Farklı yerler: "}${dw}</span>` : "";
+    $("#vd").innerHTML = verdict(ok, it, said, df ? `<span class="muted small">${esc(it.tr)}</span>` + df : "");
     if (!audio || !ok) speak(it.de);
     footNext();
   };
+  addHint(it, plain(it), true);
   $("#ck").onclick = () => check($("#typed").value);
   $("#typed").onkeydown = e => { if (e.key === "Enter") check($("#typed").value); };
   $("#sk").onclick = () => check("");
   if (!audio) setTimeout(() => $("#typed") && $("#typed").focus({preventScroll:true}), 50);
 }
 
-/* ---------- hata kartları: yanlışı gör, doğrusunu hatırla ---------- */
+/* ---------- hata kartları: önce doğrusunu seç, sonra kelimelerle kur ---------- */
 function startMistakes(){
-  let i = 0; const L = shuffle(allMistakes()).slice(0, 15);
+  const L = shuffle(allMistakes()).slice(0, 15);
   if (!L.length) { toast("Henüz hata kartı yok"); return; }
+  const q = [];
+  L.forEach(m => q.push({m, k:"pick"}));
+  L.forEach(m => { const n = m.right.split(" ").filter(Boolean).length; if (n >= 2 && n <= 12 && norm(m.right) !== norm(m.wrong)) q.push({m, k:"build"}); });
+  let i = 0, lock = 0, okN = 0; const again = new Set();
+  const fin = (ok, cur) => { if (ok) okN++; else if (!again.has(cur.k + cur.m.right)) { again.add(cur.k + cur.m.right); q.push(cur); } };
   const r = () => {
-    setTop("Hatalarım", true);
-    const m = L[i];
-    if (!m) { mark("mist"); endCard("✅", "Hatalar tekrarlandı", L.length + " kart", "Tamam"); return; }
-    $("#view").innerHTML = `<div class="ptop"><div class="pbar"><i style="width:${i/L.length*100}%"></i></div><span class="small muted">${i+1}/${L.length}</span></div>
-      <div class="phase">🩹 Düzelt</div>
-      <div class="card flash"><div class="mid">Bunu nasıl düzeltirsin?</div><div class="big" style="color:var(--bad)">${esc(m.wrong)}</div>
-        <div id="ans" hidden><div class="big" style="color:var(--ok)">${esc(m.right)}</div><div class="ex">${esc(m.rule || "")}</div></div></div>
-      <input class="typed" id="typed" placeholder="Doğrusunu yaz (istersen)" autocomplete="off" autocapitalize="off" spellcheck="false" lang="de">
-      <div class="foot"><button class="cta" id="nx">Doğrusunu göster</button></div>`;
-    $("#nx").onclick = () => {
-      if ($("#ans").hidden) {
-        const v = $("#typed").value.trim();
-        $("#ans").hidden = false; speak(m.right); $("#nx").textContent = "Devam";
-        if (v) $("#typed").outerHTML = `<div class="verdict ${similar(v, m.right) >= .8 ? "good" : "bad"}">${similar(v, m.right) >= .8 ? "Doğru düzelttin!" : "Senin cevabın: " + esc(v)}</div>`;
-      } else { i++; r(); }
-    };
+    setTop("Hatalarım", true); lock = 0;
+    const cur = q[i];
+    if (!cur) { mark("mist"); endCard("✅", "Hatalar tekrarlandı", L.length + " hata · " + okN + " doğru cevap", "Tamam"); return; }
+    const m = cur.m, top = `<div class="ptop"><div class="pbar"><i style="width:${i/q.length*100}%"></i></div><span class="small muted">${i+1}/${q.length}</span></div>`;
+    const rule = m.rule ? `<span class="small" style="display:block;margin-top:6px;color:var(--tx2)">💡 ${esc(m.rule)}</span>` : "";
+    const foot = () => { $(".foot").innerHTML = `<button class="cta" id="nx">Devam</button>`; $(".foot").hidden = false; $("#nx").onclick = () => { i++; r(); }; };
+    if (cur.k === "pick") {
+      const opts = shuffle([m.right, m.wrong]);
+      $("#view").innerHTML = top + `<div class="phase">🩹 Hangisi doğru?</div>
+        <div class="opts">${opts.map((o, j) => `<button class="opt" data-j="${j}">${esc(o)}</button>`).join("")}</div>
+        <div id="vd"></div><div class="foot" hidden></div>`;
+      $$(".opt").forEach(b => b.onclick = () => {
+        if (lock) return; lock = 1;
+        const ok = opts[+b.dataset.j] === m.right;
+        $$(".opt").forEach(x => x.classList.add(opts[+x.dataset.j] === m.right ? "good" : "bad"));
+        fin(ok, cur); speak(m.right);
+        $("#vd").innerHTML = `<div class="verdict ${ok ? "good" : "bad"}">${ok ? "Doğru!" : "Doğrusu:"}<b>${esc(m.right)}</b>${rule}</div>`;
+        foot();
+      });
+    } else {
+      const w = m.right.split(" ").filter(Boolean), pool = shuffle(w.map((x, k) => ({x, k}))), built = [];
+      if (pool.every((p, k) => p.k === k) && w.length > 1) pool.reverse();
+      $("#view").innerHTML = top + `<div class="phase">🧱 Doğrusunu kur</div>
+        <div class="card flash" style="min-height:90px"><div class="mid">Senin yazdığın</div><div class="big" style="font-size:19px;color:var(--bad);text-decoration:line-through;text-decoration-thickness:1px">${esc(m.wrong)}</div></div>
+        <div class="built" id="built"></div>
+        <div class="pool" id="pool">${pool.map((p, k) => `<button class="wd" data-k="${k}">${esc(p.x)}</button>`).join("")}</div>
+        <div id="vd"></div>
+        <div class="foot"><div class="row2"><button class="btn2" id="clr">Temizle</button><button class="cta" id="ck" disabled>Kontrol et</button></div></div>`;
+      const draw = () => {
+        $("#built").innerHTML = built.map((k, j) => `<button class="wd" data-j="${j}">${esc(pool[k].x)}</button>`).join("");
+        $$("#pool .wd").forEach(b => b.classList.toggle("used", built.includes(+b.dataset.k)));
+        $$("#built .wd").forEach(b => b.onclick = () => { if (lock) return; built.splice(+b.dataset.j, 1); draw(); });
+        $("#ck").disabled = built.length !== w.length;
+      };
+      $$("#pool .wd").forEach(b => b.onclick = () => { if (lock || built.includes(+b.dataset.k)) return; built.push(+b.dataset.k); draw(); });
+      $("#clr").onclick = () => { if (lock) return; built.length = 0; draw(); };
+      $("#ck").onclick = () => {
+        if (lock) return; lock = 1;
+        const ok = norm(built.map(k => pool[k].x).join(" ")) === norm(m.right);
+        fin(ok, cur); speak(m.right);
+        $("#vd").innerHTML = `<div class="verdict ${ok ? "good" : "bad"}">${ok ? "Harika!" : "Doğrusu:"}<b>${esc(m.right)}</b>${rule}</div>`;
+        foot();
+      };
+    }
   };
   open(r);
 }
