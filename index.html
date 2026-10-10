@@ -928,22 +928,24 @@ function next(){ clearTimeout(P.autoT); P.lock = 0; P.i++; renderSession(); }
 function head(title){
   return `<div class="ptop"><div class="pbar"><i style="width:${P.i/P.q.length*100}%"></i></div><span class="small muted">${P.i+1}/${P.q.length}</span></div><div class="phase">${MODES[title] ? MODES[title].ic + " " + MODES[title].t : title}</div>`;
 }
+const AUTO_WAIT = 1.5;
+const autoLeft = () => Math.max(0, Math.ceil(((S.opt.autoUntil || 0) - Date.now()) / 60000));
 function footNext(){
-  const a = S.opt.auto || 0, go = a && P.okI === P.i && P.badI !== P.i;
-  $(".foot").innerHTML = `<div style="display:flex;gap:8px;align-items:stretch"><button class="cta" id="nx" style="flex:1;position:relative;overflow:hidden">${go ? `<i class="autobar" style="animation-duration:${a}s"></i>` : ""}<span style="position:relative">Devam</span></button><button class="btn2" id="atm" aria-label="Otomatik geçiş" style="width:58px;padding:0;font-size:14px">⏱${a ? `<small style="display:block;font-size:11px;color:var(--acc)">${a} sn</small>` : ""}</button></div>`;
+  const m = autoLeft(), go = m && P.okI === P.i && P.badI !== P.i;
+  $(".foot").innerHTML = `<div style="display:flex;gap:8px;align-items:stretch"><button class="cta" id="nx" style="flex:1;position:relative;overflow:hidden">${go ? `<i class="autobar" style="animation-duration:${AUTO_WAIT}s"></i>` : ""}<span style="position:relative">Devam</span></button><button class="btn2" id="atm" aria-label="Otomatik geçiş" style="width:58px;padding:0;font-size:14px">⏱${m ? `<small style="display:block;font-size:11px;color:var(--acc)">${m} dk</small>` : ""}</button></div>`;
   $(".foot").hidden = false; $("#nx").onclick = next; $("#nx").focus({preventScroll:true});
   const i = P.i;
-  if (go) P.autoT = setTimeout(() => { if (P && P.i === i && screen === renderSession) next(); }, a * 1000);
+  if (go) P.autoT = setTimeout(() => { if (P && P.i === i && screen === renderSession) next(); }, AUTO_WAIT * 1000);
   $("#atm").onclick = () => { clearTimeout(P.autoT); autoPick(); };
 }
-// doğru cevaptan sonra kendiliğinden geç: kaç saniye beklensin
+// seçilen dakika boyunca doğru cevaplarda Devam'a basmadan geç
 function autoPick(){
-  const opts = [[0, "Kapalı"], [1, "1 saniye"], [2, "2 saniye"], [3, "3 saniye"], [5, "5 saniye"]];
+  const m = autoLeft(), opts = [[0, m ? "Kapat" : "Kapalı"], [5, "5 dakika"], [15, "15 dakika"], [30, "30 dakika"], [45, "45 dakika"]];
   $("#sheetIn").innerHTML = `<h2>⏱ Otomatik geçiş</h2>
-    <p class="small muted" style="margin:4px 2px 12px">Doğru cevapladığında Devam'a basmana gerek kalmaz; seçtiğin süre sonra sıradaki soruya geçer. Yanlışta durur, doğrusunu okuyabilirsin.</p>
-    ${opts.map(([v, t]) => `<button class="${(S.opt.auto || 0) === v ? "cta" : "btn2"}" data-v="${v}" style="width:100%;margin-top:8px">${t}</button>`).join("")}`;
+    <p class="small muted" style="margin:4px 2px 12px">Seçtiğin süre boyunca doğru cevaplarda Devam'a basmana gerek kalmaz, kısa bir an sonra sıradaki soruya geçer. Yanlışta durur, doğrusunu okuyabilirsin.${m ? ` <b style="color:var(--acc)">Şu an açık, ${m} dk kaldı.</b>` : ""}</p>
+    ${opts.map(([v, t]) => `<button class="${!v && !m ? "cta" : "btn2"}" data-v="${v}" style="width:100%;margin-top:8px">${t}</button>`).join("")}`;
   $("#sheet").classList.add("show");
-  $$("#sheetIn [data-v]").forEach(b => b.onclick = () => { S.opt.auto = +b.dataset.v; save(); $("#sheet").classList.remove("show"); toast(S.opt.auto ? "Doğru cevapta " + S.opt.auto + " sn sonra geçer" : "Otomatik geçiş kapalı"); if (P && screen === renderSession && $("#nx")) footNext(); });
+  $$("#sheetIn [data-v]").forEach(b => b.onclick = () => { const v = +b.dataset.v; S.opt.autoUntil = v ? Date.now() + v * 60000 : 0; delete S.opt.auto; save(); $("#sheet").classList.remove("show"); toast(v ? v + " dakika boyunca doğru cevapta kendiliğinden geçer" : "Otomatik geçiş kapalı"); if (P && screen === renderSession && $("#nx")) footNext(); });
 }
 function verdict(ok, it, said, extra){
   return `<div class="verdict ${ok ? "good" : "bad"}">${ok ? pick(["Doğru!","Harika!","Süper!","Aynen!"]) : (said ? "Tam olmadı." : "Doğrusu:")}${said ? ` <span class="muted">(“${esc(said)}”)</span>` : ""}<b>${esc(it.de)}</b>${extra || `<span class="muted small">${esc(it.tr)}</span>`}${it.note ? `<span class="small" style="display:block;margin-top:6px;color:var(--tx2)">💡 ${esc(it.note)}</span>` : ""}</div>`;
