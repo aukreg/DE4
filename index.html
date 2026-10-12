@@ -983,6 +983,15 @@ body.game #view > .talk ~ .pool{margin-bottom:auto}
 .built.lined .wd,body.game .built.lined .wd{height:46px;min-height:46px;margin:0;padding:0 13px;display:inline-flex;align-items:center}
 body.game .pool .wd{height:46px;display:inline-flex;align-items:center}
 .pool{margin-top:18px}
+/* alt düğmeler ve klavye ekranın altına otursun */
+body.game.sess #view{min-height:100dvh;padding-bottom:0}
+body.game.sess #view > .foot,body.game.sess .rfoot{padding-bottom:calc(12px + env(safe-area-inset-bottom,0px))}
+body.game.sess #view > .tfbtn:last-child,body.game.sess #view > .opts:last-child,body.game.sess #view > .opts2:last-child{margin-bottom:calc(12px + env(safe-area-inset-bottom,0px))}
+body.game #view > .swz{margin-top:auto}
+body.game #view > .swbtn{margin-top:auto;margin-bottom:calc(16px + env(safe-area-inset-bottom,0px))}
+body.game.sess .res{min-height:0;flex:1}
+body.game #view > .drop{flex:1 1 auto;height:auto;min-height:380px}
+body.game #view > .drop + .hint{margin:8px 0 0}
 </style>
 </head>
 <body>
