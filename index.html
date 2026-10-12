@@ -831,6 +831,12 @@ svg.bat{display:block;flex:none}
 .badges.cmp .bdg i{width:52px!important;height:52px!important}
 .bdg:active i{transform:scale(.92)}
 @media (prefers-reduced-motion:reduce){.pnode.now .pdot,.pnode.now .pdot svg.il,.heat i,.bdg i,.bdg i::after,.pchk{animation:none!important}}
+/* oyunlarda üst üste binen kutular cam değil, dolu olsun */
+.dbreak{background:var(--solid)!important;border-radius:inherit}
+.dw{background:var(--solid)!important;box-shadow:0 8px 20px -8px rgb(0 0 0/.45)}
+.dw.ok{background:color-mix(in srgb,var(--ok) 22%,var(--solid))!important}
+.dw.no{background:color-mix(in srgb,var(--bad) 22%,var(--solid))!important}
+body.full .top h1{font-size:19px}
 </style>
 </head>
 <body>
