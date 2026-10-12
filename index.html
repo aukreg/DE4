@@ -567,9 +567,9 @@ body.rs-open .opt:not(.good):not(.bad){opacity:.5}
 
 /* geçişler */
 @media (prefers-reduced-motion: no-preference){
-  #view > *:not(.rsheet):not(.drop):not(.hud){animation:vin .28s cubic-bezier(.2,.8,.3,1) both}
-  body.sess #view > *:not(.rsheet){animation-name:qin}
-  #view > *:nth-child(2){animation-delay:.03s} #view > *:nth-child(3){animation-delay:.06s} #view > *:nth-child(4){animation-delay:.09s} #view > *:nth-child(5){animation-delay:.12s}
+  #view.enter > *:not(.rsheet):not(.drop):not(.hud){animation:vin .28s cubic-bezier(.2,.8,.3,1) both}
+  body.sess #view.enter > *:not(.rsheet){animation-name:qin}
+  #view.enter > *:nth-child(2){animation-delay:.03s} #view.enter > *:nth-child(3){animation-delay:.06s} #view.enter > *:nth-child(4){animation-delay:.09s} #view.enter > *:nth-child(5){animation-delay:.12s}
 }
 @keyframes vin{from{opacity:0;transform:translateY(8px)}}
 @keyframes qin{from{opacity:0;transform:translateX(26px)}}
@@ -1850,13 +1850,15 @@ const ICON_MIC = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" str
 
 const TABS = {};
 function leave(){ stopSpeak(); if (onLeave) { const f = onLeave; onLeave = null; f(); } }
+// giriş animasyonu yalnızca yeni ekran açılınca oynar; ekran içi yeniden çizimler (seçim, dokunma) titremesin
+function viewEnter(){ const v = $("#view"); v.classList.remove("enter"); void v.offsetWidth; v.classList.add("enter"); clearTimeout(viewEnter.t); viewEnter.t = setTimeout(() => v.classList.remove("enter"), 500); }
 function go(t){
   leave(); screen = null; tab = t; document.body.classList.remove("game", "sess", "rs-open"); $("#view").classList.remove("kbv");
   $$(".nav button").forEach(b => b.classList.toggle("on", b.dataset.tab === t));
-  TABS[t]();
+  viewEnter(); TABS[t]();
   window.scrollTo(0, 0);
 }
-function open(fn){ leave(); screen = fn; document.body.classList.remove("sess", "rs-open"); fn(); window.scrollTo(0, 0); }
+function open(fn){ leave(); screen = fn; document.body.classList.remove("sess", "rs-open"); viewEnter(); fn(); window.scrollTo(0, 0); }
 $("#back").onclick = () => go(tab);
 $$(".nav button").forEach(b => b.onclick = () => go(b.dataset.tab));
 // bir oturumu bitirdikten sonra: o sekmeye dön
@@ -2551,6 +2553,7 @@ function renderSession(){
   if (cur.it && !can(cur.m, cur.it)) cur.m = modeFor(cur.it);
   setTop(P.o.title || "Alıştırma", true);
   document.body.classList.add("game", "sess"); document.body.classList.remove("rs-open"); $("#view").classList.remove("kbv");
+  if (P.shown !== P.i) { P.shown = P.i; viewEnter(); }
   R_MODE[cur.m](cur.it || cur.its, cur);
   const px = $("#px"); if (px) px.onclick = () => go(tab);
   if (cur.st) { const ph = $(".phase"); ph && ph.insertAdjacentHTML("beforeend", ` <span class="small" style="color:var(--acc);text-transform:none;letter-spacing:0">· tekrar ${cur.st}/${cur.of}</span>`); }
