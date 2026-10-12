@@ -307,6 +307,36 @@ textarea.imp{width:100%;min-height:90px;border-radius:12px;border:1.5px solid va
 .dbreak .ex{font-size:15px;font-style:italic;border-top:1px solid var(--line);padding-top:12px}
 .dw.pop{animation:dpop .26s ease-out forwards}
 @keyframes dpop{to{scale:1.6;opacity:0}}
+/* oyun ekranı: içerik ortada, seçenekler başparmağın altında */
+body.game #view{display:flex;flex-direction:column;min-height:calc(100dvh - 58px - env(safe-area-inset-top,0px));padding-bottom:calc(14px + env(safe-area-inset-bottom,0px))}
+body.game #view > .flash{margin-top:auto;margin-bottom:auto}
+body.game #view > .flash ~ .flash{margin-top:14px}
+body.game .gpush{margin-top:auto}
+body.game #view > .hud{margin:10px 2px 12px}
+body.game .opt{min-height:62px!important;font-size:16.5px}
+body.game .opts,body.game .opts2,body.game .tfbtn{margin-top:16px}
+body.game .tfbtn button{min-height:72px}
+body.game button{touch-action:manipulation;-webkit-user-select:none;user-select:none}
+body.game .foot{margin-top:12px}
+body.game #view > .hint:last-child{margin-bottom:4px}
+/* eşleştirme ızgarası */
+.ggrid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+.gt{aspect-ratio:1/1.05;border-radius:16px;padding:6px;display:grid;place-items:center;background:var(--bg2);border:1.5px solid var(--line);color:var(--tx2);font-weight:600;font-size:13.5px;line-height:1.2;box-shadow:var(--sh);transition:transform .12s,background .15s,opacity .25s}
+.gt span{overflow-wrap:anywhere;hyphens:auto}
+.gt.de{background:var(--blue-d);border-color:color-mix(in srgb,var(--blue) 35%,transparent);color:var(--tx);font-size:14.5px}
+.gt:active{transform:scale(.95)}
+.gt.sel{background:var(--acc-d);border-color:var(--acc);color:var(--tx);transform:scale(1.04)}
+.gt.hit{background:var(--ok-d);border-color:var(--ok);color:var(--ok);animation:gthit .28s ease-out forwards}
+@keyframes gthit{to{transform:scale(.6);opacity:0}}
+.gt.bad{background:var(--bad-d);border-color:var(--bad);animation:gtshake .35s}
+@keyframes gtshake{25%{transform:translateX(-5px)}75%{transform:translateX(5px)}}
+.gt.gone{visibility:hidden}
+.glg{display:inline-block;width:10px;height:10px;border-radius:3px;background:var(--bg2);border:1.5px solid var(--line);vertical-align:-1px}
+.glg.de{background:var(--blue-d);border-color:var(--blue)}
+body.game .toast{bottom:auto;top:calc(66px + env(safe-area-inset-top,0px));transform:translateX(-50%) translateY(-12px)}
+body.game .toast.show{transform:translateX(-50%)}
+body.game .wd{min-height:46px}
+body.game .pool{gap:7px}
 </style>
 </head>
 <body>
@@ -850,7 +880,7 @@ const ICON_MIC = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" str
 const TABS = {};
 function leave(){ stopSpeak(); if (onLeave) { const f = onLeave; onLeave = null; f(); } }
 function go(t){
-  leave(); screen = null; tab = t;
+  leave(); screen = null; tab = t; document.body.classList.remove("game");
   $$(".nav button").forEach(b => b.classList.toggle("on", b.dataset.tab === t));
   TABS[t]();
   window.scrollTo(0, 0);
@@ -1795,7 +1825,7 @@ function gMemory(){
   G = {open:[], done:0, moves:0};
   open(() => setTop("Hafıza", true));
   $("#view").innerHTML = `<div class="hud"><span class="small muted">Eşleşen: <b id="gd" style="font-size:16px">0</b>/6</span><span class="small muted">Hamle: <b id="gm" style="font-size:16px">0</b></span></div>
-    <div class="mgrid" style="grid-template-columns:repeat(3,1fr)">${cards.map((c, i) => `<button class="mc back" data-i="${i}" style="min-height:84px;font-size:13px">${esc(c.t)}</button>`).join("")}</div>`;
+    <div class="mgrid gpush" style="grid-template-columns:repeat(3,1fr)">${cards.map((c, i) => `<button class="mc back" data-i="${i}" style="min-height:84px;font-size:13px">${esc(c.t)}</button>`).join("")}</div>`;
   $$(".mc").forEach(b => b.onclick = () => {
     const c = cards[+b.dataset.i];
     if (!b.classList.contains("back") || G.open.length >= 2) return;
@@ -1963,7 +1993,7 @@ function gHunt(){
   const draw = () => {
     const hit = new Set(placed.filter(p => G.found.has(p.it.id)).flatMap(p => p.cells.map(([y, x]) => y + "," + x)));
     $("#view").innerHTML = `<div class="hud"><span class="small muted">Bulunan: <b style="font-size:16px">${G.found.size}/${placed.length}</b></span><span class="small muted">İlk ve son harfe dokun</span></div>
-      <div style="display:grid;grid-template-columns:repeat(${N},1fr);gap:4px">${grid.map((row, y) => row.map((ch, x) => `<button class="mc" data-y="${y}" data-x="${x}" style="min-height:40px;padding:0;font-size:17px;${hit.has(y + "," + x) ? "background:var(--ok-d);border-color:var(--ok)" : ""}${G.sel && G.sel[0] === y && G.sel[1] === x ? "border-color:var(--acc);background:var(--acc-d)" : ""}">${ch}</button>`).join("")).join("")}</div>
+      <div class="gpush" style="display:grid;grid-template-columns:repeat(${N},1fr);gap:4px">${grid.map((row, y) => row.map((ch, x) => `<button class="mc" data-y="${y}" data-x="${x}" style="min-height:40px;padding:0;font-size:17px;${hit.has(y + "," + x) ? "background:var(--ok-d);border-color:var(--ok)" : ""}${G.sel && G.sel[0] === y && G.sel[1] === x ? "border-color:var(--acc);background:var(--acc-d)" : ""}">${ch}</button>`).join("")).join("")}</div>
       <div class="sec">Bul</div>
       <div class="chips">${placed.map(p => `<span class="chip ${G.found.has(p.it.id) ? "on" : ""}" style="display:inline-flex;align-items:center">${G.found.has(p.it.id) ? esc(p.it.de) : esc(p.it.tr)}</span>`).join("")}</div>`;
     $$(".mc").forEach(b => b.onclick = () => {
@@ -2302,8 +2332,9 @@ function quiz(id, title, pool, make, o){
     const it = pool[G.i % pool.length], q = make(it), short = q.opts.every(x => x.length <= 16);
     $("#view").innerHTML = `<div class="hud"><b>${G.sc}</b><span class="small muted">${o.n ? (G.i + 1) + "/" + o.n : ""}</span><span>${max ? hearts(G.life, max) : ""}</span></div>
       <div class="card flash" style="min-height:140px">${q.top}</div>
+      <div id="vd"></div>
       <div class="${short ? "opts2" : "opts"}" ${short && q.opts.length === 3 ? 'style="grid-template-columns:repeat(3,1fr)"' : ""}>${q.opts.map((x, i) => `<button class="opt" data-i="${i}" style="min-height:58px">${esc(x)}</button>`).join("")}</div>
-      <div id="vd"></div>`;
+      <div id="vdn"></div>`;
     let lock = 0;
     const answer = i => {
       if (lock++) return;
@@ -2313,7 +2344,8 @@ function quiz(id, title, pool, make, o){
       if (q.say !== "") speak(q.say || q.right);
       G.i++;
       if (!ok || q.note) {
-        $("#vd").innerHTML = `<div class="tip">${q.note || ""}${!ok && q.full ? `<div style="margin-top:4px"><b>${esc(q.full)}</b></div>` : ""}</div>${ok ? "" : '<div class="foot"><button class="cta" id="gn">Devam</button></div>'}`;
+        if (q.note || q.full) $("#vd").innerHTML = `<div class="tip" style="margin-top:0">${q.note || ""}${!ok && q.full ? `<div style="margin-top:4px"><b>${esc(q.full)}</b></div>` : ""}</div>`;
+        if (!ok) $("#vdn").innerHTML = '<button class="cta" id="gn" style="margin-top:12px">Devam</button>';
         if (ok) later(draw, 1700); else $("#gn").onclick = draw;
       } else later(draw, 650);
     };
@@ -2486,7 +2518,7 @@ function gCafe(){
         <div style="font-size:18px;font-weight:600;margin-top:6px">${esc(o.txt)}</div>
         <div class="pbar" style="margin-top:10px"><i id="cpat" style="width:100%"></i></div></div>
       <div class="chips" id="ctr" style="margin:12px 0;min-height:38px"></div>
-      <div class="mgrid" style="grid-template-columns:repeat(3,1fr);margin-top:0">${CAFE_MENU.map(m => `<button class="mc" data-n="${m.n}" style="min-height:70px"><div style="font-size:22px">${m.e}</div>${esc(m.n)}<div class="small muted">${priceNum(m.p)}</div></button>`).join("")}</div>
+      <div class="mgrid gpush" style="grid-template-columns:repeat(3,1fr)">${CAFE_MENU.map(m => `<button class="mc" data-n="${m.n}" style="min-height:70px"><div style="font-size:22px">${m.e}</div>${esc(m.n)}<div class="small muted">${priceNum(m.p)}</div></button>`).join("")}</div>
       <div class="foot"><button class="cta" id="cserve">Servieren</button></div>`;
     const redraw = () => { $("#ctr").innerHTML = trayHtml(); $$("#ctr .chip").forEach(c => c.onclick = () => { tray[c.dataset.n]--; redraw(); }); };
     redraw(); speak(o.txt);
@@ -2539,8 +2571,8 @@ function gPerf(){
       $("#view").innerHTML = `<div class="hud"><b>${G.sc}</b><span class="small muted">${G.combo >= 3 ? "🔥 " + G.combo + " seri" : ""}</span><span class="t" id="gt">${G.left}</span></div>
         <div class="card flash" style="min-height:170px"><div class="mid">${esc(v.w)} · ${esc(v.tr)}</div><div class="big" style="font-size:23px">${esc(pres)}</div>
           <div class="big" style="font-size:21px;color:var(--acc)">${esc(PRON[p])} ${step ? esc(aux) : "___"} … ___.</div></div>
-        <div class="opts2" ${opts.length === 3 ? 'style="grid-template-columns:repeat(3,1fr)"' : ""}>${opts.map(o => `<button class="opt" style="min-height:60px">${esc(o)}</button>`).join("")}</div>
-        <p class="hint">${step ? "Partizip II hangisi?" : "Yardımcı fiil: haben mi sein mi?"}</p><div id="vd"></div>`;
+        <div id="vd"></div><p class="hint">${step ? "Partizip II hangisi?" : "Yardımcı fiil: haben mi sein mi?"}</p>
+        <div class="opts2" ${opts.length === 3 ? 'style="grid-template-columns:repeat(3,1fr)"' : ""}>${opts.map(o => `<button class="opt" style="min-height:60px">${esc(o)}</button>`).join("")}</div>`;
       let lock = 0;
       $$(".opt").forEach(b => b.onclick = () => {
         if (lock++) return;
@@ -2726,8 +2758,8 @@ function gWordle(daily){
     const cell = (c, s) => `<div style="width:52px;height:52px;display:grid;place-items:center;border-radius:10px;font-weight:700;font-size:22px;${s ? `background:${COL[s]};color:${s === "x" ? "var(--tx)" : "#fff"}` : "border:2px solid var(--line)"}">${c || ""}</div>`;
     const grid = Array.from({length:6}, (_, r) => `<div style="display:flex;gap:6px;justify-content:center">${rows[r] ? rows[r].g.split("").map((c, i) => cell(c, rows[r].s[i])).join("") : Array.from({length:5}, (_, i) => cell(r === rows.length ? cur[i] : "")).join("")}</div>`).join("");
     $("#view").innerHTML = `<div class="hud"><span class="small muted">${esc(it.tr)}${it.art ? " · " + it.art : ""}?</span><span class="small muted">${rows.length}/6</span></div>
-      <div style="display:flex;flex-direction:column;gap:6px;margin:8px 0 14px">${grid}</div>
-      <div id="wmsg"></div>
+      <div style="display:flex;flex-direction:column;gap:6px;margin:auto 0">${grid}</div>
+      <div id="wmsg" style="margin-bottom:10px"></div>
       ${KEYS.map((r, ri) => `<div style="display:flex;gap:4px;justify-content:center;margin-top:5px">${ri === 2 ? '<button class="wd" data-k="ENTER" style="padding:10px 8px;font-size:13px">OK</button>' : ""}${r.split("").map(k => `<button class="wd" data-k="${k}" style="flex:1;max-width:34px;padding:10px 0;font-size:15px;${keyState[k] ? `background:${COL[keyState[k]]};color:${keyState[k] === "x" ? "var(--tx3)" : "#fff"}` : ""}">${k}</button>`).join("")}${ri === 2 ? '<button class="wd" data-k="DEL" style="padding:10px 8px;font-size:13px">⌫</button>' : ""}</div>`).join("")}`;
     $$(".wd[data-k]").forEach(b => b.onclick = () => key(b.dataset.k));
     if (over) {
@@ -2763,15 +2795,20 @@ function gGrid(){
     draw();
   };
   const draw = () => {
-    $("#view").innerHTML = `<div class="hud"><b>${G.sc}</b><span class="small muted">çift</span><span class="t" id="gt">${G.left}</span></div>
-      <div class="mgrid" style="grid-template-columns:repeat(4,1fr);gap:6px">${G.cells.map((c, i) => `<button class="mc ${c.gone ? "done" : ""} ${G.sel === i ? "sel" : ""}" data-i="${i}" style="min-height:74px;font-size:13px;padding:6px;${c.de ? "" : "color:var(--tx2)"}">${esc(c.t)}</button>`).join("")}</div>`;
-    $$(".mc").forEach(b => b.onclick = () => {
+    $("#view").innerHTML = `<div class="hud"><span><b>${G.sc}</b> <span class="small muted">çift</span></span><span class="small muted">${8 - G.done} kaldı</span><span class="t" id="gt">${G.left}</span></div>
+      <p class="hint gpush" style="margin-bottom:10px"><span class="glg de"></span> Almanca &nbsp; <span class="glg"></span> Türkçe · ikisine dokun</p>
+      <div class="ggrid">${G.cells.map((c, i) => `<button class="gt ${c.de ? "de" : ""} ${c.gone ? "gone" : ""} ${G.sel === i ? "sel" : ""}" data-i="${i}"><span>${esc(c.t)}</span></button>`).join("")}</div>`;
+    $$(".ggrid .gt").forEach(b => b.onclick = () => {
       const i = +b.dataset.i, c = G.cells[i];
       if (c.gone || G.lock) return;
       if (G.sel === null || G.sel === i) { G.sel = G.sel === i ? null : i; if (c.de) speak(BYID[c.id].de); return draw(); }
       const a = G.cells[G.sel];
-      if (a.id === c.id && a.de !== c.de) { a.gone = c.gone = 1; G.sel = null; G.sc++; G.done++; if (G.done === 8) { later(board, 300); } return draw(); }
-      b.classList.add("bad"); $$(".mc")[G.sel].classList.add("bad"); G.lock = 1; G.sel = null;
+      if (a.id === c.id && a.de !== c.de) {
+        const pb = $$(".ggrid .gt")[G.sel]; b.classList.add("hit"); pb.classList.add("hit"); G.lock = 1;
+        a.gone = c.gone = 1; G.sel = null; G.sc++; G.done++;
+        return later(() => { G.lock = 0; G.done === 8 ? board() : draw(); }, 280);
+      }
+      b.classList.add("bad"); $$(".ggrid .gt")[G.sel].classList.add("bad"); G.lock = 1; G.sel = null;
       later(() => { G.lock = 0; draw(); }, 450);
     });
   };
@@ -2955,7 +2992,7 @@ function gMatch(){
     const L = shuffle(its), R = shuffle(its), gone = new Set(); let sel = null;
     const draw = () => {
       $("#view").innerHTML = `<div class="hud"><span class="small muted">Tur ${G.r + 1}/4</span><span class="small muted">${G.pen ? "+" + G.pen + " sn ceza" : ""}</span></div>
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px">
+        <div class="gpush" style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
           <div style="display:flex;flex-direction:column;gap:8px">${L.map(w => `<button class="mc ${gone.has(w.id) ? "done" : ""} ${sel === w.id ? "sel" : ""}" data-l="${w.id}" style="min-height:62px">${esc(w.de)}</button>`).join("")}</div>
           <div style="display:flex;flex-direction:column;gap:8px">${R.map(w => `<button class="mc ${gone.has(w.id) ? "done" : ""}" data-r="${w.id}" style="min-height:62px;color:var(--tx2)">${esc(w.tr)}</button>`).join("")}</div></div>`;
       $$("[data-l]").forEach(b => b.onclick = () => { sel = b.dataset.l; speak(BYID[sel].de); draw(); });
@@ -3026,6 +3063,15 @@ function gArtGuess(){
     return {top:`<div class="big">${esc(it.w)}</div><div class="mid">${esc(it.tr)}</div>`, opts:["der", "die", "das"], right: it.art, say: it.de, note: r ? "📏 " + esc(r) : "", full: it.de};
   }, {lives:3});
 }
+
+/* ---------- ortak: oyun düzeni ve titreşim ---------- */
+// her oyun açılınca body.game: içerik ortada, seçenekler altta (style.css)
+Object.values(GAMES).forEach(g => { const r = g.run; g.run = () => { document.body.classList.add("game"); r(); }; });
+// yanlış cevapta kısa titreşim (Android)
+new MutationObserver(ms => {
+  if (!document.body.classList.contains("game") || !navigator.vibrate) return;
+  if (ms.some(m => m.target.classList && m.target.classList.contains("bad") && !(m.oldValue || "").includes("bad"))) try { navigator.vibrate(40); } catch(e) {}
+}).observe(document.getElementById("view"), {subtree:true, attributes:true, attributeFilter:["class"], attributeOldValue:true});
 
 /* ================= YAZ ================= */
 const ERR = {
