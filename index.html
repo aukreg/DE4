@@ -1017,6 +1017,25 @@ svg.bat .bflag{transform-box:fill-box;transform-origin:0 50%;animation:bwave 1.4
 .pbat.hop{animation:bhop2 .55s cubic-bezier(.3,1.6,.5,1)}
 @keyframes bhop2{35%{transform:translate(-50%,-110%) rotate(-8deg)}100%{transform:translate(-50%,-58%)}}
 @media (prefers-reduced-motion:reduce){svg.bat .bwl,svg.bat .bwr,svg.bat .beye,svg.bat .bflag,.hop,.pbat.hop,.tbat svg.bat{animation:none!important}}
+/* Gedsche soru kartında */
+body.game #view > .flash{position:relative;overflow:visible}
+.host{position:absolute;right:12px;top:-34px;width:54px;height:54px;z-index:2;pointer-events:none;filter:drop-shadow(0 4px 8px rgb(40 20 90/.28))}
+body.game:not(.sess) .host{top:-24px;width:46px;height:46px}
+.host svg.bat{width:100%;height:100%}
+.host.hop{animation:bhop .55s cubic-bezier(.3,1.6,.5,1)}
+.hsay{position:absolute;right:58px;top:6px;white-space:nowrap;font:800 13px var(--disp);font-style:normal;padding:5px 10px;border-radius:12px 12px 4px 12px;background:var(--solid);border:1px solid var(--glass-b);box-shadow:0 4px 12px rgb(0 0 0/.12);opacity:0;transform:translateX(6px) scale(.9)}
+.hsay.ok{color:var(--ok)}.hsay.no{color:var(--bad)}
+.host.talking .hsay{animation:hsay 1.6s ease forwards}
+@keyframes hsay{0%{opacity:0;transform:translateX(6px) scale(.9)}12%,75%{opacity:1;transform:none}100%{opacity:0;transform:translateY(-4px)}}
+/* etkinlik sonu: Gedsche uçarak gelir, zıplayıp dans eder */
+.res .finbat.dance{animation:ffly .8s cubic-bezier(.3,1.45,.5,1) both}
+.res .finbat.dance svg.bat{animation:fjump .62s .85s ease-in-out 3;transform-origin:50% 100%}
+.res .finbat.dance svg.bat .bwl,.res .finbat.dance svg.bat .bwr{animation-duration:.45s}
+@keyframes ffly{0%{opacity:0;transform:translate(-90px,140px) rotate(-25deg) scale(.5)}60%{opacity:1;transform:translate(8px,-14px) rotate(8deg) scale(1.05)}100%{transform:none}}
+@keyframes fjump{0%,100%{transform:translateY(0) scale(1,1)}20%{transform:translateY(0) scale(1.08,.9)}50%{transform:translateY(-22px) scale(.95,1.06) rotate(-5deg)}80%{transform:translateY(0) scale(1.06,.94)}}
+.fsay{position:absolute;left:-6px;top:4px;transform:translateX(-100%);white-space:nowrap;font:800 15px var(--disp);padding:7px 13px;border-radius:16px 16px 4px 16px;background:var(--solid);border:1px solid var(--glass-b);box-shadow:0 6px 16px rgb(0 0 0/.14);color:var(--tx);animation:fsay .5s .7s cubic-bezier(.3,1.5,.5,1) both;z-index:2}
+@keyframes fsay{from{opacity:0;transform:translateX(-100%) translateY(8px) scale(.8)}}
+@media (prefers-reduced-motion:reduce){.host.hop,.host.talking .hsay,.res .finbat.dance,.res .finbat.dance svg.bat,.fsay{animation:none!important}.host.talking .hsay{opacity:1}}
 </style>
 </head>
 <body>
@@ -2206,7 +2225,7 @@ function resultScreen(o){
   $("#view").innerHTML = `
     <div class="res">${conf ? `<div class="confetti" aria-hidden="true">${conf}</div>` : ""}
       <div class="rhero">
-        <div class="rtop"><div class="finbat">${bat(mood, 118, o.cos !== undefined ? o.cos : (mood === "cheer" ? "party" : mood === "think" ? "glasses" : ""))}<span class="badge sm">${I(o.icon || "trophy")}</span></div>${ring}</div>
+        <div class="rtop"><div class="finbat dance">${o.say !== false ? `<span class="fsay">${esc(o.say || pick(mood === "cheer" ? ["Harikaydın!", "Wunderbar!", "Süpersin!", "Sehr gut!"] : mood === "happy" ? ["Güzel iş!", "Gut gemacht!", "Devam!"] : ["Olsun, yarın daha iyi!", "Weiter so!", "Birlikte tekrar ederiz"]))}</span>` : ""}${bat(mood, 118, o.cos !== undefined ? o.cos : (mood === "cheer" ? "party" : mood === "think" ? "glasses" : ""))}<span class="badge sm">${I(o.icon || "trophy")}</span></div>${ring}</div>
         <h2>${esc(o.title)}</h2>
         ${o.sub ? `<p class="rsub">${esc(o.sub)}</p>` : ""}
         ${o.msg ? `<p class="rmsg">${esc(o.msg)}</p>` : ""}
@@ -2216,6 +2235,10 @@ function resultScreen(o){
     </div>
     <div class="foot rfoot"><button class="cta" id="nx">${esc(o.btn || "Devam")}</button>${o.btn2 ? `<button class="btn2" id="nx2">${esc(o.btn2)}</button>` : ""}</div>`;
   if (party) { sfx("win"); buzz([20, 40, 20]); }
+  // sayılar sıfırdan sayarak gelsin
+  $$(".rs b").forEach((el, k) => { const t = el.textContent, m = t.match(/\d+/); if (!m || /:/.test(t)) return; const n = +m[0], t0 = performance.now() + 250 + k * 70;
+    const step = now => { const f = Math.min(1, Math.max(0, (now - t0) / 650)); el.textContent = t.replace(m[0], Math.round(n * (1 - Math.pow(1 - f, 3)))); if (f < 1 && el.isConnected) requestAnimationFrame(step); };
+    el.textContent = t.replace(m[0], "0"); requestAnimationFrame(step); });
   const leave = f => () => { document.body.classList.remove("sess"); (f || (() => go(tab)))(); };
   $("#nx").onclick = leave(o.fn);
   if ($("#nx2")) $("#nx2").onclick = leave(o.fn2);
@@ -2307,6 +2330,7 @@ function miss(x, src){
     const r = S.miss[key] || (S.miss[key] = {de, tr: String(it ? it.tr : x.tr || "").trim(), n: 0, f: TODAY});
     if (!it && x.note) r.note = String(x.note);
     if (!it && x.tr && !r.tr) r.tr = String(x.tr);
+    if (typeof hostReact === "function" && Date.now() - HOST.t > 300) hostReact(false);
     r.n++; r.last = TODAY; r.src = src || r.src || ""; r.ok = 0; delete r.done;
     if (!it && !BYID[key]) buildItems();
     clearTimeout(miss.t); miss.t = setTimeout(save, 400);
@@ -2432,8 +2456,7 @@ function answer(it, ok){
   if (ok) missOk(it); else miss(it, "Alıştırma");
   if (ok) addXP(P.hint && P.hint.has(it.id) ? 5 : 10);
   if (ok) P.okI = P.i; else P.badI = P.i;
-  P.lastOk = ok;
-  const pb = $(".pbat"); if (pb) { pb.innerHTML = bat(ok ? "cheer" : "sad", 30); pb.classList.remove("hop"); void pb.offsetWidth; pb.classList.add("hop"); }
+  hostReact(ok);
   seen(it);
   P.res[it.id] = (P.res[it.id] === undefined ? true : P.res[it.id]) && ok;
   const cur = P.q[P.i];
@@ -2460,7 +2483,7 @@ function ladder(it, m){
 }
 function next(){ clearTimeout(P.autoT); P.lock = 0; P.i++; renderSession(); }
 function head(title){
-  return `<div class="ptop"><button class="ib px" id="px" aria-label="Kapat">${I("x")}</button><div class="pbw"><div class="pbar"><i style="width:${Math.max(4, P.i/P.q.length*100)}%"></i></div><span class="pbat" style="left:${Math.max(4, P.i/P.q.length*100)}%">${bat(P.lastOk === false ? "sad" : P.lastOk ? "cheer" : "happy", 30)}</span></div><span class="pcnt">${P.i+1}/${P.q.length}</span></div><div class="phase">${MODES[title] ? I(MODES[title].ic) + " " + MODES[title].t : title}</div>`;
+  return `<div class="ptop"><button class="ib px" id="px" aria-label="Kapat">${I("x")}</button><div class="pbar"><i style="width:${Math.max(4, P.i/P.q.length*100)}%"></i></div><span class="pcnt">${P.i+1}/${P.q.length}</span></div><div class="phase">${MODES[title] ? I(MODES[title].ic) + " " + MODES[title].t : title}</div>`;
 }
 const AUTO_WAIT = 1.5;
 const autoLeft = () => Math.max(0, Math.ceil(((S.opt.autoUntil || 0) - Date.now()) / 60000));
@@ -3460,6 +3483,7 @@ function gBlitz(){
     $$(".opt").forEach(b => b.onclick = () => {
       const ok = b.dataset.id === it.id;
       b.classList.add(ok ? "good" : "bad");
+      hostReact(ok);
       if (ok) { G.combo++; G.sc += G.combo >= 5 ? 2 : 1; } else { G.combo = 0; miss(it, GAMES.blitz.t); }
       G.i++; later(() => G.left > 0 && draw(), ok ? 180 : 600);
     });
@@ -3570,6 +3594,7 @@ function timedChoice(id, title, pool, make){
       if (G.lock) return; G.lock = 1;
       const ok = q.opts[+b.dataset.i] === q.right;
       b.classList.add(ok ? "good" : "bad");
+      hostReact(ok);
       if (ok) { G.combo++; G.sc += G.combo >= 5 ? 2 : 1; } else { G.combo = 0; $(`.opt[data-i="${q.opts.indexOf(q.right)}"]`).classList.add("good"); miss(q.m || it, GAMES[id].t); }
       speak(q.say || it.de);
       G.i++; later(() => { G.lock = 0; if (G.left > 0) draw(); }, ok ? 300 : 1100);
@@ -4657,7 +4682,7 @@ function gTF(){
     $$(".tfbtn button").forEach(b => b.onclick = () => {
       if (lock++) return;
       const ok = (b.dataset.v === "1") === truth;
-      b.classList.add(ok ? "good" : "bad"); $(".tfbtn").classList.add("done");
+      b.classList.add(ok ? "good" : "bad"); $(".tfbtn").classList.add("done"); hostReact(ok);
       if (ok) { G.combo++; G.sc += G.combo >= 5 ? 2 : 1; } else { G.combo = 0; $("#tfr").style.visibility = "visible"; speak(it.de); miss(t === 1 ? {de: "die " + it.pl, tr: it.tr + " (çoğul)", note: it.de + " → die " + it.pl} : it, GAMES.tf.t); }
       later(() => G.left > 0 && draw(), ok ? 350 : 1400);
     });
@@ -6014,6 +6039,28 @@ function onboarding(force){
   };
   draw();
 }
+
+/* ---------- Gedsche derste: soru kartının köşesinde durur, cevaplara tepki verir ---------- */
+const HOST_OK = ["Süper!", "Aynen!", "Harika!", "Bravo!", "Sehr gut!", "Toll!", "Genau!"];
+const HOST_BAD = ["Olsun!", "Az kaldı!", "Kein Problem!", "Tekrar bakarız", "Bir dahakine!"];
+const HOST = {t: 0, ok: null};
+function hostIn(){
+  if (!document.body.classList.contains("game") || typeof bat !== "function") return;
+  const card = $("#view > .flash");
+  if (!card || card.querySelector(".host")) return;
+  const fresh = Date.now() - HOST.t < 900;
+  const cur = typeof P !== "undefined" && P && P.q && P.q[P.i];
+  const mood = fresh ? (HOST.ok ? "cheer" : "sad") : cur && cur.m === "learn" ? "happy" : "think";
+  card.insertAdjacentHTML("afterbegin", `<span class="host">${bat(mood, 54)}<i class="hsay"></i></span>`);
+}
+function hostReact(ok){
+  HOST.t = Date.now(); HOST.ok = ok;
+  const h = $("#view .host"); if (!h) return;
+  h.firstElementChild.outerHTML = bat(ok ? "cheer" : "sad", 54);
+  const s = h.querySelector(".hsay"); s.textContent = pick(ok ? HOST_OK : HOST_BAD); s.className = "hsay " + (ok ? "ok" : "no");
+  h.classList.remove("hop", "talking"); void h.offsetWidth; h.classList.add("hop", "talking");
+}
+new MutationObserver(hostIn).observe($("#view"), {childList: true});
 
 /* ================= EŞİTLEME: iki sürüm arasında kodla taşı, birleştir ================= */
 const SYNC_TAG = "ALMANCA1:";
