@@ -1,6 +1,6 @@
 /* Almanca Günlük – çevrimdışı önbellek. Sayfa ve içerik önce ağdan denenir, yoksa önbellekten gelir. */
-const C = "almanca-gunluk-v71";
-const FILES = ["./", "./index.html", "./data.js", "./manifest.webmanifest", "./icon-192.png", "./icon-512.png"];
+const C = "almanca-gunluk-v72";
+const FILES = ["./", "./index.html", "./data.js", "./manifest.webmanifest", "./icon-192.png", "./icon-512.png", "./icon-maskable-512.png"];
 
 self.addEventListener("install", e => {
   e.waitUntil(caches.open(C).then(c => c.addAll(FILES)).then(() => self.skipWaiting()));
