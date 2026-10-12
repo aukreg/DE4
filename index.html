@@ -662,7 +662,7 @@ body::before{content:"";position:fixed;inset:0;z-index:-1;background:var(--mesh)
 body.scrolled .top{background:color-mix(in srgb,var(--bg) 82%,transparent);backdrop-filter:blur(18px) saturate(1.4);-webkit-backdrop-filter:blur(18px) saturate(1.4)}
 .card,.qk,.gtile,.opt,.btn2,.wd,.pill,.feat,.mode,.tile,.chip,.bt,.msg,.cb,.chap,.pi{border-color:var(--glass-b)!important}
 .card{background:var(--bg2);backdrop-filter:blur(16px) saturate(1.3);-webkit-backdrop-filter:blur(16px) saturate(1.3);box-shadow:0 8px 24px -14px rgb(30 30 90/.35)}
-.sheet .in,.rsheet,.bub,.swf,.swb,.gsheet{background:var(--solid)!important}
+.sheet .in,.rsheet,.bub,.gsheet{background:var(--solid)!important}
 .bub:before{background:var(--solid)}
 .toast{background:var(--solid);color:var(--tx);border:1px solid var(--glass-b);box-shadow:0 10px 30px -10px rgb(0 0 0/.35)}
 textarea,input[type=text],input[type=search],input:not([type]){background:var(--solid)!important}
@@ -879,11 +879,11 @@ body.full .top h1{font-size:19px}
 .rmsg{margin:2px 0 0;color:var(--tx2);font-size:14.5px;max-width:300px}
 .rstats{display:grid;gap:10px;grid-template-columns:repeat(3,1fr)}
 .rstats.n1{grid-template-columns:1fr;max-width:200px;justify-self:center;width:100%}.rstats.n2{grid-template-columns:repeat(2,1fr)}
-.rs{display:grid;justify-items:center;gap:2px;padding:12px 6px 10px;border-radius:20px;background:var(--bg2);border:1px solid var(--glass-b);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);animation:rsin .45s var(--d) cubic-bezier(.3,1.4,.5,1) both}
+.rs{display:grid;justify-items:center;gap:2px;padding:12px 6px 10px;border-radius:20px;background:var(--bg2);border:1px solid var(--glass-b);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);animation:rstin .45s var(--d) cubic-bezier(.3,1.4,.5,1) both}
 .rs svg.i{width:30px;height:30px;margin-bottom:2px}
 .rs b{font:800 19px var(--disp)}
 .rs small{font-size:12px;color:var(--tx2)}
-@keyframes rsin{from{opacity:0;transform:translateY(12px) scale(.94)}}
+@keyframes rstin{from{opacity:0;transform:translateY(12px) scale(.94)}}
 .rwrong{display:flex;flex-wrap:wrap;gap:8px}
 .rwrong span{display:grid;padding:8px 12px;border-radius:14px;background:var(--bg2);border:1px solid var(--glass-b);font-size:12.5px;color:var(--tx2)}
 .rwrong b{font-size:14.5px;color:var(--tx)}
@@ -919,6 +919,52 @@ body.full .top h1{font-size:19px}
 .psheet .grp{margin-top:14px}
 .psheet .chips{flex-wrap:wrap}
 @media (prefers-reduced-motion:reduce){.phill{animation:none}}
+
+/* cevap paneli: ekranı itmeden alttan üstüne gelsin */
+body.rs-open #view{padding-bottom:16px!important}
+.rsheet{box-shadow:0 -12px 40px rgb(0 0 0/.25)}
+/* otomatik geçişte küçük onay */
+.okpill{position:fixed;left:50%;bottom:calc(22px + env(safe-area-inset-bottom));transform:translateX(-50%);z-index:30;display:flex;align-items:center;gap:10px;width:min(92vw,420px);padding:10px 10px 10px 12px;border-radius:20px;background:var(--solid);border:1px solid var(--glass-b);box-shadow:0 10px 30px rgb(0 0 0/.22);animation:okin .25s cubic-bezier(.3,1.4,.5,1)}
+.okpill .rsi{width:30px;height:30px;flex:none;border-radius:50%;display:grid;place-items:center;background:var(--ok);color:#fff}
+.okpill .rsi svg.i{width:18px;height:18px;stroke-width:3}
+.okpill > span:nth-child(2){flex:1;display:grid;min-width:0}
+.okpill b{font:800 16px var(--disp);color:var(--ok)}
+.okpill small{font-size:13px;color:var(--tx2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.okpill .ib{flex:none;display:grid;place-items:center;width:46px;height:46px;border-radius:14px;font-size:14px;line-height:1.1}
+.okpill .ib small{font-size:10.5px;color:var(--acc)}
+@keyframes okin{from{opacity:0;transform:translate(-50%,16px)}}
+/* uygulama klavyesi */
+.typed.kbin{caret-color:transparent;border-color:var(--acc)!important;cursor:default}
+.kbd{display:grid;gap:7px;margin:0 -10px 12px;padding:9px 5px 8px;border-radius:18px;background:var(--bg2);border:1px solid var(--glass-b);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);user-select:none;-webkit-user-select:none;touch-action:manipulation}
+.kr{display:flex;gap:4px;justify-content:center}
+.kk{flex:1;max-width:44px;height:44px;border-radius:9px;background:var(--solid);box-shadow:0 2px 0 rgb(0 0 0/.18);font:600 18px var(--body);color:var(--tx);display:grid;place-items:center;padding:0;-webkit-tap-highlight-color:transparent}
+.kbd.up .kk:not(.kfn):not(.ksp){text-transform:uppercase}
+.kk.on{transform:translateY(2px);box-shadow:none;background:var(--acc);color:#fff}
+.kk.ksh,.kk.kbs{flex:1.4;max-width:58px;background:rgb(127 127 160/.25)}
+.kbd.up .ksh{background:var(--acc);color:#fff}
+.kk.kfn{flex:1.4;max-width:58px;background:rgb(127 127 160/.25)}
+.kk svg.i{width:20px;height:20px}
+.kk.ksp{flex:5;max-width:none;font-size:14px;color:var(--tx2)}
+.kbsw{display:flex;align-items:center;gap:6px;margin:0 auto 10px;font-size:13px;color:var(--tx2);padding:8px 10px}
+.kbsw svg.i{width:20px;height:20px}
+body.game .foot:has(.kbd){margin-top:auto;padding-top:8px}
+/* Kaydır kartı: Öğren kartı gibi cam */
+.swz{height:330px}
+.swc{perspective:none}
+.swf,.swb{background:var(--bg2)!important;border:1px solid var(--glass-b)!important;box-shadow:0 8px 24px -14px rgb(30 30 90/.35)!important;backdrop-filter:blur(16px) saturate(1.3);-webkit-backdrop-filter:blur(16px) saturate(1.3);border-radius:26px;transform:none!important;backface-visibility:visible;transition:opacity .2s ease;gap:12px}
+.swb{opacity:0;pointer-events:none}
+.swc.flip .swf{opacity:0}.swc.flip .swb{opacity:1}
+.swc.flipping{animation:swflip .32s ease}
+@keyframes swflip{50%{transform:scaleX(.82)}}
+.swf .big,.swb .big{font:800 30px/1.2 var(--disp);letter-spacing:-.01em}
+.swb .big{font-size:24px!important}
+.swf .tap{display:inline-flex;align-items:center;gap:6px;font-size:14px;color:var(--tx2);padding:7px 14px;border-radius:99px;background:rgb(127 127 160/.14)}
+.swf .tap svg.i{width:16px;height:16px}
+.swb .de{font:700 17px var(--disp);color:var(--tx2)}
+.swb .ex{border-top:1px solid var(--line);padding-top:12px;margin-top:2px;width:100%}
+.swb{overflow:auto;justify-content:safe center}
+body.game #view.kbv > .flash{margin-top:10px!important;margin-bottom:0!important}
+.swb .exk{font:700 11px var(--body);letter-spacing:.1em;text-transform:uppercase;color:var(--acc);margin-right:4px}.kk.kbs{font-size:20px}
 </style>
 </head>
 <body>
@@ -1731,7 +1777,7 @@ const ICON_MIC = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" str
 const TABS = {};
 function leave(){ stopSpeak(); if (onLeave) { const f = onLeave; onLeave = null; f(); } }
 function go(t){
-  leave(); screen = null; tab = t; document.body.classList.remove("game", "sess", "rs-open");
+  leave(); screen = null; tab = t; document.body.classList.remove("game", "sess", "rs-open"); $("#view").classList.remove("kbv");
   $$(".nav button").forEach(b => b.classList.toggle("on", b.dataset.tab === t));
   TABS[t]();
   window.scrollTo(0, 0);
@@ -2328,6 +2374,19 @@ const AUTO_WAIT = 1.5;
 const autoLeft = () => Math.max(0, Math.ceil(((S.opt.autoUntil || 0) - Date.now()) / 60000));
 function footNext(){
   const m = autoLeft(), go = m && P.okI === P.i && P.badI !== P.i;
+  // otomatik geçiş açıkken doğru cevapta panel hiç açılmaz: küçük bir onay görünür, sıradaki soruya geçer
+  if (go) {
+    const it = (P.q[P.i] || {}).it, i = P.i, vd = $("#vd");
+    if (vd) vd.hidden = true;
+    const f = $(".foot"); if (f) f.hidden = true;
+    const el = document.createElement("div");
+    el.className = "okpill";
+    el.innerHTML = `<span class="rsi">${I("check", "ln")}</span><span><b>${pick(["Doğru!","Harika!","Süper!","Aynen!"])}</b>${it ? `<small>${esc(it.de)}</small>` : ""}</span><button class="ib" id="atm" aria-label="Otomatik geçiş">⏱<small>${m} dk</small></button>`;
+    $("#view").appendChild(el);
+    $("#atm").onclick = () => { clearTimeout(P.autoT); autoPick(); };
+    P.autoT = setTimeout(() => { if (P && P.i === i && screen === renderSession) next(); }, AUTO_WAIT * 1000);
+    return;
+  }
   $(".foot").innerHTML = `<div style="display:flex;gap:8px;align-items:stretch"><button class="cta" id="nx" style="flex:1;position:relative;overflow:hidden">${go ? `<i class="autobar" style="animation-duration:${AUTO_WAIT}s"></i>` : ""}<span style="position:relative">Devam</span></button><button class="btn2" id="atm" aria-label="Otomatik geçiş" style="width:58px;padding:0;font-size:14px">⏱${m ? `<small style="display:block;font-size:11px;color:var(--acc)">${m} dk</small>` : ""}</button></div>`;
   const it = (P.q[P.i] || {}).it;
   if (it && it.ex && !$("#exa")) $(".foot").insertAdjacentHTML("beforebegin", `<div class="exa" id="exa">${exHtml(it, true)}</div>`);
@@ -2361,7 +2420,7 @@ function autoPick(){
     <p class="small muted" style="margin:4px 2px 12px">Seçtiğin süre boyunca doğru cevaplarda Devam'a basmana gerek kalmaz, kısa bir an sonra sıradaki soruya geçer. Yanlışta durur, doğrusunu okuyabilirsin.${m ? ` <b style="color:var(--acc)">Şu an açık, ${m} dk kaldı.</b>` : ""}</p>
     ${opts.map(([v, t]) => `<button class="${!v && !m ? "cta" : "btn2"}" data-v="${v}" style="width:100%;margin-top:8px">${t}</button>`).join("")}`;
   $("#sheet").classList.add("show");
-  $$("#sheetIn [data-v]").forEach(b => b.onclick = () => { const v = +b.dataset.v; S.opt.autoUntil = v ? Date.now() + v * 60000 : 0; delete S.opt.auto; save(); $("#sheet").classList.remove("show"); toast(v ? v + " dakika boyunca doğru cevapta kendiliğinden geçer" : "Otomatik geçiş kapalı"); if (P && screen === renderSession && $("#nx")) footNext(); });
+  $$("#sheetIn [data-v]").forEach(b => b.onclick = () => { const v = +b.dataset.v; S.opt.autoUntil = v ? Date.now() + v * 60000 : 0; delete S.opt.auto; save(); $("#sheet").classList.remove("show"); toast(v ? v + " dakika boyunca doğru cevapta kendiliğinden geçer" : "Otomatik geçiş kapalı"); if (P && screen === renderSession && ($(".okpill") || (v && $("#rs.good")))) next(); });
 }
 function verdict(ok, it, said, extra){
   return `<div class="verdict ${ok ? "good" : "bad"}">${ok ? pick(["Doğru!","Harika!","Süper!","Aynen!"]) : (said ? "Tam olmadı." : "Doğrusu:")}${said ? ` <span class="muted">(“${esc(said)}”)</span>` : ""}<b>${esc(it.de)}</b>${extra || `<span class="muted small">${esc(it.tr)}</span>`}${it.note ? `<span class="small" style="display:block;margin-top:6px;color:var(--tx2)">💡 ${esc(it.note)}</span>` : ""}</div>`;
@@ -2373,7 +2432,7 @@ function renderSession(){
   // sessiz mod açıldıysa sesli soruyu sessiz bir türe çevir
   if (cur.it && !can(cur.m, cur.it)) cur.m = modeFor(cur.it);
   setTop(P.o.title || "Alıştırma", true);
-  document.body.classList.add("game", "sess"); document.body.classList.remove("rs-open");
+  document.body.classList.add("game", "sess"); document.body.classList.remove("rs-open"); $("#view").classList.remove("kbv");
   R_MODE[cur.m](cur.it || cur.its, cur);
   const px = $("#px"); if (px) px.onclick = () => go(tab);
   if (cur.st) { const ph = $(".phase"); ph && ph.insertAdjacentHTML("beforeend", ` <span class="small" style="color:var(--acc);text-transform:none;letter-spacing:0">· tekrar ${cur.st}/${cur.of}</span>`); }
@@ -2390,7 +2449,7 @@ function addHint(it, target, byWord){
     k++; P.hint.add(it.id);
     $("#htx").textContent = byWord ? w.map((x, i) => i < k - 1 ? x : x[0] + mask(x.slice(1))).join(" ") : target.slice(0, k) + mask(target.slice(k));
     if (byWord ? k > w.length : k >= target.length - 1) $("#hint").disabled = true;
-    $("#typed").focus({preventScroll:true});
+    if (!$("#typed").readOnly) $("#typed").focus({preventScroll:true});
   };
 }
 // cevapla doğrusu arasındaki farklı kelimeleri işaretle
@@ -2521,8 +2580,8 @@ const R_MODE = {
     $("#view").innerHTML = head("swipe") + `
       <p class="hint" style="margin-top:0">Anlamını biliyor musun? Kartı çevir, sonra kaydır.</p>
       <div class="swz"><span class="swl no">${I("x")} Bilmiyorum</span><span class="swl yes">Biliyorum ${I("check")}</span>
-        <div class="swc" id="swc"><div class="swf"><div class="big">${esc(it.de)}</div><small class="muted">Çevirmek için dokun</small></div>
-        <div class="swb"><div class="big" style="font-size:22px">${esc(it.tr)}</div>${exHtml(it, true)}</div></div></div>
+        <div class="swc" id="swc"><div class="swf"><div class="big">${esc(it.de)}</div><span class="tap">${I("refresh", "ln")} Çevirmek için dokun</span></div>
+        <div class="swb"><div class="de">${esc(it.de)}</div><div class="big">${esc(it.tr)}</div>${exHtml(it, true)}${it.note ? `<div class="small" style="color:var(--tx2)">💡 ${esc(it.note)}</div>` : ""}</div></div></div>
       <div class="swbtn"><button class="n" id="sn" aria-label="Bilmiyorum">${I("x")}</button><button class="say" id="spk" aria-label="Dinle">${ICON_SPK}</button><button class="y" id="sy" aria-label="Biliyorum">${I("check")}</button></div>
       <div id="vd"></div><div class="foot" hidden></div>`;
     const c = $("#swc"), z = $(".swz");
@@ -2545,7 +2604,7 @@ const R_MODE = {
       if (x0 === null) return; x0 = null; z.classList.remove("toy", "ton");
       if (Math.abs(dx) > 90) return done(dx > 0);
       c.style.transition = "transform .25s"; c.style.transform = "";
-      if (!moved) c.classList.toggle("flip");
+      if (!moved) { c.classList.remove("flipping"); void c.offsetWidth; c.classList.add("flipping"); setTimeout(() => c.classList.toggle("flip"), 140); }
     };
     $("#sy").onclick = () => done(true); $("#sn").onclick = () => done(false);
   },
@@ -2613,7 +2672,8 @@ function gapMode(it, cur, typing){
     addHint(it, c.w, false);
     $("#ck").onclick = chk; $("#typed").onkeydown = e => { if (e.key === "Enter") chk(); };
     $("#sk").onclick = () => { if (P.lock) return; P.lock = 1; fin(false, ""); };
-    setTimeout(() => $("#typed") && $("#typed").focus({preventScroll:true}), 50);
+    appKbd();
+    if (S.opt.syskb) setTimeout(() => $("#typed") && $("#typed").focus({preventScroll:true}), 50);
   } else $$(".opt").forEach(b => b.onclick = () => {
     if (P.lock) return; P.lock = 1;
     const ok = opts[+b.dataset.i] === c.w;
@@ -2641,7 +2701,8 @@ function typed(it, m, top, audio){
   $("#ck").onclick = () => check($("#typed").value);
   $("#typed").onkeydown = e => { if (e.key === "Enter") check($("#typed").value); };
   $("#sk").onclick = () => check("");
-  if (!audio) setTimeout(() => $("#typed") && $("#typed").focus({preventScroll:true}), 50);
+  appKbd();
+  if (!audio && S.opt.syskb) setTimeout(() => $("#typed") && $("#typed").focus({preventScroll:true}), 50);
 }
 
 /* ---------- hata kartları: önce doğrusunu seç, sonra kelimelerle kur ---------- */
@@ -2791,6 +2852,50 @@ Object.assign(R_MODE, {
     };
   },
 });
+
+/* ---------- uygulama klavyesi: telefon klavyesi açılıp ekranı kaydırmasın ---------- */
+const KB_ROWS = ["qwertzuiopü", "asdfghjklöä", "⇧yxcvbnmß⌫"];
+function appKbd(){
+  const inp = $("#typed"), foot = $(".foot");
+  if (!inp || !foot) return;
+  $("#view").classList.add("kbv");
+  if (S.opt.syskb) {
+    foot.insertAdjacentHTML("afterbegin", `<button class="kbsw" id="kbsw">${I("keyboard")} Uygulama klavyesini kullan</button>`);
+    $("#kbsw").onclick = () => { S.opt.syskb = 0; save(); inp.blur(); inp.readOnly = true; inp.setAttribute("inputmode", "none"); $("#kbsw").remove(); appKbd(); };
+    return;
+  }
+  inp.readOnly = true; inp.setAttribute("inputmode", "none"); inp.classList.add("kbin"); inp.blur();
+  let up = false;
+  const key = k => `<button class="kk${k === "⇧" ? " ksh" : k === "⌫" ? " kbs" : ""}" data-k="${k}">${k}</button>`;
+  foot.insertAdjacentHTML("afterbegin", `<div class="kbd" id="kbd">${KB_ROWS.map(r => `<div class="kr">${[...r].map(key).join("")}</div>`).join("")}
+    <div class="kr"><button class="kk kfn" data-k="sys" aria-label="Telefon klavyesi">${I("keyboard", "ln")}</button><button class="kk" data-k=",">,</button><button class="kk ksp" data-k=" ">boşluk</button><button class="kk" data-k=".">.</button><button class="kk" data-k="?">?</button></div></div>`);
+  const kb = $("#kbd");
+  const paint = () => { kb.classList.toggle("up", up); };
+  const put = k => {
+    if (P && P.lock) return;
+    if (k === "⇧") { up = !up; return paint(); }
+    if (k === "⌫") inp.value = inp.value.slice(0, -1);
+    else if (k === "sys") { S.opt.syskb = 1; save(); kb.remove(); inp.readOnly = false; inp.removeAttribute("inputmode"); inp.classList.remove("kbin"); appKbd(); inp.focus(); return; }
+    else { inp.value += up ? k.toUpperCase() : k; if (up) { up = false; paint(); } }
+    buzz(6);
+  };
+  let rep;
+  kb.querySelectorAll(".kk").forEach(b => {
+    b.onpointerdown = e => { e.preventDefault(); b.classList.add("on"); put(b.dataset.k); if (b.dataset.k === "⌫") rep = setTimeout(function r(){ put("⌫"); rep = setTimeout(r, 70); }, 420); };
+    b.onpointerup = b.onpointerleave = b.onpointercancel = () => { b.classList.remove("on"); clearTimeout(rep); };
+  });
+  // fiziksel klavye (bilgisayar) yine çalışsın
+  onKbdKey.inp = inp;
+}
+function onKbdKey(e){
+  const inp = onKbdKey.inp;
+  if (!inp || !document.body.contains(inp) || !inp.readOnly || (P && P.lock)) return;
+  if (e.target && /^(INPUT|TEXTAREA)$/.test(e.target.tagName) && e.target !== inp) return;
+  if (e.key === "Enter") { if (document.activeElement !== inp && $("#ck")) { $("#ck").click(); e.preventDefault(); } }
+  else if (e.key === "Backspace") { inp.value = inp.value.slice(0, -1); e.preventDefault(); }
+  else if (e.key.length === 1 && !e.ctrlKey && !e.metaKey) { inp.value += e.key; e.preventDefault(); }
+}
+document.addEventListener("keydown", onKbdKey);
 
 /* ================= BUGÜN ================= */
 function nextChapter(){
