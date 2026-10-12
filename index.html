@@ -1061,7 +1061,6 @@ body.game:not(.sess) .host{top:-24px;width:46px;height:46px}
 .z5{--c1:#2ED3E6;--c2:#0891B2;--c3:#05607A}
 .z6{--c1:#FF6B6B;--c2:#E11D48;--c3:#9B1035}
 .z7{--c1:#FFC93C;--c2:#F59E0B;--c3:#A86400}
-.z7 b,.z7 small{color:#fff}
 /* günün oyunu: jackpot */
 .feat.jack{position:relative;overflow:hidden;padding:18px 16px;border-radius:24px;background:linear-gradient(135deg,#7C3AED,#DB2777 55%,#F59E0B);border:2px solid #FFE066!important;box-shadow:0 6px 0 #8A1C5C,0 12px 28px -8px #DB2777,inset 0 2px 0 rgb(255 255 255/.4)}
 .feat.jack::after{content:"";position:absolute;top:-50%;left:-60%;width:35%;height:200%;background:linear-gradient(90deg,transparent,rgb(255 255 255/.5),transparent);transform:rotate(20deg);animation:gshine 3.6s infinite;pointer-events:none}
@@ -1085,10 +1084,82 @@ body.game:not(.sess) .host{top:-24px;width:46px;height:46px}
 .mem{gap:7px}
 .mem .mc{position:relative;min-height:86px;padding:6px 4px;font-size:13px;line-height:1.2;border-radius:14px;transition:transform .28s,background .2s,color .2s;transform-style:preserve-3d}
 .mem .mc.de{border-color:color-mix(in srgb,var(--acc) 55%,transparent)}
-.mem .mc.back{color:transparent;transform:rotateY(180deg);background:linear-gradient(150deg,#8B6CFF,#5B3FD9)!important;border-color:rgb(255 255 255/.35)!important;box-shadow:0 3px 0 #3E26A6}
+.mem .mc.back{color:transparent;transform:rotateY(180deg);background:linear-gradient(150deg,var(--c1,#8B6CFF),var(--c2,#5B3FD9))!important;border-color:rgb(255 255 255/.4)!important;box-shadow:0 4px 0 var(--c3,#3E26A6),inset 0 2px 0 rgb(255 255 255/.35)!important}
 .mem .mc.back span{visibility:hidden}
 .mem .mc.back::after{content:"?";position:absolute;inset:0;display:grid;place-items:center;font:400 30px "Lilita One",var(--disp);color:rgb(255 255 255/.85);transform:rotateY(180deg)}
 .mem .mc.done{opacity:.3}
+
+/* ===== Oyun içi: casino enerjisi (sadece oyunlarda, pratikte değil) ===== */
+body[data-gz="0"]{--c1:#FF4F8B;--c2:#E0216A;--c3:#A3124A}
+body[data-gz="1"]{--c1:#FFA43A;--c2:#F06A0F;--c3:#B04700}
+body[data-gz="2"]{--c1:#3DDC84;--c2:#16A34A;--c3:#0E6B31}
+body[data-gz="3"]{--c1:#4F9BFF;--c2:#2563EB;--c3:#1A3FA3}
+body[data-gz="4"]{--c1:#B57BFF;--c2:#8B3FEA;--c3:#5E22A8}
+body[data-gz="5"]{--c1:#2ED3E6;--c2:#0891B2;--c3:#05607A}
+body[data-gz="6"]{--c1:#FF6B6B;--c2:#E11D48;--c3:#9B1035}
+body[data-gz="7"]{--c1:#FFC93C;--c2:#F59E0B;--c3:#A86400}
+body.arcade:not(.sess)::after{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;background:radial-gradient(90% 45% at 50% -8%,color-mix(in srgb,var(--c1) 45%,transparent),transparent 70%),radial-gradient(70% 35% at 50% 108%,color-mix(in srgb,var(--c2) 30%,transparent),transparent 70%)}
+body.arcade:not(.sess) .hud > b{font:400 30px/1 "Lilita One",var(--disp);color:var(--tx);text-shadow:0 2px 0 color-mix(in srgb,var(--c1) 60%,transparent)}
+body.arcade:not(.sess) .hud .t{min-width:56px;padding:5px 12px;border-radius:99px;text-align:center;font:400 20px/1 "Lilita One",var(--disp);color:#fff!important;background:linear-gradient(180deg,var(--c1),var(--c2));box-shadow:0 3px 0 var(--c3),inset 0 2px 0 rgb(255 255 255/.35)}
+body.arcade:not(.sess) .hud .t.low{background:linear-gradient(180deg,#FF6B6B,#E11D48);box-shadow:0 3px 0 #9B1035;animation:gnew .6s ease-in-out infinite}
+body.arcade:not(.sess) #view > .card.flash,body.arcade:not(.sess) #view > .card{border:2px solid color-mix(in srgb,var(--c1) 65%,transparent)!important;background:linear-gradient(165deg,color-mix(in srgb,var(--c1) 22%,var(--bg2)),var(--bg2) 70%);box-shadow:0 0 0 5px color-mix(in srgb,var(--c1) 14%,transparent),0 16px 40px -14px var(--c2)}
+body.arcade:not(.sess) .card.flash .big{font-family:"Lilita One",var(--disp);font-weight:400;letter-spacing:.01em;font-size:30px}
+/* şıklar: her biri ayrı canlı renk */
+body.arcade:not(.sess) .opt{--o1:#4F9BFF;--o2:#2563EB;--o3:#1A3FA3;position:relative;overflow:hidden;color:#fff!important;background:linear-gradient(180deg,var(--o1),var(--o2));border:2px solid rgb(255 255 255/.35)!important;box-shadow:0 5px 0 var(--o3),0 10px 18px -10px var(--o2),inset 0 2px 0 rgb(255 255 255/.4)!important;font:700 17px var(--disp);text-shadow:0 1px 0 rgb(0 0 0/.22);transition:transform .08s,box-shadow .08s,filter .2s}
+body.arcade:not(.sess) .opt::before{content:"";position:absolute;inset:0 0 55% 0;background:linear-gradient(rgb(255 255 255/.25),transparent);pointer-events:none}
+body.arcade:not(.sess) :is(.opts,.opts2) .opt:nth-child(4n+2){--o1:#FF4F8B;--o2:#E0216A;--o3:#A3124A}
+body.arcade:not(.sess) :is(.opts,.opts2) .opt:nth-child(4n+3){--o1:#FFA43A;--o2:#F06A0F;--o3:#B04700}
+body.arcade:not(.sess) :is(.opts,.opts2) .opt:nth-child(4n+4){--o1:#B57BFF;--o2:#8B3FEA;--o3:#5E22A8}
+body.arcade:not(.sess) :is(.opts,.opts2) .opt:nth-child(5){--o1:#2ED3E6;--o2:#0891B2;--o3:#05607A}
+body.arcade:not(.sess) .opt:active{transform:translateY(4px);box-shadow:0 1px 0 var(--o3),inset 0 2px 0 rgb(255 255 255/.4)!important}
+body.arcade:not(.sess) :is(.opts,.opts2,#view) .opt.good{--o1:#3DDC84;--o2:#16A34A;--o3:#0E6B31;animation:okpop .35s cubic-bezier(.3,1.6,.5,1);box-shadow:0 5px 0 var(--o3),0 0 0 4px rgb(61 220 132/.35),0 0 26px rgb(61 220 132/.6)!important}
+body.arcade:not(.sess) :is(.opts,.opts2,#view) .opt.bad{--o1:#FF6B6B;--o2:#E11D48;--o3:#9B1035;animation:shake .35s}
+@keyframes okpop{0%{transform:scale(1)}50%{transform:scale(1.06)}100%{transform:scale(1)}}
+/* kelime / harf / sayı taşları */
+body.arcade:not(.sess) .wd{color:#fff;background:linear-gradient(180deg,var(--c1),var(--c2));border:2px solid rgb(255 255 255/.32)!important;box-shadow:0 4px 0 var(--c3),inset 0 2px 0 rgb(255 255 255/.35);font-weight:700;text-shadow:0 1px 0 rgb(0 0 0/.2)}
+body.arcade:not(.sess) .wd:active{transform:translateY(3px);box-shadow:0 1px 0 var(--c3)}
+body.arcade:not(.sess) .pool .wd.used{color:transparent;background:color-mix(in srgb,var(--c1) 18%,var(--bg3));border-color:transparent!important;box-shadow:none;text-shadow:none}
+body.arcade:not(.sess) .built .wd{background:#fff;color:#1F1A4D;text-shadow:none;border-color:var(--c1)!important;box-shadow:0 3px 0 var(--c2)}
+body.arcade:not(.sess) .btn2{font-family:var(--disp);font-weight:700;border:2px solid color-mix(in srgb,var(--c1) 55%,transparent)!important;box-shadow:0 4px 0 color-mix(in srgb,var(--c3) 70%,transparent)}
+body.arcade:not(.sess) .btn2:active{transform:translateY(3px);box-shadow:0 1px 0 var(--c3)}
+body.arcade:not(.sess) .cta{background:linear-gradient(180deg,#FFE680,#FFB800);color:#6B3A00;box-shadow:0 5px 0 #C77F00,inset 0 2px 0 rgb(255 255 255/.5);font-family:"Lilita One",var(--disp);font-weight:400;font-size:19px;letter-spacing:.04em}
+/* kart ızgaraları */
+body.arcade:not(.sess) .mc{background:linear-gradient(165deg,color-mix(in srgb,var(--c1) 30%,var(--bg2)),var(--bg2));border:2px solid color-mix(in srgb,var(--c1) 55%,transparent)!important;box-shadow:0 4px 0 color-mix(in srgb,var(--c3) 65%,transparent);font-weight:700}
+body.arcade:not(.sess) .mc:active{transform:translateY(3px);box-shadow:0 1px 0 var(--c3)}
+body.arcade:not(.sess) .mc.sel{border-color:#FFD23F!important;box-shadow:0 0 0 3px rgb(255 210 63/.45),0 4px 0 var(--c3)}
+body.arcade:not(.sess) .mc.bad{background:linear-gradient(180deg,#FF6B6B,#E11D48);color:#fff;animation:shake .35s}
+body.arcade:not(.sess) .mc.good,body.arcade:not(.sess) .mc.ok{background:linear-gradient(180deg,#3DDC84,#16A34A);color:#fff}
+body.arcade:not(.sess) .gt{background:linear-gradient(165deg,color-mix(in srgb,var(--c1) 28%,var(--bg2)),var(--bg2));border:2px solid color-mix(in srgb,var(--c1) 50%,transparent);box-shadow:0 4px 0 color-mix(in srgb,var(--c3) 60%,transparent);color:var(--tx);font-weight:700}
+body.arcade:not(.sess) .gt.de{background:linear-gradient(170deg,#4F9BFF,#2563EB);border-color:rgb(255 255 255/.35);box-shadow:0 4px 0 #1A3FA3;color:#fff}
+body.arcade:not(.sess) .gt.sel{border-color:#FFD23F;box-shadow:0 0 0 3px rgb(255 210 63/.5),0 4px 0 var(--c3)}
+body.arcade:not(.sess) .gt.hit{background:linear-gradient(180deg,#3DDC84,#16A34A);color:#fff;border-color:transparent}
+body.arcade:not(.sess) .gt.bad{background:linear-gradient(180deg,#FF6B6B,#E11D48);color:#fff}
+/* düşen oyunların kapıları */
+body.arcade:not(.sess) .gate{--o1:#4F9BFF;--o2:#2563EB;--o3:#1A3FA3;color:#fff!important;background:linear-gradient(180deg,var(--o1),var(--o2));border:2px solid rgb(255 255 255/.35);box-shadow:0 4px 0 var(--o3),inset 0 2px 0 rgb(255 255 255/.35);font-family:"Lilita One",var(--disp);font-weight:400;font-size:20px;letter-spacing:.02em}
+body.arcade:not(.sess) .gates .gate:nth-child(2),body.arcade:not(.sess) .grow .gate:nth-child(2){--o1:#FF4F8B;--o2:#E0216A;--o3:#A3124A}
+body.arcade:not(.sess) .gates .gate:nth-child(3){--o1:#3DDC84;--o2:#16A34A;--o3:#0E6B31}
+body.arcade:not(.sess) .grow:not(.on) .gate{filter:saturate(.35) brightness(.8);opacity:.6}
+body.arcade:not(.sess) .gate.good{--o1:#3DDC84;--o2:#16A34A;--o3:#0E6B31;filter:none;box-shadow:0 0 0 4px rgb(61 220 132/.4),0 4px 0 #0E6B31}
+body.arcade:not(.sess) .gate.bad{--o1:#FF6B6B;--o2:#E11D48;--o3:#9B1035;filter:none}
+body.arcade:not(.sess) .grow .gate{font-size:16px}
+/* doğru / yanlış */
+body.arcade:not(.sess) .tfbtn button{color:#fff!important;font:400 22px "Lilita One",var(--disp)!important;letter-spacing:.03em;border:2px solid rgb(255 255 255/.35)!important;backdrop-filter:none;-webkit-backdrop-filter:none}
+body.arcade:not(.sess) .tfbtn button.y{background:linear-gradient(180deg,#3DDC84,#16A34A)!important;box-shadow:0 6px 0 #0E6B31,inset 0 2px 0 rgb(255 255 255/.4)!important}
+body.arcade:not(.sess) .tfbtn button.n{background:linear-gradient(180deg,#FF6B6B,#E11D48)!important;box-shadow:0 6px 0 #9B1035,inset 0 2px 0 rgb(255 255 255/.4)!important}
+body.arcade:not(.sess) .tfbtn button:active{transform:translateY(5px)}
+body.arcade:not(.sess) .tfbtn button.done:not(.good):not(.bad){opacity:.45}
+body.arcade:not(.sess) .tfbtn button.good{box-shadow:0 0 0 5px rgb(255 255 255/.5),0 6px 0 rgb(0 0 0/.25)!important;animation:okpop .35s}
+body.arcade:not(.sess) .tfbtn button.bad{animation:shake .35s}
+@media (prefers-reduced-motion:reduce){body.arcade:not(.sess) .hud .t.low,body.arcade:not(.sess) .opt.good{animation:none}}
+body.arcade:not(.sess) .tfbtn button.good{background:linear-gradient(180deg,#3DDC84,#16A34A)!important}
+body.arcade:not(.sess) .tfbtn button.bad{background:linear-gradient(180deg,#FF6B6B,#E11D48)!important}
+body.arcade:not(.sess) .drop{background:linear-gradient(180deg,color-mix(in srgb,var(--c1) 16%,transparent),color-mix(in srgb,var(--c2) 6%,transparent));border:2px solid color-mix(in srgb,var(--c1) 50%,transparent);box-shadow:inset 0 0 40px -10px color-mix(in srgb,var(--c1) 40%,transparent)}
+body.arcade:not(.sess) .dw{background:#fff!important;color:#1F1A4D!important;border:2px solid var(--c1)!important;box-shadow:0 4px 0 var(--c2),0 8px 20px -6px var(--c2)!important}
+body.arcade:not(.sess) .dw b{font:400 21px "Lilita One",var(--disp);color:#1F1A4D}
+body.arcade:not(.sess) .dw span{color:#5B5680}
+body[data-gz="7"]{--ct:#5A3300}
+body.arcade:not(.sess) .wd{color:var(--ct,#fff)}
+body[data-gz="7"].arcade .wd{text-shadow:none}
 </style>
 </head>
 <body>
@@ -1906,7 +1977,7 @@ function leave(){ stopSpeak(); if (onLeave) { const f = onLeave; onLeave = null;
 // giriş animasyonu yalnızca yeni ekran açılınca oynar; ekran içi yeniden çizimler (seçim, dokunma) titremesin
 function viewEnter(){ const v = $("#view"); v.classList.remove("enter"); void v.offsetWidth; v.classList.add("enter"); clearTimeout(viewEnter.t); viewEnter.t = setTimeout(() => v.classList.remove("enter"), 500); }
 function go(t){
-  leave(); screen = null; tab = t; document.body.classList.remove("game", "sess", "rs-open"); $("#view").classList.remove("kbv");
+  leave(); screen = null; tab = t; document.body.classList.remove("game", "sess", "rs-open", "arcade"); $("#view").classList.remove("kbv");
   $$(".nav button").forEach(b => b.classList.toggle("on", b.dataset.tab === t));
   viewEnter(); TABS[t]();
   window.scrollTo(0, 0);
@@ -2605,7 +2676,7 @@ function renderSession(){
   // sessiz mod açıldıysa sesli soruyu sessiz bir türe çevir
   if (cur.it && !can(cur.m, cur.it)) cur.m = modeFor(cur.it);
   setTop(P.o.title || "Alıştırma", true);
-  document.body.classList.add("game", "sess"); document.body.classList.remove("rs-open"); $("#view").classList.remove("kbv");
+  document.body.classList.add("game", "sess"); document.body.classList.remove("arcade"); document.body.classList.remove("rs-open"); $("#view").classList.remove("kbv");
   if (P.shown !== P.i) { P.shown = P.i; viewEnter(); }
   R_MODE[cur.m](cur.it || cur.its, cur);
   const px = $("#px"); if (px) px.onclick = () => go(tab);
@@ -4879,7 +4950,7 @@ function gArtGuess(){
 
 /* ---------- ortak: oyun düzeni ve titreşim ---------- */
 // her oyun açılınca body.game: içerik ortada, seçenekler altta (style.css)
-Object.values(GAMES).forEach(g => { const r = g.run; g.run = () => { document.body.classList.remove("sess"); document.body.classList.add("game"); const g0 = G; r(); if (G && G !== g0) G.t0 = Date.now(); }; });
+Object.values(GAMES).forEach((g, gi) => { const r = g.run; g.run = () => { document.body.classList.remove("sess"); document.body.classList.add("game", "arcade"); document.body.dataset.gz = gi % 8; const g0 = G; r(); if (G && G !== g0) G.t0 = Date.now(); }; });
 // yanlış cevapta kısa titreşim (Android)
 new MutationObserver(ms => {
   if (!document.body.classList.contains("game") || !navigator.vibrate) return;
