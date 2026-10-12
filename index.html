@@ -780,6 +780,63 @@ svg.bat{display:block;flex:none}
 :is(.t-acc,.t-ok,.t-amber,.t-violet,.t-rose,.t-teal,.t-blue,.fi,.gsheet > i) > svg.il{width:100%!important;height:100%!important;max-width:48px;max-height:48px}
 .gtile i{width:46px;height:46px}
 .foot{background:none!important}
+/* ---- yol düğümleri: cam daire + renkli ikon, bitince yeşil halka ve köşe tiki ---- */
+.path{position:relative}
+.pdot{background:var(--bg2)!important;border:2px solid var(--glass-b)!important;backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);box-shadow:0 10px 22px -12px rgb(20 20 80/.5),inset 0 1px 0 rgb(255 255 255/.25)!important}
+.pdot svg.il{width:40px!important;height:40px!important;transition:transform .2s}
+.pnode:active .pdot{transform:scale(.95)}
+.pnode.done .pdot{border-color:color-mix(in srgb,var(--ok) 70%,transparent)!important;box-shadow:0 0 0 4px color-mix(in srgb,var(--ok) 18%,transparent),0 10px 22px -12px rgb(20 80 50/.5)!important}
+.pnode.done .pdot svg.il{opacity:.9}
+.pchk{position:absolute;right:-4px;bottom:-2px;width:26px;height:26px;border-radius:50%;display:grid;place-items:center;background:var(--ok);color:#fff;border:2.5px solid var(--solid);box-shadow:0 2px 6px rgb(0 0 0/.25);animation:chkpop .4s cubic-bezier(.3,1.6,.5,1) both}
+.pchk svg.i{width:14px!important;height:14px!important;stroke-width:3.4}
+@keyframes chkpop{from{transform:scale(0)}}
+.pnode.now .pdot{border:3px solid var(--acc)!important;box-shadow:0 0 0 6px color-mix(in srgb,var(--acc) 22%,transparent),0 10px 24px -10px color-mix(in srgb,var(--acc) 70%,transparent)!important;animation:nowpulse 2.2s ease-in-out infinite}
+.pnode.now .pdot svg.il{animation:batfloat 2.2s ease-in-out infinite}
+@keyframes nowpulse{50%{box-shadow:0 0 0 11px color-mix(in srgb,var(--acc) 10%,transparent),0 10px 24px -10px color-mix(in srgb,var(--acc) 70%,transparent)}}
+.pdot em{background:var(--acc)!important;color:#fff!important;border:0!important;box-shadow:0 4px 12px -4px color-mix(in srgb,var(--acc) 80%,transparent)}
+.pnode.done .ptx b{color:var(--tx2)}
+.pnode.done .ptx span{color:var(--tx3)}
+
+/* ---- son 5 hafta: küçük cam noktalar, parlayan aktif günler ---- */
+.heatc{padding:16px!important}
+.heathd{display:flex;align-items:center;gap:10px;margin-bottom:14px}
+.heathd > b{font:800 30px/1 var(--disp);background:linear-gradient(135deg,#22C55E,#14B8A6);-webkit-background-clip:text;background-clip:text;color:transparent}
+.heathd > span{font-size:12.5px;line-height:1.25;color:var(--tx2);font-weight:600}
+.heathd .hl{margin:0 0 0 auto}
+.heat{grid-template-columns:repeat(7,30px)!important;justify-content:space-between;gap:9px 0!important}
+.heat span{font-size:11px}
+.heat i{width:30px;height:30px;aspect-ratio:auto!important;border-radius:50%!important;background:var(--bg3)!important;border:1px solid var(--glass-b);animation:hin .35s ease both;animation-delay:var(--d)}
+.heat i.h1{background:linear-gradient(135deg,#86EFAC,#5EEAD4)!important;border-color:transparent}
+.heat i.h2{background:linear-gradient(135deg,#34D399,#14B8A6)!important;border-color:transparent;box-shadow:0 0 10px -2px rgb(20 184 166/.6)}
+.heat i.h3{background:linear-gradient(135deg,#22C55E,#0EA5E9)!important;border-color:transparent;box-shadow:0 0 14px -1px rgb(34 197 94/.75)}
+.heat i.f{background:transparent!important;border:1.5px dashed var(--line)!important;opacity:.6}
+.heat i.td{outline:none!important;box-shadow:0 0 0 3px var(--solid),0 0 0 5px var(--acc)!important;animation:hin .35s ease both,tdpulse 2s ease-in-out .6s infinite}
+@keyframes hin{from{transform:scale(.3);opacity:0}}
+@keyframes tdpulse{50%{box-shadow:0 0 0 3px var(--solid),0 0 0 7px color-mix(in srgb,var(--acc) 55%,transparent)}}
+.hl i{border-radius:50%!important}
+.hl i.h1{background:#5EEAD4!important}.hl i.h2{background:#14B8A6!important}.hl i.h3{background:#22C55E!important}
+
+/* ---- rozetler: parlayan, hafif yüzen; kilitliler soluk cam ---- */
+.bdg i{position:relative;overflow:hidden;width:58px!important;height:58px!important;background:var(--bg3)!important;border:2px dashed var(--line)!important;box-shadow:none!important}
+.bdg:not(.on) i{opacity:.7}
+.bdg:not(.on) i svg.i{width:22px;height:22px;color:var(--tx3)}
+.bdg.on i{background:radial-gradient(circle at 30% 25%,#FFE08A,#FFB020 55%,#FF7A1A)!important;border:2px solid rgb(255 255 255/.55)!important;box-shadow:0 6px 16px -6px rgb(255 140 20/.7),inset 0 -3px 0 rgb(0 0 0/.12)!important;animation:bfloat 3.6s ease-in-out infinite;animation-delay:calc(var(--d) * -1)}
+.bdg.on i svg.il{width:34px;height:34px;filter:drop-shadow(0 2px 2px rgb(0 0 0/.2))}
+.bdg.on i::after{content:"";position:absolute;inset:-20%;background:linear-gradient(115deg,transparent 40%,rgb(255 255 255/.75) 50%,transparent 60%);transform:translateX(-120%);animation:shine 4s ease-in-out infinite;animation-delay:var(--d)}
+.bdg.new i{animation:bnew .9s cubic-bezier(.3,1.6,.5,1) both,bfloat 3.6s ease-in-out .9s infinite}
+.bdg.new b::after{content:" · yeni";color:var(--amber-s)}
+@keyframes bfloat{50%{transform:translateY(-4px) rotate(-3deg)}}
+@keyframes shine{0%,70%{transform:translateX(-120%)}100%{transform:translateX(120%)}}
+@keyframes bnew{0%{transform:scale(.2) rotate(-30deg)}60%{transform:scale(1.15) rotate(8deg)}}
+.badges.cmp .bdg i{width:52px!important;height:52px!important}
+.bdg:active i{transform:scale(.92)}
+@media (prefers-reduced-motion:reduce){.pnode.now .pdot,.pnode.now .pdot svg.il,.heat i,.bdg i,.bdg i::after,.pchk{animation:none!important}}
+/* oyunlarda üst üste binen kutular cam değil, dolu olsun */
+.dbreak{background:var(--solid)!important;border-radius:inherit}
+.dw{background:var(--solid)!important;box-shadow:0 8px 20px -8px rgb(0 0 0/.45)}
+.dw.ok{background:color-mix(in srgb,var(--ok) 22%,var(--solid))!important}
+.dw.no{background:color-mix(in srgb,var(--bad) 22%,var(--solid))!important}
+body.full .top h1{font-size:19px}
 </style>
 </head>
 <body>
@@ -1943,13 +2000,15 @@ const mmss = ms => { const s = Math.max(0, Math.round(ms / 1000)); return Math.f
 function heatHtml(){
   const cells = [], t = new Date(); t.setHours(12);
   const start = new Date(t); start.setDate(t.getDate() - ((t.getDay() + 6) % 7) - 28);
+  let act = 0;
   for (let i = 0; i < 35; i++) {
     const d = new Date(start); d.setDate(start.getDate() + i);
     const k = ymd(d), r = S.days[k] || {}, n = (r.n || 0) + (Object.keys(r).length ? 3 : 0);
+    if (n && d <= t) act++;
     const lv = d > t ? "f" : !n ? "" : n < 15 ? "h1" : n < 40 ? "h2" : "h3";
-    cells.push(`<i class="${lv} ${k === TODAY ? "td" : ""}" title="${trDate(k)}"></i>`);
+    cells.push(`<i class="${lv} ${k === TODAY ? "td" : ""}" style="--d:${(i * .018).toFixed(3)}s" title="${trDate(k)}"></i>`);
   }
-  return `<div class="heat">${["P","S","Ç","P","C","C","P"].map(d => `<span>${d}</span>`).join("")}${cells.join("")}</div>`;
+  return `<div class="heathd"><b>${act}</b><span>gün çalıştın<br>son 5 haftada</span><span class="hl"><span>Az</span><i></i><i class="h1"></i><i class="h2"></i><i class="h3"></i><span>Çok</span></span></div><div class="heat">${["P","S","Ç","P","C","C","P"].map(d => `<span>${d}</span>`).join("")}${cells.join("")}</div>`;
 }
 
 /* ---------- karakterler: basit yüz çizimi ---------- */
@@ -1999,7 +2058,7 @@ function checkBadges(){
 function badgesHtml(compact){
   const B = S.badges || {};
   const list = compact ? BADGES.slice().sort((a, b) => !!B[b.id] - !!B[a.id]).slice(0, 8) : BADGES;
-  return `<div class="badges ${compact ? "cmp" : ""}">${list.map(b => `<div class="bdg ${B[b.id] ? "on" : ""}" title="${esc(b.d)}"><i>${I(B[b.id] ? b.ic : "lock")}</i><b>${b.t}</b>${compact ? "" : `<small>${B[b.id] ? trDate(B[b.id]) : esc(b.d)}</small>`}</div>`).join("")}</div>`;
+  return `<div class="badges ${compact ? "cmp" : ""}">${list.map(b => `<div class="bdg ${B[b.id] ? "on" : ""} ${B[b.id] === TODAY ? "new" : ""}" style="--d:${(Math.random() * 4).toFixed(2)}s" title="${esc(b.d)}"><i>${I(B[b.id] ? b.ic : "lock", B[b.id] ? "" : "ln")}</i><b>${b.t}</b>${compact ? "" : `<small>${B[b.id] ? trDate(B[b.id]) : esc(b.d)}</small>`}</div>`).join("")}</div>`;
 }
 
 /* ================= ALIŞTIRMA MOTORU ================= */
@@ -2641,7 +2700,7 @@ function renderToday(){
     <div class="pathhd"><b>Bugünün yolu</b><span>${nx ? (st.length - done) + " adım kaldı" : "Tamamlandı"}</span></div>
     <div class="path">${st.map((s, i) => `
       <button class="pnode ${s.done ? "done" : nx === s ? "now" : ""}" data-i="${i}" style="--o:${OFF[i % OFF.length]}px">
-        <span class="pdot">${I(s.done ? "check" : s.ic)}${nx === s ? `<em>${done ? "DEVAM" : "BAŞLA"}</em>` : ""}</span>
+        <span class="pdot">${I(s.ic)}${s.done ? `<i class="pchk">${I("check", "ln")}</i>` : ""}${nx === s ? `<em>${done ? "DEVAM" : "BAŞLA"}</em>` : ""}</span>
         <span class="ptx"><b>${esc(s.t)}</b><span>${esc(s.s)}</span></span>
       </button>`).join("")}</div>
     <div class="sec">Boş bir anın varsa</div>
@@ -2654,7 +2713,7 @@ function renderToday(){
       <button class="qk" id="st"><i class="t-teal">${I("chart")}</i><b>İlerlemem</b></button>
     </div>
     <div class="sec">Son 5 hafta</div>
-    <button class="card heatc" id="hm">${heatHtml()}<span class="hl"><span>Az</span><i></i><i class="h1"></i><i class="h2"></i><i class="h3"></i><span>Çok</span></span></button>
+    <button class="card heatc" id="hm">${heatHtml()}</button>
     <div class="sec">Rozetler <span class="muted small" style="font-weight:500">${Object.keys(S.badges || {}).length}/${BADGES.length}</span></div>
     <button class="card bdgc" id="bd">${badgesHtml(true)}</button>
     <div style="height:8px"></div>`;
