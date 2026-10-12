@@ -575,6 +575,65 @@ body.rs-open .opt:not(.good):not(.bad){opacity:.5}
 @keyframes qin{from{opacity:0;transform:translateX(26px)}}
 @media (prefers-reduced-motion: reduce){.confetti,.pdot em{animation:none!important}.rsheet{animation:none}}
 body.full #xp{display:none}
+/* ---- release 2: karakterler, kaydırmalı kart, sohbet, rozetler ---- */
+svg.av{display:block;flex:none;border-radius:50%}
+.talk{display:flex;align-items:flex-end;gap:10px;margin:6px 2px 4px}
+.talk .avw{flex:none;animation:qin .35s ease}
+.bub{position:relative;flex:1;background:var(--bg2);border:2px solid var(--line);border-radius:18px;padding:12px 14px;font-weight:700;font-size:19px;line-height:1.3}
+.bub small{display:block;font-size:12px;font-weight:600;color:var(--tx3);margin-bottom:3px}
+.bub:before{content:"";position:absolute;left:-9px;bottom:16px;width:14px;height:14px;background:var(--bg2);border-left:2px solid var(--line);border-bottom:2px solid var(--line);transform:rotate(45deg)}
+.built.lined{border:0;border-radius:0;padding:6px 0;min-height:104px;background:repeating-linear-gradient(to bottom,transparent 0 50px,var(--line) 50px 52px)}
+.built.lined .wd{margin-bottom:2px}
+.swz{position:relative;height:300px;margin:10px 0 14px;display:grid;place-items:center}
+.swl{position:absolute;top:10px;z-index:3;display:inline-flex;align-items:center;gap:5px;padding:6px 12px;border-radius:12px;font-weight:800;font-size:14px;opacity:0;transition:opacity .15s}
+.swl svg{width:16px;height:16px}
+.swl.no{left:6px;background:var(--bad);color:#fff}.swl.yes{right:6px;background:var(--ok);color:#fff}
+.swz.ton .swl.no,.swz.toy .swl.yes{opacity:1}
+.swc{position:relative;width:100%;height:100%;touch-action:pan-y;user-select:none;cursor:grab;perspective:900px}
+.swf,.swb{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;padding:22px;text-align:center;background:var(--bg2);border:2px solid var(--line);border-radius:24px;box-shadow:0 6px 0 var(--line);backface-visibility:hidden;transition:transform .4s ease}
+.swb{transform:rotateY(180deg)}
+.swc.flip .swf{transform:rotateY(-180deg)}.swc.flip .swb{transform:rotateY(0)}
+.swb .ex{text-align:center}
+.swbtn{display:flex;justify-content:center;align-items:center;gap:22px}
+.swbtn button{width:66px;height:66px;border-radius:50%;display:grid;place-items:center}
+.swbtn button svg{width:30px;height:30px}
+.swbtn .n{background:var(--bad);color:#fff;box-shadow:0 4px 0 var(--bad-s)}
+.swbtn .y{background:var(--ok);color:#fff;box-shadow:0 4px 0 var(--ok-s)}
+.swbtn .say{width:52px;height:52px;padding:0;justify-content:center}
+.swbtn .n:active,.swbtn .y:active{transform:translateY(4px);box-shadow:none}
+.chatgo{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;margin:4px 0 12px}
+.chatgo svg{width:20px;height:20px}
+.chatlog{display:flex;flex-direction:column;gap:10px;padding:8px 0 4px}
+.cmsg{display:flex;align-items:flex-end;gap:8px;max-width:88%;animation:qin .3s ease}
+.cmsg.me{align-self:flex-end;flex-direction:row-reverse}
+.cb{background:var(--bg2);border:2px solid var(--line);border-radius:18px 18px 18px 6px;padding:9px 13px;text-align:left;cursor:pointer}
+.cmsg.me .cb{background:var(--acc);border-color:var(--acc);color:var(--onacc);border-radius:18px 18px 6px 18px}
+.cb small{display:block;font-size:11.5px;font-weight:700;color:var(--tx3);margin-bottom:2px}
+.cmsg.me .cb small{color:inherit;opacity:.75}
+.cb .de{display:block;font-size:16.5px;font-weight:600;line-height:1.35}
+.cb .tr{display:none;font-size:13.5px;opacity:.75;margin-top:3px}
+.cmsg.showtr .tr{display:block}
+.cb.typing{display:flex;gap:4px;padding:14px 16px}
+.cb.typing i{width:8px;height:8px;border-radius:50%;background:var(--tx3);animation:tdot 1s infinite}
+.cb.typing i:nth-child(2){animation-delay:.15s}.cb.typing i:nth-child(3){animation-delay:.3s}
+@keyframes tdot{0%,60%,100%{opacity:.3;transform:none}30%{opacity:1;transform:translateY(-4px)}}
+.chatch{display:flex;flex-direction:column;gap:9px;padding:6px 0 18px}
+.chatch:empty{display:none}
+.chq{padding:10px 12px;border-radius:14px;background:var(--acc-d)}
+.chq small{display:block;font-size:12px;color:var(--tx2);font-weight:600}
+.chq b{font-size:16px}
+.badges{display:grid;grid-template-columns:repeat(4,1fr);gap:10px 6px}
+.bdg{display:flex;flex-direction:column;align-items:center;text-align:center;gap:4px;min-width:0}
+.bdg i{width:52px;height:52px;border-radius:50%;display:grid;place-items:center;background:var(--bg3);color:var(--tx3);border:2px solid var(--line)}
+.bdg i svg{width:24px;height:24px}
+.bdg.on i{background:var(--amber);color:#fff;border-color:var(--amber-s);box-shadow:0 3px 0 var(--amber-s)}
+.bdg b{font-size:11.5px;font-weight:700;line-height:1.2;color:var(--tx2)}
+.bdg.on b{color:var(--tx)}
+.bdg small{font-size:10.5px;color:var(--tx3);line-height:1.2}
+.badges.cmp .bdg i{width:46px;height:46px}
+.bdgc{display:block;width:100%;padding:14px 10px;text-align:left}
+@media (prefers-reduced-motion:reduce){.swf,.swb,.cmsg,.talk .avw{transition:none;animation:none}.cb.typing i{animation:none}}
+.pool .wd.used{visibility:visible;color:transparent;background:var(--bg3);border-color:var(--bg3);box-shadow:none;pointer-events:none}
 </style>
 </head>
 <body>
@@ -1537,6 +1596,7 @@ function addXP(n){
 
 /* ---------- kutlama ekranı ---------- */
 function celebrate(o){
+  checkBadges();
   setTop("", true);
   document.body.classList.add("sess");
   const cols = ["var(--amber)", "var(--ok)", "var(--acc)", "var(--rose)", "var(--violet)"];
@@ -1573,11 +1633,62 @@ function heatHtml(){
   return `<div class="heat">${["P","S","Ç","P","C","C","P"].map(d => `<span>${d}</span>`).join("")}${cells.join("")}</div>`;
 }
 
+/* ---------- karakterler: basit yüz çizimi ---------- */
+const CHAR = {
+  "Nisa":   {c:"#F43F5E", h:"#5B3A29", f:1}, "Atakan": {c:"#3654F4", h:"#2B2118", f:0},
+  "Sen":    {c:"#3654F4", h:"#2B2118", f:0}, "Ben":   {c:"#3654F4", h:"#2B2118", f:0},
+};
+const CHAR_POOL = [{c:"#8B5CF6", h:"#3B2A1A", f:1}, {c:"#14B8A6", h:"#1F1A17", f:0}, {c:"#F59E0B", h:"#6B4423", f:1}, {c:"#0E8FD6", h:"#3A2A20", f:0}];
+function charOf(name){
+  if (CHAR[name]) return CHAR[name];
+  let h = 0; for (const ch of String(name)) h = (h * 31 + ch.charCodeAt(0)) >>> 0;
+  return CHAR_POOL[h % CHAR_POOL.length];
+}
+function avatar(name, size){
+  const c = charOf(name), s = size || 44;
+  const hair = c.f
+    ? `<path d="M10 25c-2-12 6-18 14-18s16 6 14 18c0 6-2 12-2 12l-3-11c-6 1-12-2-15-6-2 4-5 6-6 6l-2 11s-2-6 0-12z" fill="${c.h}"/>`
+    : `<path d="M12 22c-1-9 5-14 12-14s13 5 12 14c-3-3-8-5-12-5s-9 2-12 5z" fill="${c.h}"/>`;
+  return `<svg class="av" width="${s}" height="${s}" viewBox="0 0 48 48" aria-hidden="true"><circle cx="24" cy="24" r="24" fill="${c.c}"/><circle cx="24" cy="26" r="13" fill="#F6D2B5"/>${hair}<circle cx="19.5" cy="27" r="1.7" fill="#2A1F14"/><circle cx="28.5" cy="27" r="1.7" fill="#2A1F14"/><path d="M20 32c2.5 2.5 5.5 2.5 8 0" stroke="#2A1F14" stroke-width="1.8" fill="none" stroke-linecap="round"/><circle cx="16.5" cy="31" r="2" fill="#F4A6A0" opacity=".6"/><circle cx="31.5" cy="31" r="2" fill="#F4A6A0" opacity=".6"/></svg>`;
+}
+
+/* ---------- rozetler ---------- */
+const BADGES = [
+  {id:"st3",   ic:"flame",    t:"3 gün seri",       d:"3 gün üst üste çalış",       v:() => streak() >= 3},
+  {id:"st7",   ic:"flame",    t:"1 hafta seri",     d:"7 gün üst üste çalış",       v:() => streak() >= 7},
+  {id:"st30",  ic:"flame",    t:"1 ay seri",        d:"30 gün üst üste çalış",      v:() => streak() >= 30},
+  {id:"c50",   ic:"cards",    t:"50 kart",          d:"50 kart başlat",             v:() => Object.keys(S.prog).length >= 50},
+  {id:"c250",  ic:"cards",    t:"250 kart",         d:"250 kart başlat",            v:() => Object.keys(S.prog).length >= 250},
+  {id:"w100",  ic:"text",     t:"100 kelime",       d:"100 kelime öğrenmeye başla", v:() => Object.keys(S.prog).filter(k => /^[nva]:/.test(k)).length >= 100},
+  {id:"sat50", ic:"star",     t:"50 oturmuş kart",  d:"50 kart uzun süreli hafızada", v:() => Object.values(S.prog).filter(r => r.b >= 4).length >= 50},
+  {id:"bk1",   ic:"book",     t:"İlk bölüm",        d:"Kitaptan bir bölüm bitir",   v:() => Object.keys(S.book.read || {}).length >= 1},
+  {id:"bk10",  ic:"book",     t:"10 bölüm",         d:"Kitabın yarısını bitir",     v:() => Object.keys(S.book.read || {}).length >= 10},
+  {id:"sc5",   ic:"chat",     t:"Sohbet ustası",    d:"5 senaryo bitir",            v:() => Object.keys(S.scen.done || {}).length >= 5},
+  {id:"wr1",   ic:"pen",      t:"İlk yazı",         d:"Bir günlük yazı düzelttir",  v:() => allWritings().length >= 1},
+  {id:"g5",    ic:"game",     t:"Oyuncu",           d:"5 farklı oyun oyna",         v:() => Object.keys(S.games).length >= 5},
+  {id:"g15",   ic:"trophy",   t:"Oyun sever",       d:"15 farklı oyun oyna",        v:() => Object.keys(S.games).length >= 15},
+  {id:"xp1k",  ic:"bolt",     t:"1.000 puan",       d:"Toplam 1.000 puan topla",    v:() => (S.xp || 0) >= 1000},
+  {id:"xp5k",  ic:"bolt",     t:"5.000 puan",       d:"Toplam 5.000 puan topla",    v:() => (S.xp || 0) >= 5000},
+  {id:"eve",   ic:"moon",     t:"Gece kuşu",        d:"21:00'den sonra çalış",      v:() => new Date().getHours() >= 21 && (dayRec().n || 0) >= 10},
+];
+function checkBadges(){
+  S.badges = S.badges || {};
+  const got = BADGES.filter(b => !S.badges[b.id] && (() => { try { return b.v(); } catch(e) { return false; } })());
+  got.forEach(b => S.badges[b.id] = TODAY);
+  if (got.length) { save(); setTimeout(() => { toast("Yeni rozet: " + got.map(b => b.t).join(", ")); sfx("win"); }, 600); }
+}
+function badgesHtml(compact){
+  const B = S.badges || {};
+  const list = compact ? BADGES.slice().sort((a, b) => !!B[b.id] - !!B[a.id]).slice(0, 8) : BADGES;
+  return `<div class="badges ${compact ? "cmp" : ""}">${list.map(b => `<div class="bdg ${B[b.id] ? "on" : ""}" title="${esc(b.d)}"><i>${I(B[b.id] ? b.ic : "lock")}</i><b>${b.t}</b>${compact ? "" : `<small>${B[b.id] ? trDate(B[b.id]) : esc(b.d)}</small>`}</div>`).join("")}</div>`;
+}
+
 /* ================= ALIŞTIRMA MOTORU ================= */
 // g: 0 tanı · 1 hatırla · 2 üret
 function gapCands(it){ return words(it).map((w, i) => ({w: w.replace(/[.,!?;:"„“]/g, ""), i})).filter(x => x.w.length >= 3 && /^[A-Za-zÄÖÜäöüß]+$/.test(x.w)); }
 const MODES = {
   learn:  {t:"Öğren",       ic:"👀", g:0, d:"Kartı gör, dinle, tekrar et"},
+  swipe:  {t:"Kaydır",      ic:"cards", g:0, d:"Biliyorsan sağa, bilmiyorsan sola"},
   rquiz:  {t:"Anlamı",      ic:"🇹🇷", g:0, d:"Almancayı oku, anlamını seç"},
   tf:     {t:"Doğru mu?",   ic:"⚖️", g:0, d:"Çeviri doğru mu, yanlış mı"},
   match:  {t:"Eşleştir",    ic:"🧩", g:0, d:"Almanca ve Türkçeyi eşle", group:true},
@@ -1605,12 +1716,12 @@ function modeFor(it){
   // kutu küçükse tanıma, büyüdükçe üretme
   const b = (S.prog[it.id] || {}).b || 0;
   if (it.kind) {
-    const wp = {n: b <= 1 ? ["rquiz","quiz","artikel","hear","match"] : ["artikel","plural","write","scramble","dictate"],
-                v: b <= 1 ? ["rquiz","quiz","conj"] : ["conj","perfekt","prat","write"],
-                a: b <= 1 ? ["rquiz","quiz","opp"] : ["opp","write","scramble"]}[it.kind];
+    const wp = {n: b <= 1 ? ["rquiz","quiz","artikel","hear","swipe"] : ["artikel","plural","write","scramble","dictate"],
+                v: b <= 1 ? ["rquiz","quiz","conj","swipe"] : ["conj","perfekt","prat","write"],
+                a: b <= 1 ? ["rquiz","quiz","opp","swipe"] : ["opp","write","scramble"]}[it.kind];
     return pick(wp.filter(m => m !== "match" && can(m, it))) || "quiz";
   }
-  const pool = b <= 1 ? ["quiz","rquiz","tf","hear","order","gap"] : b <= 3 ? ["quiz","order","gap","finish","gapw","dictate","write"] : ["write","gapw","dictate","order","speak"];
+  const pool = b <= 1 ? ["quiz","rquiz","tf","hear","order","gap","swipe"] : b <= 3 ? ["quiz","order","gap","finish","gapw","dictate","write"] : ["write","gapw","dictate","order","speak"];
   return pick(pool.filter(m => can(m, it))) || "quiz";
 }
 
@@ -1857,10 +1968,10 @@ const R_MODE = {
   order(it){
     const w = words(it), pool = shuffle(w.map((x, i) => ({x, i})));
     if (pool.every((p, i) => p.i === i) && w.length > 1) pool.reverse();
-    const built = [];
+    const built = [], who = pick(["Nisa", "Lena", "Jonas", "Mia", "Tom"]);
     $("#view").innerHTML = head("order") + `
-      <div class="card flash" style="min-height:100px"><div class="mid">Almanca kur</div><div class="big" style="font-size:21px">${esc(it.tr)}</div></div>
-      <div class="built" id="built"></div>
+      <div class="talk"><span class="avw">${avatar(who, 64)}</span><div class="bub"><small>Almanca nasıl dersin?</small>${esc(it.tr)}</div></div>
+      <div class="built lined" id="built"></div>
       <div class="pool" id="pool">${pool.map((p, k) => `<button class="wd" data-k="${k}">${esc(p.x)}</button>`).join("")}</div>
       <div id="vd"></div>
       <div class="foot"><div class="row2"><button class="btn2" id="clr">Temizle</button><button class="cta" id="ck" disabled>Kontrol et</button></div></div>`;
@@ -1870,13 +1981,45 @@ const R_MODE = {
       $$("#built .wd").forEach(b => b.onclick = () => { if (P.lock) return; built.splice(+b.dataset.j, 1); draw(); });
       $("#ck").disabled = built.length !== w.length;
     };
-    $$("#pool .wd").forEach(b => b.onclick = () => { if (P.lock || built.includes(+b.dataset.k)) return; built.push(+b.dataset.k); draw(); });
+    $$("#pool .wd").forEach(b => b.onclick = () => { if (P.lock || built.includes(+b.dataset.k)) return; built.push(+b.dataset.k); if (!noListen()) speak(pool[+b.dataset.k].x.replace(/[.,!?;:]/g, ""), null, null, {quiet:1}); sfx("tap"); draw(); });
     $("#clr").onclick = () => { if (P.lock) return; built.length = 0; draw(); };
     $("#ck").onclick = () => {
       if (P.lock) return; P.lock = 1;
       const said = built.map(k => pool[k].x).join(" "), ok = norm(said) === norm(w.join(" "));
       answer(it, ok); $("#vd").innerHTML = verdict(ok, it, ok ? "" : said); speak(plain(it)); footNext();
     };
+  },
+  swipe(it){
+    $("#view").innerHTML = head("swipe") + `
+      <p class="hint" style="margin-top:0">Anlamını biliyor musun? Kartı çevir, sonra kaydır.</p>
+      <div class="swz"><span class="swl no">${I("x")} Bilmiyorum</span><span class="swl yes">Biliyorum ${I("check")}</span>
+        <div class="swc" id="swc"><div class="swf"><div class="big">${esc(it.de)}</div><small class="muted">Çevirmek için dokun</small></div>
+        <div class="swb"><div class="big" style="font-size:22px">${esc(it.tr)}</div>${exHtml(it, true)}</div></div></div>
+      <div class="swbtn"><button class="n" id="sn" aria-label="Bilmiyorum">${I("x")}</button><button class="say" id="spk" aria-label="Dinle">${ICON_SPK}</button><button class="y" id="sy" aria-label="Biliyorum">${I("check")}</button></div>
+      <div id="vd"></div><div class="foot" hidden></div>`;
+    const c = $("#swc"), z = $(".swz");
+    speak(it.de); $("#spk").onclick = () => speak(it.de);
+    let x0 = null, dx = 0, moved = false;
+    const done = ok => {
+      if (P.lock) return; P.lock = 1;
+      c.style.transition = "transform .3s ease, opacity .3s"; c.style.transform = `translateX(${ok ? 140 : -140}%) rotate(${ok ? 18 : -18}deg)`; c.style.opacity = 0;
+      answer(it, ok);
+      if (ok) setTimeout(() => { if (P && P.q[P.i] && P.q[P.i].it === it) next(); }, 320);
+      else setTimeout(() => { if (!document.body.contains(c)) return; $("#vd").innerHTML = verdict(false, it); footNext(); }, 260);
+    };
+    c.onpointerdown = e => { if (P.lock) return; x0 = e.clientX; dx = 0; moved = false; c.style.transition = "none"; c.setPointerCapture(e.pointerId); };
+    c.onpointermove = e => {
+      if (x0 === null) return; dx = e.clientX - x0; if (Math.abs(dx) > 6) moved = true;
+      c.style.transform = `translateX(${dx}px) rotate(${dx / 18}deg)`;
+      z.classList.toggle("toy", dx > 40); z.classList.toggle("ton", dx < -40);
+    };
+    c.onpointerup = c.onpointercancel = () => {
+      if (x0 === null) return; x0 = null; z.classList.remove("toy", "ton");
+      if (Math.abs(dx) > 90) return done(dx > 0);
+      c.style.transition = "transform .25s"; c.style.transform = "";
+      if (!moved) c.classList.toggle("flip");
+    };
+    $("#sy").onclick = () => done(true); $("#sn").onclick = () => done(false);
   },
   dictate(it){ typed(it, "dictate", `<div class="mid">Dinle ve yaz</div><button class="mic" id="spk" style="width:72px;height:72px;margin:6px auto">${ICON_SPK.replace('width="18" height="18"', 'width="30" height="30"')}</button>`, true); },
   write(it){ typed(it, "write", `<div class="mid">Almanca yaz</div><div class="big" style="font-size:23px">${esc(it.tr)}</div>`); },
@@ -2149,6 +2292,7 @@ function steps(){
 
 function renderToday(){
   setTop("Bugün");
+  checkBadges();
   const now = new Date(), st = steps(), done = st.filter(s => s.done).length, nx = st.find(s => !s.done);
   const h = now.getHours(), eve = h >= 21 || h < 5;
   const greet = h < 5 ? "İyi geceler" : h < 12 ? "Günaydın" : h < 18 ? "Merhaba" : "İyi akşamlar";
@@ -2180,6 +2324,8 @@ function renderToday(){
     </div>
     <div class="sec">Son 5 hafta</div>
     <button class="card heatc" id="hm">${heatHtml()}<span class="hl"><span>Az</span><i></i><i class="h1"></i><i class="h2"></i><i class="h3"></i><span>Çok</span></span></button>
+    <div class="sec">Rozetler <span class="muted small" style="font-weight:500">${Object.keys(S.badges || {}).length}/${BADGES.length}</span></div>
+    <button class="card bdgc" id="bd">${badgesHtml(true)}</button>
     <div style="height:8px"></div>`;
   $$(".pnode").forEach(b => b.onclick = () => { sfx("tap"); st[+b.dataset.i].run(); });
   $("#q1").onclick = () => startTurbo(srcItems("due").length >= 5 ? "due" : "ph");
@@ -2190,6 +2336,7 @@ function renderToday(){
   $("#q4").onclick = () => startShadow(srcItems("due").length >= 5 ? "due" : "ph");
   $("#st").onclick = () => open(renderStats);
   $("#hm").onclick = () => open(renderStats);
+  $("#bd").onclick = () => open(renderStats);
 }
 
 /* ================= ALIŞTIR ================= */
@@ -4129,8 +4276,10 @@ function renderStats(){
   const big = (n, t) => `<div class="card" style="padding:14px;text-align:center"><div style="font-size:26px;font-weight:700">${n}</div><div class="small muted">${t}</div></div>`;
   $("#view").innerHTML = `
     <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:8px">
-      ${big("🔥 " + streak(), "gün seri")}${big(Object.keys(S.days).length, "gün çalıştın")}${big(answered ? Math.round(right / answered * 100) + "%" : "–", "doğru oranı")}</div>
+      ${big(I("flame") + " " + streak(), "gün seri")}${big(Object.keys(S.days).length, "gün çalıştın")}${big(answered ? Math.round(right / answered * 100) + "%" : "–", "doğru oranı")}</div>
     ${weekBox()}
+    <div class="sec">Rozetler · ${Object.keys(S.badges || {}).length}/${BADGES.length}</div>
+    <div class="card" style="padding:12px">${badgesHtml(false)}</div>
     <div class="sec">Son 14 gün</div>
     <div class="card" style="padding:14px 12px 8px"><div style="display:flex;align-items:flex-end;gap:5px;height:110px">${days.map(d => { const n = (S.days[d] || {}).n || 0, act = Object.keys(S.days[d] || {}).length; return `<div style="flex:1;display:flex;flex-direction:column;justify-content:flex-end;height:100%" title="${d}: ${n}"><div style="height:${Math.max(act ? 6 : 2, n / mx * 100)}%;border-radius:5px 5px 2px 2px;background:${act ? "var(--acc)" : "var(--bg4)"}"></div></div>`; }).join("")}</div>
       <div style="display:flex;justify-content:space-between;font-size:11.5px;color:var(--tx3);margin-top:6px"><span>${trDate(days[0])}</span><span>Bugün</span></div></div>
@@ -4256,6 +4405,7 @@ function renderReader(){
   setTop(kind === "book" ? src.n + ". " + src.de : src.title, true);
   $("#view").innerHTML = `
     ${kind === "scen" ? `<div class="card desc">${esc(src.desc)}</div>` : ""}
+    <button class="cta chatgo" id="cplay">${I("chat")} Sohbet gibi oyna</button>
     <div class="seg" id="roles"><button data-r="" class="${!R.me ? "on" : ""}">Sadece oku</button>
       ${keys.map(k => `<button data-r="${k}" class="${R.me === k ? "on" : ""}">Ben: ${esc(roles[k])}</button>`).join("")}</div>
     <p class="hint">${R.me ? "Senin repliklerin gizli: Türkçesine bakıp Almancasını söyle, sonra dokunup kontrol et." : "Bir cümleye dokun: Türkçesi açılır ve okunur."}</p>
@@ -4279,12 +4429,8 @@ function renderReader(){
     if (R.play >= 0) { stopSpeak(); R.play = -1; R.waiting = false; $("#play").textContent = "▶ Sesli oynat"; clearCur(); return; }
     R.play = 0; $("#play").textContent = "■ Durdur"; playStep();
   };
-  $("#fin").onclick = () => {
-    stopSpeak();
-    if (kind === "book") { S.book.read = S.book.read || {}; S.book.read[src.n] = (S.book.read[src.n] || 0) + 1; S.book.last = src.n; mark("book"); }
-    else { S.scen.done = S.scen.done || {}; S.scen.done[src.id] = (S.scen.done[src.id] || 0) + 1; mark("scen"); }
-    save(); toast("Kaydedildi ✓"); go(tab);
-  };
+  $("#fin").onclick = () => { stopSpeak(); readerDone(); toast("Kaydedildi ✓"); go(tab); };
+  $("#cplay").onclick = () => { stopSpeak(); R.play = -1; open(renderChatPlay); };
   if ($("#kq")) $("#kq").onclick = () => startSession({items: kind === "book" ? ITEMS.filter(i => i.src === "bk" && i.ch === src.n) : ITEMS.filter(i => i.sc === src.id), mode:"mix", title:"Bölüm kalıpları"});
   if ($("#live")) $("#live").onclick = () => liveChat(src);
 }
@@ -4299,6 +4445,80 @@ function playStep(){
   if (R.me && l[0] === R.me) { el.classList.add("wait"); R.waiting = true; return; }  // sıra sende: söyle, sonra balona dokun
   el.classList.add("cur");
   speak(l[1], R.keys.indexOf(l[0]), () => { if (R && R.play === i) { R.play++; setTimeout(playStep, 350); } });
+}
+function readerDone(){
+  const {kind, src} = R;
+  if (kind === "book") { S.book.read = S.book.read || {}; S.book.read[src.n] = (S.book.read[src.n] || 0) + 1; S.book.last = src.n; mark("book"); }
+  else { S.scen.done = S.scen.done || {}; S.scen.done[src.id] = (S.scen.done[src.id] || 0) + 1; mark("scen"); }
+  save(); checkBadges();
+}
+
+/* ---------- sohbet gibi oyna: replikler tek tek gelir, sıra sende olunca doğru cümleyi seç ---------- */
+function renderChatPlay(){
+  const {kind, src, roles, keys} = R, me = R.me || (kind === "book" ? "A" : "U");
+  const C = R.chat = {i:0, ok:0, n:0, t0:Date.now(), xp0:S.xp || 0};
+  setTop(kind === "book" ? src.n + ". bölüm" : src.title, true);
+  document.body.classList.add("sess");
+  const mine = src.lines.filter(l => l[0] === me).length || 1;
+  $("#view").innerHTML = `
+    <div class="ptop"><button class="ib px" id="px" aria-label="Kapat">${I("x")}</button><div class="pbar"><i id="cbar" style="width:4%"></i></div><span class="pcnt" id="ccnt">0/${mine}</span></div>
+    <div class="chatlog" id="clog"></div><div class="chatch" id="cch"></div>`;
+  $("#px").onclick = () => { stopSpeak(); R.chat = null; open(renderReader); };
+  const log = $("#clog"), live = () => R && R.chat === C && screen === renderChatPlay;
+  const name = k => roles[k] || k;
+  const bubble = (l, who) => {
+    const el = document.createElement("div");
+    el.className = "cmsg " + (who === me ? "me" : "");
+    el.innerHTML = (who === me ? "" : `<span class="cav">${avatar(name(who), 38)}</span>`) + `<div class="cb"><small>${esc(name(who))}</small><span class="de">${esc(l[1])}</span><span class="tr">${esc(l[2])}</span></div>`;
+    el.querySelector(".cb").onclick = () => { el.classList.toggle("showtr"); speak(l[1], keys.indexOf(who)); };
+    log.appendChild(el); el.scrollIntoView({block:"end", behavior:"smooth"});
+    return el;
+  };
+  const step = () => {
+    if (!live()) return;
+    const l = src.lines[C.i];
+    if (!l) return finish();
+    if (l[0] !== me) {
+      const typing = document.createElement("div");
+      typing.className = "cmsg"; typing.innerHTML = `<span class="cav">${avatar(name(l[0]), 38)}</span><div class="cb typing"><i></i><i></i><i></i></div>`;
+      log.appendChild(typing); typing.scrollIntoView({block:"end", behavior:"smooth"});
+      setTimeout(() => {
+        if (!live()) return; typing.remove(); bubble(l, l[0]);
+        let moved = 0; const go2 = () => { if (moved++) return; C.i++; setTimeout(step, 300); };
+        speak(l[1], keys.indexOf(l[0]), go2); setTimeout(go2, 2600 + l[1].length * 110);
+      }, 650 + Math.min(900, l[1].length * 15));
+      return;
+    }
+    // sıra sende
+    const pool = src.lines.filter((x, j) => j !== C.i && norm(x[1]) !== norm(l[1]));
+    const others = (D.scenarios || []).flatMap(s => s.lines).concat(D.book.chapters.flatMap(c => c.lines)).filter(x => norm(x[1]) !== norm(l[1]));
+    const dis = shuffle(pool.filter(x => x[0] === me)).concat(shuffle(pool), shuffle(others).slice(0, 6));
+    const ch = [l[1]]; for (const x of dis) { if (ch.length >= 3) break; if (!ch.some(c => norm(c) === norm(x[1]))) ch.push(x[1]); }
+    const opts = shuffle(ch);
+    $("#cch").innerHTML = `<div class="chq"><small>Sıra sende. Şunu söyle:</small><b>${esc(l[2])}</b></div>${opts.map((o, k) => `<button class="opt" data-k="${k}">${esc(o)}</button>`).join("")}`;
+    $("#cch").scrollIntoView({block:"end", behavior:"smooth"});
+    let lock = 0;
+    $$("#cch .opt").forEach(b => b.onclick = () => {
+      if (lock) return; lock = 1;
+      const ok = opts[+b.dataset.k] === l[1];
+      C.n++; if (ok) C.ok++;
+      b.classList.add(ok ? "good" : "bad"); if (!ok) $(`#cch .opt[data-k="${opts.indexOf(l[1])}"]`).classList.add("good");
+      sfx(ok ? "ok" : "bad"); buzz(ok ? 12 : [30, 40, 30]); if (ok) addXP(5);
+      $("#cbar").style.width = Math.max(4, C.n / mine * 100) + "%"; $("#ccnt").textContent = C.n + "/" + mine;
+      setTimeout(() => {
+        if (!live()) return; $("#cch").innerHTML = ""; bubble(l, me);
+        let moved = 0; const go2 = () => { if (moved++) return; C.i++; setTimeout(step, 300); };
+        speak(l[1], keys.indexOf(me), go2); setTimeout(go2, 2600 + l[1].length * 110);
+      }, ok ? 450 : 1300);
+    });
+  };
+  const finish = () => {
+    readerDone();
+    if (C.n && C.ok === C.n) addXP(10);
+    celebrate({title:"Sohbet bitti!", sub: kind === "book" ? `${src.n}. bölüm: ${src.de}` : src.title, xp:(S.xp || 0) - C.xp0, pct: C.n ? Math.round(C.ok / C.n * 100) : undefined,
+      time: mmss(Date.now() - C.t0), icon:"chat", btn:"Kitaplığa dön", fn: () => go("library")});
+  };
+  setTimeout(step, 300);
 }
 
 /* ================= NASIL DERİM? kendi cümlelerin ================= */
