@@ -12,7 +12,7 @@
 <meta name="apple-mobile-web-app-title" content="Gedsche">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Lilita+One&family=Rubik:wght@500;600;700;800&family=Figtree:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@700;800&family=Rubik:wght@500;600;700;800&family=Figtree:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
 :root{
   --bg:#F3F5FB; --bg2:#FFFFFF; --bg3:#EAEDF6; --bg4:#DCE1EE;
@@ -1048,7 +1048,7 @@ body.game:not(.sess) .host{top:-24px;width:46px;height:46px}
 .gtile.cz:active{transform:translateY(4px) scale(.98);box-shadow:0 1px 0 var(--c3),0 4px 10px -6px var(--c2),inset 0 2px 0 rgb(255 255 255/.45)}
 .gtile.cz i{position:absolute;right:-6px;top:-4px;width:64px!important;height:64px!important;transform:rotate(12deg);filter:drop-shadow(0 4px 4px rgb(0 0 0/.25));background:transparent!important;font-style:normal;font-size:44px;display:grid;place-items:center}
 .gtile.cz i svg{width:60px!important;height:60px!important;max-width:none!important;max-height:none!important}
-.gtile.cz b{position:relative;margin-top:36px;font:400 21px/1.02 "Lilita One",var(--disp);letter-spacing:.01em;text-shadow:0 2px 0 var(--c3),0 3px 8px rgb(0 0 0/.25);word-break:break-word;hyphens:auto}
+.gtile.cz b{position:relative;margin-top:36px;font:800 21px/1.02 "Baloo 2",var(--disp);letter-spacing:.01em;text-shadow:0 2px 0 var(--c3),0 3px 8px rgb(0 0 0/.25);word-break:break-word;hyphens:auto}
 .gtile.cz small{position:relative;color:rgb(255 255 255/.92);font-size:11.5px;font-weight:700}
 .grec{position:absolute;left:10px;bottom:10px;font-style:normal;font-size:11.5px;font-weight:800;padding:3px 9px;border-radius:99px;background:rgb(0 0 0/.22);color:#fff}
 .grec.new{background:linear-gradient(180deg,#FFE066,#FFB800);color:#6B3A00;box-shadow:0 2px 0 #C77F00;letter-spacing:.06em;animation:gnew 1.6s ease-in-out infinite}
@@ -1064,18 +1064,18 @@ body.game:not(.sess) .host{top:-24px;width:46px;height:46px}
 /* günün oyunu: jackpot */
 .feat.jack{position:relative;overflow:hidden;padding:18px 16px;border-radius:24px;background:linear-gradient(135deg,#7C3AED,#DB2777 55%,#F59E0B);border:2px solid #FFE066!important;box-shadow:0 6px 0 #8A1C5C,0 12px 28px -8px #DB2777,inset 0 2px 0 rgb(255 255 255/.4)}
 .feat.jack::after{content:"";position:absolute;top:-50%;left:-60%;width:35%;height:200%;background:linear-gradient(90deg,transparent,rgb(255 255 255/.5),transparent);transform:rotate(20deg);animation:gshine 3.6s infinite;pointer-events:none}
-.feat.jack .ft b{display:block;font:400 26px/1.05 "Lilita One",var(--disp);text-shadow:0 2px 0 #8A1C5C}
+.feat.jack .ft b{display:block;font:800 26px/1.05 "Baloo 2",var(--disp);text-shadow:0 2px 0 #8A1C5C}
 .feat.jack .ft small{font-weight:700;opacity:.95}
 .feat.jack .fi{background:rgb(255 255 255/.18);box-shadow:inset 0 0 0 2px rgb(255 255 255/.3)}
 .feat.jack .ft{flex:1;min-width:0}
-.feat.jack .fp{width:auto;height:auto;margin-left:auto;flex:none;font:400 17px "Lilita One",var(--disp);letter-spacing:.06em;color:#6B3A00;padding:10px 16px;border-radius:99px;background:linear-gradient(180deg,#FFE680,#FFB800);box-shadow:0 4px 0 #C77F00;animation:gnew 1.3s ease-in-out infinite}
+.feat.jack .fp{width:auto;height:auto;margin-left:auto;flex:none;font:800 17px "Baloo 2",var(--disp);letter-spacing:.06em;color:#6B3A00;padding:10px 16px;border-radius:99px;background:linear-gradient(180deg,#FFE680,#FFB800);box-shadow:0 4px 0 #C77F00;animation:gnew 1.3s ease-in-out infinite}
 .feat.jack:active{transform:translateY(5px);box-shadow:0 1px 0 #8A1C5C}
 @media (prefers-reduced-motion:reduce){.gtile.cz::after,.feat.jack::after,.grec.new,.feat.jack .fp{animation:none}}
 
 /* ===== Hafıza ===== */
 .mstage{flex:1;min-height:120px;display:flex;align-items:center;justify-content:center;gap:10px}
 .mstage .mbat{display:block;animation:mbob 2.4s ease-in-out infinite}
-.mstage .msay{font:400 21px "Lilita One",var(--disp);padding:10px 16px;border-radius:18px 18px 18px 4px;background:var(--glass,rgb(255 255 255/.12));border:1.5px solid var(--glass-b);color:var(--tx)}
+.mstage .msay{font:800 21px "Baloo 2",var(--disp);padding:10px 16px;border-radius:18px 18px 18px 4px;background:var(--glass,rgb(255 255 255/.12));border:1.5px solid var(--glass-b);color:var(--tx)}
 .mstage.pop .msay{animation:mpop .35s cubic-bezier(.3,1.6,.5,1)}
 .mstage.pop .mbat{animation:mhop .45s ease,mbob 2.4s .45s ease-in-out infinite}
 @keyframes mbob{0%,100%{transform:translateY(0)}50%{transform:translateY(-6px)}}
@@ -1086,7 +1086,7 @@ body.game:not(.sess) .host{top:-24px;width:46px;height:46px}
 .mem .mc.de{border-color:color-mix(in srgb,var(--acc) 55%,transparent)}
 .mem .mc.back{color:transparent;transform:rotateY(180deg);background:linear-gradient(150deg,var(--c1,#8B6CFF),var(--c2,#5B3FD9))!important;border-color:rgb(255 255 255/.4)!important;box-shadow:0 4px 0 var(--c3,#3E26A6),inset 0 2px 0 rgb(255 255 255/.35)!important}
 .mem .mc.back span{visibility:hidden}
-.mem .mc.back::after{content:"?";position:absolute;inset:0;display:grid;place-items:center;font:400 30px "Lilita One",var(--disp);color:rgb(255 255 255/.85);transform:rotateY(180deg)}
+.mem .mc.back::after{content:"?";position:absolute;inset:0;display:grid;place-items:center;font:800 30px "Baloo 2",var(--disp);color:rgb(255 255 255/.85);transform:rotateY(180deg)}
 .mem .mc.done{opacity:.3}
 
 /* ===== Oyun içi: casino enerjisi (sadece oyunlarda, pratikte değil) ===== */
@@ -1099,11 +1099,11 @@ body[data-gz="5"]{--c1:#2ED3E6;--c2:#0891B2;--c3:#05607A}
 body[data-gz="6"]{--c1:#FF6B6B;--c2:#E11D48;--c3:#9B1035}
 body[data-gz="7"]{--c1:#FFC93C;--c2:#F59E0B;--c3:#A86400}
 body.arcade:not(.sess)::after{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;background:radial-gradient(90% 45% at 50% -8%,color-mix(in srgb,var(--c1) 45%,transparent),transparent 70%),radial-gradient(70% 35% at 50% 108%,color-mix(in srgb,var(--c2) 30%,transparent),transparent 70%)}
-body.arcade:not(.sess) .hud > b{font:400 30px/1 "Lilita One",var(--disp);color:var(--tx);text-shadow:0 2px 0 color-mix(in srgb,var(--c1) 60%,transparent)}
-body.arcade:not(.sess) .hud .t{min-width:56px;padding:5px 12px;border-radius:99px;text-align:center;font:400 20px/1 "Lilita One",var(--disp);color:#fff!important;background:linear-gradient(180deg,var(--c1),var(--c2));box-shadow:0 3px 0 var(--c3),inset 0 2px 0 rgb(255 255 255/.35)}
+body.arcade:not(.sess) .hud > b{font:800 30px/1 "Baloo 2",var(--disp);color:var(--tx);text-shadow:0 2px 0 color-mix(in srgb,var(--c1) 60%,transparent)}
+body.arcade:not(.sess) .hud .t{min-width:56px;padding:5px 12px;border-radius:99px;text-align:center;font:800 20px/1 "Baloo 2",var(--disp);color:#fff!important;background:linear-gradient(180deg,var(--c1),var(--c2));box-shadow:0 3px 0 var(--c3),inset 0 2px 0 rgb(255 255 255/.35)}
 body.arcade:not(.sess) .hud .t.low{background:linear-gradient(180deg,#FF6B6B,#E11D48);box-shadow:0 3px 0 #9B1035;animation:gnew .6s ease-in-out infinite}
 body.arcade:not(.sess) #view > .card.flash,body.arcade:not(.sess) #view > .card{border:2px solid color-mix(in srgb,var(--c1) 65%,transparent)!important;background:linear-gradient(165deg,color-mix(in srgb,var(--c1) 22%,var(--bg2)),var(--bg2) 70%);box-shadow:0 0 0 5px color-mix(in srgb,var(--c1) 14%,transparent),0 16px 40px -14px var(--c2)}
-body.arcade:not(.sess) .card.flash .big{font-family:"Lilita One",var(--disp);font-weight:400;letter-spacing:.01em;font-size:30px}
+body.arcade:not(.sess) .card.flash .big{font-family:"Baloo 2",var(--disp);font-weight:800;letter-spacing:.01em;font-size:30px}
 /* şıklar: her biri ayrı canlı renk */
 body.arcade:not(.sess) .opt{--o1:#4F9BFF;--o2:#2563EB;--o3:#1A3FA3;position:relative;overflow:hidden;color:#fff!important;background:linear-gradient(180deg,var(--o1),var(--o2));border:2px solid rgb(255 255 255/.35)!important;box-shadow:0 5px 0 var(--o3),0 10px 18px -10px var(--o2),inset 0 2px 0 rgb(255 255 255/.4)!important;font:700 17px var(--disp);text-shadow:0 1px 0 rgb(0 0 0/.22);transition:transform .08s,box-shadow .08s,filter .2s}
 body.arcade:not(.sess) .opt::before{content:"";position:absolute;inset:0 0 55% 0;background:linear-gradient(rgb(255 255 255/.25),transparent);pointer-events:none}
@@ -1122,7 +1122,7 @@ body.arcade:not(.sess) .pool .wd.used{color:transparent;background:color-mix(in 
 body.arcade:not(.sess) .built .wd{background:#fff;color:#1F1A4D;text-shadow:none;border-color:var(--c1)!important;box-shadow:0 3px 0 var(--c2)}
 body.arcade:not(.sess) .btn2{font-family:var(--disp);font-weight:700;border:2px solid color-mix(in srgb,var(--c1) 55%,transparent)!important;box-shadow:0 4px 0 color-mix(in srgb,var(--c3) 70%,transparent)}
 body.arcade:not(.sess) .btn2:active{transform:translateY(3px);box-shadow:0 1px 0 var(--c3)}
-body.arcade:not(.sess) .cta{background:linear-gradient(180deg,#FFE680,#FFB800);color:#6B3A00;box-shadow:0 5px 0 #C77F00,inset 0 2px 0 rgb(255 255 255/.5);font-family:"Lilita One",var(--disp);font-weight:400;font-size:19px;letter-spacing:.04em}
+body.arcade:not(.sess) .cta{background:linear-gradient(180deg,#FFE680,#FFB800);color:#6B3A00;box-shadow:0 5px 0 #C77F00,inset 0 2px 0 rgb(255 255 255/.5);font-family:"Baloo 2",var(--disp);font-weight:800;font-size:19px;letter-spacing:.04em}
 /* kart ızgaraları */
 body.arcade:not(.sess) .mc{background:linear-gradient(165deg,color-mix(in srgb,var(--c1) 30%,var(--bg2)),var(--bg2));border:2px solid color-mix(in srgb,var(--c1) 55%,transparent)!important;box-shadow:0 4px 0 color-mix(in srgb,var(--c3) 65%,transparent);font-weight:700}
 body.arcade:not(.sess) .mc:active{transform:translateY(3px);box-shadow:0 1px 0 var(--c3)}
@@ -1135,7 +1135,7 @@ body.arcade:not(.sess) .gt.sel{border-color:#FFD23F;box-shadow:0 0 0 3px rgb(255
 body.arcade:not(.sess) .gt.hit{background:linear-gradient(180deg,#3DDC84,#16A34A);color:#fff;border-color:transparent}
 body.arcade:not(.sess) .gt.bad{background:linear-gradient(180deg,#FF6B6B,#E11D48);color:#fff}
 /* düşen oyunların kapıları */
-body.arcade:not(.sess) .gate{--o1:#4F9BFF;--o2:#2563EB;--o3:#1A3FA3;color:#fff!important;background:linear-gradient(180deg,var(--o1),var(--o2));border:2px solid rgb(255 255 255/.35);box-shadow:0 4px 0 var(--o3),inset 0 2px 0 rgb(255 255 255/.35);font-family:"Lilita One",var(--disp);font-weight:400;font-size:20px;letter-spacing:.02em}
+body.arcade:not(.sess) .gate{--o1:#4F9BFF;--o2:#2563EB;--o3:#1A3FA3;color:#fff!important;background:linear-gradient(180deg,var(--o1),var(--o2));border:2px solid rgb(255 255 255/.35);box-shadow:0 4px 0 var(--o3),inset 0 2px 0 rgb(255 255 255/.35);font-family:"Baloo 2",var(--disp);font-weight:800;font-size:20px;letter-spacing:.02em}
 body.arcade:not(.sess) .gates .gate:nth-child(2),body.arcade:not(.sess) .grow .gate:nth-child(2){--o1:#FF4F8B;--o2:#E0216A;--o3:#A3124A}
 body.arcade:not(.sess) .gates .gate:nth-child(3){--o1:#3DDC84;--o2:#16A34A;--o3:#0E6B31}
 body.arcade:not(.sess) .grow:not(.on) .gate{filter:saturate(.35) brightness(.8);opacity:.6}
@@ -1143,7 +1143,7 @@ body.arcade:not(.sess) .gate.good{--o1:#3DDC84;--o2:#16A34A;--o3:#0E6B31;filter:
 body.arcade:not(.sess) .gate.bad{--o1:#FF6B6B;--o2:#E11D48;--o3:#9B1035;filter:none}
 body.arcade:not(.sess) .grow .gate{font-size:16px}
 /* doğru / yanlış */
-body.arcade:not(.sess) .tfbtn button{color:#fff!important;font:400 22px "Lilita One",var(--disp)!important;letter-spacing:.03em;border:2px solid rgb(255 255 255/.35)!important;backdrop-filter:none;-webkit-backdrop-filter:none}
+body.arcade:not(.sess) .tfbtn button{color:#fff!important;font:800 22px "Baloo 2",var(--disp)!important;letter-spacing:.03em;border:2px solid rgb(255 255 255/.35)!important;backdrop-filter:none;-webkit-backdrop-filter:none}
 body.arcade:not(.sess) .tfbtn button.y{background:linear-gradient(180deg,#3DDC84,#16A34A)!important;box-shadow:0 6px 0 #0E6B31,inset 0 2px 0 rgb(255 255 255/.4)!important}
 body.arcade:not(.sess) .tfbtn button.n{background:linear-gradient(180deg,#FF6B6B,#E11D48)!important;box-shadow:0 6px 0 #9B1035,inset 0 2px 0 rgb(255 255 255/.4)!important}
 body.arcade:not(.sess) .tfbtn button:active{transform:translateY(5px)}
@@ -1155,11 +1155,35 @@ body.arcade:not(.sess) .tfbtn button.good{background:linear-gradient(180deg,#3DD
 body.arcade:not(.sess) .tfbtn button.bad{background:linear-gradient(180deg,#FF6B6B,#E11D48)!important}
 body.arcade:not(.sess) .drop{background:linear-gradient(180deg,color-mix(in srgb,var(--c1) 16%,transparent),color-mix(in srgb,var(--c2) 6%,transparent));border:2px solid color-mix(in srgb,var(--c1) 50%,transparent);box-shadow:inset 0 0 40px -10px color-mix(in srgb,var(--c1) 40%,transparent)}
 body.arcade:not(.sess) .dw{background:#fff!important;color:#1F1A4D!important;border:2px solid var(--c1)!important;box-shadow:0 4px 0 var(--c2),0 8px 20px -6px var(--c2)!important}
-body.arcade:not(.sess) .dw b{font:400 21px "Lilita One",var(--disp);color:#1F1A4D}
+body.arcade:not(.sess) .dw b{font:800 21px "Baloo 2",var(--disp);color:#1F1A4D}
 body.arcade:not(.sess) .dw span{color:#5B5680}
 body[data-gz="7"]{--ct:#5A3300}
 body.arcade:not(.sess) .wd{color:var(--ct,#fff)}
 body[data-gz="7"].arcade .wd{text-shadow:none}
+
+/* ===== Efektler ===== */
+#fx{position:fixed;inset:0;z-index:80;pointer-events:none;overflow:hidden}
+.fxp{position:absolute;width:var(--s);height:var(--s);margin:calc(var(--s)/-2);border-radius:50%;background:var(--c);box-shadow:0 0 8px var(--c),0 0 14px var(--c);animation:fxfly .7s cubic-bezier(.15,.7,.3,1) forwards}
+.fxp.star{border-radius:0;width:calc(var(--s)*1.8);height:calc(var(--s)*1.8);clip-path:polygon(50% 0,61% 39%,100% 50%,61% 61%,50% 100%,39% 61%,0 50%,39% 39%)}
+@keyframes fxfly{0%{transform:translate(0,0) scale(1.2);opacity:1}70%{opacity:1}100%{transform:translate(var(--dx),calc(var(--dy) + 30px)) scale(.3) rotate(160deg);opacity:0}}
+.fxring{position:absolute;width:20px;height:20px;margin:-10px;border-radius:50%;border:4px solid #FFD23F;box-shadow:0 0 18px #FFD23F,inset 0 0 12px #fff;animation:fxring .5s ease-out forwards}
+@keyframes fxring{0%{transform:scale(.4);opacity:1}100%{transform:scale(7);opacity:0}}
+.fxbolt{position:absolute;inset:0;animation:fxflash .6s steps(1) forwards}
+.fxbolt::before{content:"";position:absolute;inset:0;background:rgb(255 248 200/.35);animation:fxbg .6s ease-out forwards}
+.fxbolt svg{position:absolute;inset:0}
+.fxbolt polyline{fill:none;stroke:#FFF6B0;stroke-width:5;stroke-linejoin:round;filter:drop-shadow(0 0 6px #FFE45C) drop-shadow(0 0 16px #FFC400)}
+@keyframes fxflash{0%{opacity:1}15%{opacity:0}25%{opacity:1}55%{opacity:1}100%{opacity:0}}
+@keyframes fxbg{0%{opacity:1}100%{opacity:0}}
+.fxban{position:absolute;left:50%;top:30%;transform:translate(-50%,-50%);padding:10px 22px;border-radius:99px;font:800 30px "Baloo 2",var(--disp);color:#fff;white-space:nowrap;background:linear-gradient(135deg,#FF4F8B,#F59E0B);border:3px solid #FFE066;box-shadow:0 6px 0 #A3124A,0 0 40px #FFC400;text-shadow:0 2px 0 rgb(0 0 0/.25);animation:fxban 1.1s cubic-bezier(.3,1.6,.5,1) forwards}
+@keyframes fxban{0%{transform:translate(-50%,-50%) scale(.3) rotate(-8deg);opacity:0}25%{transform:translate(-50%,-50%) scale(1.1) rotate(2deg);opacity:1}75%{transform:translate(-50%,-50%) scale(1);opacity:1}100%{transform:translate(-50%,-90%) scale(.9);opacity:0}}
+.fxbad{position:absolute;inset:0;box-shadow:inset 0 0 60px 10px rgb(225 29 72/.55);animation:fxbg .45s ease-out forwards}
+#fxbg{display:none;position:fixed;inset:0;z-index:-1;pointer-events:none}
+body.arcade:not(.sess) #fxbg{display:block}
+#fxbg i{position:absolute;width:var(--z);height:var(--z);border-radius:50%;background:#fff;box-shadow:0 0 10px 3px var(--c1,#FFD23F),0 0 22px 6px color-mix(in srgb,var(--c1,#FFD23F) 50%,transparent);animation:twk var(--t) var(--dl) ease-in-out infinite;opacity:0}
+@keyframes twk{0%,100%{opacity:0;transform:scale(.4)}50%{opacity:.9;transform:scale(1)}}
+:root[data-theme="light"] #fxbg i{background:var(--c1)}
+@media (prefers-color-scheme: light){:root:not([data-theme="dark"]) #fxbg i{background:var(--c1)}}
+@media (prefers-reduced-motion:reduce){#fxbg{display:none!important}}
 </style>
 </head>
 <body>
@@ -3586,6 +3610,7 @@ function gameOver(id, title, sc, unit, lowerBetter){
   unit = unit || GAMES[id].u; lowerBetter = lowerBetter || GAMES[id].low;
   const nb = best(id, sc, lowerBetter);
   const xp = 10 + (nb ? 10 : 0); addXP(xp); save();
+  setTimeout(fxFireworks, 250);
   celebrate({title: nb ? "Yeni rekor!" : "Oyun bitti", sub: `${title}: ${sc} ${unit}${nb ? "" : " · en iyi " + S.games[id]}`, xp, icon: nb ? "trophy" : "game",
     time: G && G.t0 ? mmss(Date.now() - G.t0) : undefined, btn: "Tekrar oyna", fn: () => GAMES[id].run()});
   $(".foot").insertAdjacentHTML("beforeend", `<button class="linkbtn" id="gb">Oyunlara dön</button>`);
@@ -4950,7 +4975,7 @@ function gArtGuess(){
 
 /* ---------- ortak: oyun düzeni ve titreşim ---------- */
 // her oyun açılınca body.game: içerik ortada, seçenekler altta (style.css)
-Object.values(GAMES).forEach((g, gi) => { const r = g.run; g.run = () => { document.body.classList.remove("sess"); document.body.classList.add("game", "arcade"); document.body.dataset.gz = gi % 8; const g0 = G; r(); if (G && G !== g0) G.t0 = Date.now(); }; });
+Object.values(GAMES).forEach((g, gi) => { const r = g.run; g.run = () => { document.body.classList.remove("sess"); document.body.classList.add("game", "arcade"); document.body.dataset.gz = gi % 8; FX.streak = 0; fxAmbient(); const g0 = G; r(); if (G && G !== g0) G.t0 = Date.now(); }; });
 // yanlış cevapta kısa titreşim (Android)
 new MutationObserver(ms => {
   if (!document.body.classList.contains("game") || !navigator.vibrate) return;
@@ -6208,6 +6233,72 @@ function hostReact(ok){
   h.classList.remove("hop", "talking"); void h.offsetWidth; h.classList.add("hop", "talking");
 }
 new MutationObserver(hostIn).observe($("#view"), {childList: true});
+
+/* ===== Oyun efektleri: ışık, patlama, yıldırım (sadece oyunlarda) ===== */
+const FX = {last: 0, streak: 0};
+const fxOn = () => document.body.classList.contains("arcade") && !document.body.classList.contains("sess") && !matchMedia("(prefers-reduced-motion: reduce)").matches;
+function fxLayer(){ let l = $("#fx"); if (!l) { l = document.createElement("div"); l.id = "fx"; document.body.appendChild(l); } return l; }
+function fxBurst(x, y, big){
+  const l = fxLayer(), cs = getComputedStyle(document.body);
+  const cols = [cs.getPropertyValue("--c1").trim() || "#FFD23F", "#FFD23F", "#fff", "#3DDC84", "#FF4F8B", "#4F9BFF"];
+  const n = big ? 26 : 16, frag = document.createDocumentFragment();
+  const ring = document.createElement("i"); ring.className = "fxring"; ring.style.cssText = `left:${x}px;top:${y}px`; frag.appendChild(ring);
+  for (let i = 0; i < n; i++) {
+    const a = (i / n) * Math.PI * 2 + Math.random() * .4, d = (big ? 120 : 70) + Math.random() * (big ? 90 : 50);
+    const p = document.createElement("i"); p.className = Math.random() < .35 ? "fxp star" : "fxp";
+    p.style.cssText = `left:${x}px;top:${y}px;--dx:${Math.cos(a) * d}px;--dy:${Math.sin(a) * d}px;--c:${cols[i % cols.length]};--s:${4 + Math.random() * 6}px;animation-duration:${520 + Math.random() * 300}ms`;
+    frag.appendChild(p);
+  }
+  l.appendChild(frag); setTimeout(() => l.querySelectorAll(".fxring,.fxp").forEach((e, i) => i < n + 1 && e.remove()), 950);
+}
+function fxBolt(){
+  const l = fxLayer(), W = innerWidth, H = innerHeight;
+  const bolt = (x0) => { let x = x0, y = -10, pts = [`${x},${y}`]; while (y < H * .55) { y += 30 + Math.random() * 40; x += (Math.random() - .5) * 70; pts.push(`${x.toFixed(0)},${y.toFixed(0)}`); } return pts.join(" "); };
+  const s = document.createElement("div"); s.className = "fxbolt";
+  s.innerHTML = `<svg viewBox="0 0 ${W} ${H}" width="${W}" height="${H}"><polyline points="${bolt(W * (.15 + Math.random() * .25))}"/><polyline points="${bolt(W * (.6 + Math.random() * .25))}"/></svg>`;
+  l.appendChild(s); setTimeout(() => s.remove(), 650);
+}
+function fxBanner(t){
+  const l = fxLayer(), b = document.createElement("div"); b.className = "fxban"; b.textContent = t;
+  l.appendChild(b); setTimeout(() => b.remove(), 1100);
+}
+function fxBad(){ const l = fxLayer(), e = document.createElement("div"); e.className = "fxbad"; l.appendChild(e); setTimeout(() => e.remove(), 450); }
+function fxFireworks(){
+  if (!fxOn() && !document.body.classList.contains("arcade")) return;
+  if (matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+  for (let i = 0; i < 6; i++) setTimeout(() => fxBurst(innerWidth * (.15 + Math.random() * .7), innerHeight * (.12 + Math.random() * .4), true), i * 260);
+  setTimeout(fxBolt, 200);
+}
+function fxGood(el){
+  if (!fxOn()) return;
+  FX.last = Date.now(); FX.streak++;
+  const r = el ? el.getBoundingClientRect() : null;
+  fxBurst(r ? r.left + r.width / 2 : innerWidth / 2, r ? r.top + r.height / 2 : innerHeight * .4, FX.streak >= 5);
+  if (FX.streak === 3) fxBolt();
+  if (FX.streak >= 5 && FX.streak % 5 === 0) { fxBolt(); setTimeout(fxBolt, 180); fxBanner(FX.streak >= 10 ? `⚡ ${FX.streak} SERİ! ⚡` : `🔥 ${FX.streak} seri!`); }
+  if (FX.streak === 10) setTimeout(fxFireworks, 150);
+}
+// tüm oyunlar: bir düğme "good/hit" olunca patlama, "bad" olunca kırmızı çakma
+new MutationObserver(ms => {
+  if (!fxOn()) return;
+  for (const m of ms) {
+    const el = m.target, old = m.oldValue || "";
+    if (!(el instanceof Element)) continue;
+    const add = c => el.classList.contains(c) && !old.split(" ").includes(c);
+    if (add("good") || add("hit") || (add("done") && el.closest(".mem"))) { if (Date.now() - FX.last > 60) fxGood(el); }
+    else if (add("bad")) { FX.streak = 0; fxBad(); }
+  }
+}).observe($("#view"), {subtree: true, attributes: true, attributeFilter: ["class"], attributeOldValue: true});
+// sınıf kullanmayan oyunlar için yedek: Gedsche'nin tepkisi
+const _hostReact = hostReact;
+hostReact = function(ok){ _hostReact(ok); if (!fxOn()) return; if (ok) setTimeout(() => { if (Date.now() - FX.last > 120) fxGood(null); }, 40); else { FX.streak = 0; } };
+// arka planda yavaşça parlayan ışıklar
+function fxAmbient(){
+  if ($("#fxbg")) return;
+  const d = document.createElement("div"); d.id = "fxbg";
+  d.innerHTML = Array.from({length: 14}, (_, i) => `<i style="left:${(i * 37 + 7) % 100}%;top:${(i * 53 + 11) % 100}%;--t:${2.4 + (i % 5) * .7}s;--dl:${(i * .43) % 3}s;--z:${i % 3 ? 3 : 6}px"></i>`).join("");
+  document.body.appendChild(d);
+}
 
 /* ================= EŞİTLEME: iki sürüm arasında kodla taşı, birleştir ================= */
 const SYNC_TAG = "ALMANCA1:";
