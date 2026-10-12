@@ -1738,6 +1738,8 @@ function renderGames(){
     <div class="tiles">${E.filter(([, g]) => g.g === "d").map(tile).join("")}</div>
     <div class="sec">Cümle oyunları</div>
     <div class="tiles">${E.filter(([, g]) => g.g === "s").map(tile).join("")}</div>
+    <div class="sec">Sayılar</div>
+    <div class="tiles">${E.filter(([, g]) => g.g === "n").map(tile).join("")}</div>
     <div class="sec">Kelime oyunları</div>
     <div class="tiles">${E.filter(([, g]) => g.g === "w").map(tile).join("")}</div>
     <div style="height:16px"></div>`;
@@ -2237,6 +2239,792 @@ function gCmpDrop(){
     if (G.y >= ty) { G.y = ty; fail(); }                          // seçmeden sıraya değdi
     w.style.transform = `translate(-50%, ${G.y}px)`;
   });
+}
+
+/* ================= SİTEDEKİ OYUNLAR (learngermanwithgames benzeri) ================= */
+/* ---------- sayılar ---------- */
+const N_ONES = ["null","eins","zwei","drei","vier","fünf","sechs","sieben","acht","neun","zehn","elf","zwölf","dreizehn","vierzehn","fünfzehn","sechzehn","siebzehn","achtzehn","neunzehn"];
+const N_TENS = ["","","zwanzig","dreißig","vierzig","fünfzig","sechzig","siebzig","achtzig","neunzig"];
+function numDE(n){
+  if (n < 20) return N_ONES[n];
+  if (n < 100) { const o = n % 10, t = N_TENS[n / 10 | 0]; return o ? (o === 1 ? "ein" : N_ONES[o]) + "und" + t : t; }
+  if (n < 1000) { const h = n / 100 | 0, r = n % 100; return (h === 1 ? "ein" : N_ONES[h]) + "hundert" + (r ? numDE(r) : ""); }
+  return "eintausend";
+}
+const rnd = (a, b) => a + (Math.random() * (b - a + 1) | 0);
+// yakın ama yanlış sayılar: bir eksik/fazla, onluk kayması, rakam takası (einundzwanzig ↔ 12 hatası)
+function nearNums(n, k, max){
+  const sw = n >= 10 && n < 100 ? (n % 10) * 10 + (n / 10 | 0) : -1;
+  const c = uniq([sw, n + 1, n - 1, n + 10, n - 10, n + 2, n - 20, n + 100, n - 100].filter(x => x >= 0 && x <= (max || 1000) && x !== n));
+  return shuffle(c.slice(0, 4)).slice(0, k);
+}
+const priceDE = c => { const e = c / 100 | 0, ct = c % 100; return (e === 1 ? "ein" : numDE(e)) + " Euro" + (ct ? " " + numDE(ct) : ""); };
+const priceNum = c => (c / 100).toFixed(2).replace(".", ",") + " €";
+
+Object.assign(GAMES, {
+  numdrop: {t:"Sayı Düşüşü",      ic:"🔢", g:"d", u:"puan",   d:"60 saniye: düşen Almanca sayıyı doğru rakam kapısına gönder.", run:() => gNumDrop()},
+  cafe:    {t:"Café Berlin",       ic:"☕", g:"s", u:"puan",   d:"Kafeyi sen işletiyorsun: siparişi oku, tepsiyi hazırla, fiyatı Almanca söyle.", run:() => gCafe()},
+  perf:    {t:"Perfekt'e Çevir",   ic:"⏪", g:"s", u:"puan",   d:"60 saniye: şimdiki zaman cümlesini Perfekt'e çevir (haben mi sein mi?).", run:() => gPerf()},
+  de2tr:   {t:"Cümle Ne Diyor?",   ic:"📖", g:"s", u:"doğru",  d:"Almanca cümleyi oku, Türkçe anlamını seç. 10 cümle.", run:() => gDe2Tr()},
+  order:   {t:"Cümle Sırala",      ic:"🧩", g:"s", u:"doğru",  d:"Süre yok: 10 cümleyi kelime kutularıyla diz.", run:() => gOrder()},
+  dativ:   {t:"Wo? Wohin? Woher?", ic:"📍", g:"s", u:"doğru",  d:"Edat ve artikeli seç: zum Arzt, beim Arzt, vom Arzt.", run:() => gDativ()},
+  time:    {t:"um, am, im?",       ic:"🕗", g:"s", u:"doğru",  d:"Zaman ifadesine doğru edatı koy: um acht, am Montag, im Mai.", run:() => gTime()},
+  numtap:  {t:"Sayı Tuşla",        ic:"⌨️", g:"n", u:"puan",   d:"60 saniye: Almanca sayıyı duy, rakamla tuşla.", run:() => gNumTap()},
+  math:    {t:"Almanca Matematik", ic:"➗", g:"n", u:"puan",   d:"60 saniye: acht mal vier = ? Sonucu kelime parçalarıyla kur.", run:() => gMath()},
+  nine:    {t:"9 Kelime",          ic:"⏱️", g:"w", u:"kelime", d:"9 tur, her biri 30 saniye: karışık harflerden kelimeyi kur.", run:() => gNine()},
+  wordle:  {t:"Almanca Wordle",    ic:"🟩", g:"w", u:"deneme", low:1, d:"5 harfli kelimeyi 6 denemede bul. Her gün yeni bulmaca.", run:() => gWordle()},
+  grid:    {t:"Eşleştirme Izgarası", ic:"🔲", g:"w", u:"çift", d:"60 saniye: ızgarada Almanca ve Türkçe karşılıkları eşle.", run:() => gGrid()},
+  rules:   {t:"Artikel Kuralları", ic:"📏", g:"w", u:"doğru",  d:"der, die, das seç ve arkasındaki kuralı öğren (-ung → die, -chen → das).", run:() => gRules()},
+  img:     {t:"Resimden Bil",      ic:"🖼️", g:"w", u:"puan",   d:"60 saniye: resme bak, kelimeyi artikeliyle seç.", run:() => gImg()},
+  tf:      {t:"Doğru mu Yanlış mı?", ic:"✅", g:"w", u:"puan", d:"60 saniye: artikel, çoğul ya da anlam doğru mu?", run:() => gTF()},
+  salad:   {t:"Harf Salatası",     ic:"🥗", g:"w", u:"kelime", d:"60 saniye: kasedeki karışık harflerden kelimeyi bul.", run:() => gSalad()},
+  match:   {t:"Kelime Eşle",       ic:"🔗", g:"w", u:"sn", low:1, d:"İki sütun: Almancayı Türkçesiyle eşle. 4 tur, hızın ölçülür.", run:() => gMatch()},
+  guess:   {t:"Kelime Tahmini",    ic:"🔤", g:"w", u:"kelime", d:"Fiil ve sıfatları harf harf bul. Canlar bitene kadar devam.", run:() => gGuess()},
+  gverb:   {t:"Fiili Bil",         ic:"🏃", g:"w", u:"puan",   d:"60 saniye: Almanca fiilin Türkçesini seç.", run:() => gVerbMC()},
+  conj4:   {t:"Çekim Seçmeli",     ic:"🧷", g:"w", u:"doğru",  d:"4 şıktan doğru çekimi seç. 3 canın var.", run:() => gConj4()},
+  plural4: {t:"Çoğul Seçmeli",     ic:"🍎", g:"w", u:"doğru",  d:"4 şıktan doğru çoğulu seç. 3 canın var.", run:() => gPlural4()},
+  gword:   {t:"Kelimeyi Bil",      ic:"🔎", g:"w", u:"puan",   d:"60 saniye: Almanca ismin Türkçesini seç.", run:() => gWordMC()},
+  artguess:{t:"Artikel Tahmini",   ic:"🎩", g:"w", u:"doğru",  d:"Süre yok, 3 can: her isim için der, die, das. Kural varsa gösterilir.", run:() => gArtGuess()},
+});
+
+/* ---------- ortak iskeletler ---------- */
+const nounsAll = () => WORDS().filter(w => w.kind === "n");
+const kindOther = (it, n, key) => shuffle(WORDS().filter(w => w.kind === it.kind && w.id !== it.id && w[key] !== it[key])).slice(0, n).map(w => w[key]);
+const hearts = (n, max) => "❤️".repeat(Math.max(0, n)) + "🤍".repeat(Math.max(0, max - Math.max(0, n)));
+
+// süresiz soru dizisi: n soru ya da can bitene kadar; yanlışta açıklama + Devam
+function quiz(id, title, pool, make, o){
+  o = o || {}; const max = o.lives || 0;
+  G = {i:0, sc:0, life:max};
+  const end = () => gameOver(id, title, G.sc);
+  const draw = () => {
+    if ((o.n && G.i >= o.n) || (max && G.life <= 0) || !pool.length) return end();
+    const it = pool[G.i % pool.length], q = make(it), short = q.opts.every(x => x.length <= 16);
+    $("#view").innerHTML = `<div class="hud"><b>${G.sc}</b><span class="small muted">${o.n ? (G.i + 1) + "/" + o.n : ""}</span><span>${max ? hearts(G.life, max) : ""}</span></div>
+      <div class="card flash" style="min-height:140px">${q.top}</div>
+      <div class="${short ? "opts2" : "opts"}" ${short && q.opts.length === 3 ? 'style="grid-template-columns:repeat(3,1fr)"' : ""}>${q.opts.map((x, i) => `<button class="opt" data-i="${i}" style="min-height:58px">${esc(x)}</button>`).join("")}</div>
+      <div id="vd"></div>`;
+    let lock = 0;
+    const answer = i => {
+      if (lock++) return;
+      const ok = q.opts[i] === q.right, bs = $$(".opt");
+      bs[i].classList.add(ok ? "good" : "bad"); if (!ok) bs[q.opts.indexOf(q.right)].classList.add("good");
+      if (ok) G.sc++; else if (max) G.life--;
+      if (q.say !== "") speak(q.say || q.right);
+      G.i++;
+      if (!ok || q.note) {
+        $("#vd").innerHTML = `<div class="tip">${q.note || ""}${!ok && q.full ? `<div style="margin-top:4px"><b>${esc(q.full)}</b></div>` : ""}</div>${ok ? "" : '<div class="foot"><button class="cta" id="gn">Devam</button></div>'}`;
+        if (ok) later(draw, 1700); else $("#gn").onclick = draw;
+      } else later(draw, 650);
+    };
+    $$(".opt").forEach(b => b.onclick = () => answer(+b.dataset.i));
+  };
+  open(() => setTop(title, true));
+  draw();
+}
+
+/* ---------- Sayı Düşüşü ---------- */
+function gNumDrop(){
+  G = {sc:0, combo:0, ok:0, left:60};
+  open(() => setTop("Sayı Düşüşü", true));
+  $("#view").innerHTML = `<div class="hud"><b id="ds">0</b><span class="small muted" id="dc"></span><span class="t" id="gt">60</span></div>
+    <div class="drop" id="df"><div class="dw" id="dw"><b></b><span></span></div>
+      <div class="gates">${[0, 1, 2].map(k => `<button class="gate" data-k="${k}"></button>`).join("")}</div></div>
+    <p class="hint">Kapıya dokun ya da ← ↓ → tuşları</p>`;
+  const f = $("#df"), w = $("#dw"), gates = $$(".gate");
+  const hud = () => { $("#ds").textContent = G.sc; $("#dc").textContent = G.combo >= 3 ? "🔥 " + G.combo + " seri" : ""; };
+  const next = () => {
+    const max = G.ok < 8 ? 100 : G.ok < 18 ? 500 : 1000, n = rnd(G.ok < 8 ? 0 : 20, max);
+    G.n = n; G.opts = shuffle([n].concat(nearNums(n, 2, max))); G.y = 0; G.pick = null; G.pause = 0;
+    G.dur = Math.max(2.8, 7.5 * Math.pow(0.95, G.ok));
+    w.className = "dw"; w.style.left = "50%"; w.querySelector("b").textContent = numDE(n); w.querySelector("span").textContent = "";
+    gates.forEach((g, k) => { g.textContent = G.opts[k]; g.className = "gate"; });
+  };
+  const land = () => {
+    G.pause = 1; const right = G.opts.indexOf(G.n), ok = G.pick === right;
+    gates[right].classList.add("good"); if (G.pick !== null && !ok) gates[G.pick].classList.add("bad");
+    w.querySelector("span").textContent = G.n; w.classList.add(ok ? "ok" : "no", ok ? "pop" : "x");
+    if (ok) { G.ok++; G.combo++; G.sc += G.combo >= 5 ? 2 : 1; } else { G.combo = 0; speak(numDE(G.n)); }
+    hud(); later(() => G.left > 0 && next(), ok ? 260 : 1300);
+  };
+  const pick = k => { if (G.pick !== null || G.pause) return; G.pick = k; w.style.left = (k * 2 + 1) * 100 / 6 + "%"; land(); };
+  gates.forEach(g => g.onclick = () => pick(+g.dataset.k));
+  dropKeys(key => { const k = {ArrowLeft:0, ArrowDown:1, ArrowRight:2, 1:0, 2:1, 3:2}[key]; if (k === undefined) return false; pick(k); return true; });
+  hud(); next();
+  let sec = 0;
+  dropLoop(dt => {
+    sec += dt; if (sec >= 1) { sec -= 1; G.left--; const t = $("#gt"); t.textContent = G.left; t.classList.toggle("low", G.left <= 10); if (G.left <= 0) return dropEnd("numdrop", "Sayı Düşüşü", G.sc); }
+    const H = f.clientHeight - gates[0].offsetHeight - w.offsetHeight;
+    G.y += dt * H / G.dur;
+    if (G.y >= H) { G.y = H; land(); }
+    w.style.transform = `translate(-50%, ${G.y}px)`;
+  });
+}
+
+/* ---------- Sayı Tuşla ---------- */
+function gNumTap(){
+  G = {sc:0, ok:0, v:""};
+  const next = () => {
+    const max = G.ok < 8 ? 100 : 1000; G.n = rnd(0, max); G.v = "";
+    $("#nw").textContent = numDE(G.n); $("#nv").textContent = "_"; $("#nv").style.color = ""; speak(numDE(G.n));
+  };
+  const check = () => {
+    if (!G.v || G.lock) return; G.lock = 1;
+    const ok = +G.v === G.n; $("#nv").style.color = ok ? "var(--ok)" : "var(--bad)";
+    if (ok) { G.ok++; G.sc++; } else $("#nv").textContent = G.v + " → " + G.n;
+    later(() => { G.lock = 0; if (G.left > 0) next(); }, ok ? 300 : 1300);
+  };
+  open(() => setTop("Sayı Tuşla", true));
+  $("#view").innerHTML = `<div class="hud"><b id="ns">0</b><span class="t" id="gt">60</span></div>
+    <div class="card flash" style="min-height:150px"><div class="big" id="nw" style="font-size:24px;word-break:break-word"></div><div class="big" id="nv" style="font-size:34px">_</div>
+      <button class="say" id="nsp">${ICON_SPK} Dinle</button></div>
+    <div class="mgrid" style="grid-template-columns:repeat(3,1fr)">${"123456789".split("").concat(["⌫", "0", "✓"]).map(k => `<button class="mc" data-k="${k}" style="min-height:58px;font-size:22px">${k}</button>`).join("")}</div>`;
+  const tap = k => {
+    if (G.lock) return;
+    if (k === "⌫") G.v = G.v.slice(0, -1); else if (k === "✓") return check(); else if (G.v.length < 4) G.v += k;
+    $("#nv").textContent = G.v || "_"; $("#ns").textContent = G.sc;
+    if (G.v.length === String(G.n).length && +G.v === G.n) check();
+  };
+  $$(".mc").forEach(b => b.onclick = () => tap(b.dataset.k));
+  $("#nsp").onclick = () => speak(numDE(G.n));
+  const h = e => { if (/^[0-9]$/.test(e.key)) tap(e.key); else if (e.key === "Backspace") tap("⌫"); else if (e.key === "Enter") tap("✓"); };
+  document.addEventListener("keydown", h);
+  gameTimer(60, () => { document.removeEventListener("keydown", h); gameOver("numtap", "Sayı Tuşla", G.sc); });
+  const ol = onLeave; onLeave = () => { ol && ol(); document.removeEventListener("keydown", h); };
+  next();
+}
+
+/* ---------- Almanca Matematik ---------- */
+const MATH_KEYS = ["null","eins","ein","zwei","drei","vier","fünf","sechs","sech","sieben","sieb","acht","neun","zehn","elf","zwölf","und","zwanzig","dreißig","vierzig","fünfzig","sechzig","siebzig","achtzig","neunzig","hundert"];
+function gMath(){
+  G = {sc:0, b:[]};
+  const OPS = [["plus", (a, b) => a + b], ["minus", (a, b) => a - b], ["mal", (a, b) => a * b], ["geteilt durch", (a, b) => a / b]];
+  const next = () => {
+    const [name, fn] = pick(OPS); let a = rnd(1, 10), b = rnd(1, 10);
+    if (name === "minus" && b > a) [a, b] = [b, a];
+    if (name === "geteilt durch") a = a * b;
+    G.r = fn(a, b); G.b = [];
+    G.ok = G.r === 100 ? ["einhundert", "hundert"] : [numDE(G.r)];
+    $("#mq").textContent = numDE(a) + " " + name + " " + numDE(b); $("#mn").textContent = a + " " + {plus:"+", minus:"−", mal:"×", "geteilt durch":"÷"}[name] + " " + b + " = ?";
+    show();
+  };
+  const show = () => { $("#mb").textContent = G.b.join("") || "…"; $("#mb").style.color = ""; };
+  const done = ok => {
+    G.lock = 1; $("#mb").style.color = ok ? "var(--ok)" : "var(--bad)";
+    if (ok) G.sc++; else $("#mb").textContent = G.ok[0];
+    $("#ms").textContent = G.sc; speak(G.ok[0]);
+    later(() => { G.lock = 0; if (G.left > 0) next(); }, ok ? 500 : 1600);
+  };
+  open(() => setTop("Almanca Matematik", true));
+  $("#view").innerHTML = `<div class="hud"><b id="ms">0</b><span class="t" id="gt">60</span></div>
+    <div class="card flash" style="min-height:140px;gap:8px"><div class="big" id="mq" style="font-size:23px"></div><div class="mid" id="mn"></div>
+      <div class="big" id="mb" style="font-size:22px;color:var(--acc);word-break:break-word">…</div></div>
+    <div class="pool" style="gap:6px">${MATH_KEYS.map(k => `<button class="wd" data-k="${k}" style="padding:8px 10px;font-size:15px">${k}</button>`).join("")}</div>
+    <div class="row2" style="margin-top:12px"><button class="btn2" id="mdel">⌫ Sil</button><button class="btn2" id="mok">✓ Kontrol</button></div>`;
+  $$(".wd[data-k]").forEach(b => b.onclick = () => {
+    if (G.lock) return; G.b.push(b.dataset.k); show();
+    if (G.ok.includes(G.b.join(""))) done(true);
+  });
+  $("#mdel").onclick = () => { if (!G.lock) { G.b.pop(); show(); } };
+  $("#mok").onclick = () => { if (!G.lock && G.b.length) done(G.ok.includes(G.b.join(""))); };
+  gameTimer(60, () => gameOver("math", "Almanca Matematik", G.sc));
+  next();
+}
+
+/* ---------- Café Berlin ---------- */
+// ad|artikel|fiyat (sent)|emoji|çoğul (2+ için; içecekler "zweimal")
+const CAFE_MENU = `
+Kaffee|der|250|☕|
+Tee|der|220|🍵|
+Kakao|der|280|🍫|
+Cola|die|260|🥤|
+Wasser|das|190|💧|
+Saft|der|240|🧃|
+Brezel|die|150|🥨|Brezeln
+Croissant|das|210|🥐|Croissants
+Brötchen|das|80|🥯|Brötchen
+Kuchen|der|340|🍰|Stück Kuchen
+Muffin|der|230|🧁|Muffins
+Sandwich|das|450|🥪|Sandwiches`.trim().split("\n").map(l => { const [n, a, p, e, pl] = l.split("|"); return {n, a, p:+p, e, pl}; });
+const ACC = {der:"einen", die:"eine", das:"ein"}, KEIN = {der:"keinen", die:"keine", das:"kein"};
+const cafePhrase = (m, q) => q === 1 ? ACC[m.a] + " " + m.n : m.pl ? numDE(q) + " " + m.pl : numDE(q) + "mal " + m.n;
+const listDE = a => a.length === 1 ? a[0] : a.slice(0, -1).join(", ") + " und " + a.at(-1);
+function cafeOrder(k){
+  const items = shuffle(CAFE_MENU).slice(0, rnd(1, k < 2 ? 2 : 3)).map(m => ({m, q: Math.random() < .3 ? 2 : 1}));
+  const L = listDE(items.map(x => cafePhrase(x.m, x.q)));
+  let txt = pick(["Ich hätte gern " + L + ".", "Ich nehme " + L + ".", "Für mich bitte " + L + ".", "Ich möchte " + L + ".", L.charAt(0).toUpperCase() + L.slice(1) + ", bitte."]);
+  if (k >= 2 && Math.random() < .45) {
+    const extra = CAFE_MENU.filter(m => !items.some(x => x.m === m));
+    if (items.length > 1 && Math.random() < .5) {
+      const x = items.find(i => i.q === 1);
+      if (x) { txt += " Ach nein, doch " + KEIN[x.m.a] + " " + x.m.n + "."; items.splice(items.indexOf(x), 1); }
+    } else { const m = pick(extra); txt += " Ach, und noch " + ACC[m.a] + " " + m.n + ", bitte."; items.push({m, q:1}); }
+  }
+  return {txt, items, total: items.reduce((s, x) => s + x.m.p * x.q, 0)};
+}
+function gCafe(){
+  const NAMES = ["Anna", "Ben", "Lena", "Herr Weber", "Frau Yılmaz", "Tom", "Mia", "Herr Schulz"];
+  G = {sc:0, k:0, strikes:0};
+  const hl = t => esc(t).replace(/\b(einen|eine|ein|keinen|keine|kein)\b/g, '<b style="color:var(--acc)">$1</b>');
+  const strikeTxt = () => "❌".repeat(G.strikes) + "⚪".repeat(3 - G.strikes);
+  const after = (ok, msg, o) => {
+    if (!ok) G.strikes++;
+    $("#view").innerHTML = `<div class="hud"><b>${G.sc}</b><span>${strikeTxt()}</span><span class="t" id="gt">${G.left}</span></div>
+      <div class="card flash" style="min-height:200px"><div style="font-size:40px">${ok ? "😊" : "😕"}</div><div class="mid">${msg}</div>
+        <div class="ex" style="font-style:normal">${hl(o.txt)}</div><div class="mid">${o.items.map(x => x.q + "× " + x.m.e + " " + esc(x.m.n)).join(" · ")} = <b>${priceNum(o.total)}</b></div></div>
+      <div class="foot"><button class="cta" id="cn">Sıradaki müşteri</button></div>`;
+    if (G.strikes >= 3) clearInterval(G.tm);
+    $("#cn").onclick = () => G.strikes >= 3 ? gameOver("cafe", "Café Berlin", G.sc) : customer();
+    if (G.strikes >= 3) $("#cn").textContent = "Kafe kapandı · sonuç";
+  };
+  const customer = () => {
+    if (G.left <= 0) return;
+    const o = cafeOrder(G.k++), who = pick(NAMES), tray = {}, t0 = Date.now(), WAIT = 35;
+    const trayHtml = () => Object.keys(tray).filter(n => tray[n]).map(n => `<button class="chip on" data-n="${n}">${tray[n]}× ${esc(n)} ✕</button>`).join("") || '<span class="small muted">Tepsi boş</span>';
+    $("#view").innerHTML = `<div class="hud"><b>${G.sc}</b><span>${strikeTxt()}</span><span class="t" id="gt">${G.left}</span></div>
+      <div class="card" style="padding:14px 16px"><div class="small muted">${esc(who)} <button class="say" id="csp" style="padding:4px 10px;margin-left:6px">${ICON_SPK}</button></div>
+        <div style="font-size:18px;font-weight:600;margin-top:6px">${esc(o.txt)}</div>
+        <div class="pbar" style="margin-top:10px"><i id="cpat" style="width:100%"></i></div></div>
+      <div class="chips" id="ctr" style="margin:12px 0;min-height:38px"></div>
+      <div class="mgrid" style="grid-template-columns:repeat(3,1fr);margin-top:0">${CAFE_MENU.map(m => `<button class="mc" data-n="${m.n}" style="min-height:70px"><div style="font-size:22px">${m.e}</div>${esc(m.n)}<div class="small muted">${priceNum(m.p)}</div></button>`).join("")}</div>
+      <div class="foot"><button class="cta" id="cserve">Servieren</button></div>`;
+    const redraw = () => { $("#ctr").innerHTML = trayHtml(); $$("#ctr .chip").forEach(c => c.onclick = () => { tray[c.dataset.n]--; redraw(); }); };
+    redraw(); speak(o.txt);
+    $("#csp").onclick = () => speak(o.txt);
+    $$(".mc[data-n]").forEach(b => b.onclick = () => { tray[b.dataset.n] = (tray[b.dataset.n] || 0) + 1; redraw(); });
+    const pt = setInterval(() => {
+      const el = $("#cpat"); if (!el) return clearInterval(pt);
+      const left = 1 - (Date.now() - t0) / 1000 / WAIT; el.style.width = Math.max(0, left * 100) + "%";
+      if (G.left <= 0) return clearInterval(pt);
+      if (left <= 0) { clearInterval(pt); after(false, "Müşteri çok bekledi ve gitti.", o); }
+    }, 250);
+    const ol = onLeave; onLeave = () => { clearInterval(pt); ol && ol(); };
+    $("#cserve").onclick = () => {
+      clearInterval(pt);
+      const want = {}; o.items.forEach(x => want[x.m.n] = x.q);
+      const ok = Object.keys(want).every(n => tray[n] === want[n]) && Object.keys(tray).every(n => !tray[n] || want[n]);
+      if (!ok) return after(false, "Sipariş yanlış.", o);
+      const fast = (Date.now() - t0) / 1000 < 15;
+      const opts = shuffle([o.total].concat(uniq(shuffle([o.total + 10, o.total - 10, o.total + 50, o.total + 100, o.total - 100, o.total + 20]).filter(x => x > 0)).slice(0, 3)));
+      $("#view").innerHTML = `<div class="hud"><b>${G.sc}</b><span>${strikeTxt()}</span><span class="t" id="gt">${G.left}</span></div>
+        <div class="card flash" style="min-height:150px"><div class="mid">${esc(who)}: Was macht das?</div><div class="big" style="font-size:22px">${o.items.map(x => x.m.e.repeat(x.q)).join(" ")}</div><div class="small muted">Fiyatı Almanca söyle</div></div>
+        <div class="opts">${opts.map(p => `<button class="opt" data-p="${p}">${priceDE(p)}</button>`).join("")}</div>`;
+      $$(".opt").forEach(b => b.onclick = () => {
+        const good = +b.dataset.p === o.total; speak(priceDE(o.total));
+        if (good) { G.sc += 1 + (fast ? 1 : 0); after(true, fast ? "Hızlı servis, bahşiş aldın! +2" : "Teşekkürler! +1", o); }
+        else after(false, "Fiyat yanlış: doğrusu " + priceDE(o.total) + ".", o);
+      });
+    };
+  };
+  open(() => setTop("Café Berlin", true));
+  gameTimer(180, () => gameOver("cafe", "Café Berlin", G.sc));
+  customer();
+}
+
+/* ---------- Perfekt'e Çevir ---------- */
+const HABEN = ["habe", "hast", "hat", "haben", "habt", "haben"], SEIN = ["bin", "bist", "ist", "sind", "seid", "sind"];
+const PRON = ["Ich", "Du", "Er", "Wir", "Ihr", "Sie"];
+function gPerf(){
+  const pool = wordPool("v").filter(v => !/^(können|müssen|wollen|sollen|dürfen|mögen|möchten)$/.test(v.w) && v.pf);
+  G = {sc:0, combo:0};
+  const draw = () => {
+    const v = pick(pool), p = rnd(0, 5), sein = /^ist /.test(v.pf), part = v.pf.split(" ").slice(1).join(" ");
+    const aux = (sein ? SEIN : HABEN)[p], other = (sein ? HABEN : SEIN)[p];
+    const stem = v.w.replace(/e?n$/, "");
+    const wrongP = uniq(shuffle(["ge" + stem + "t", "ge" + v.w, part.replace(/t$/, "en"), part.replace(/en$/, "t")]).filter(x => x !== part)).slice(0, 2);
+    const pres = PRON[p] + " " + v.pr[p] + ".", perf = PRON[p] + " " + aux + " " + part + ".";
+    let step = 0;
+    const show = () => {
+      const opts = step === 0 ? shuffle([aux, other]) : shuffle([part].concat(wrongP));
+      $("#view").innerHTML = `<div class="hud"><b>${G.sc}</b><span class="small muted">${G.combo >= 3 ? "🔥 " + G.combo + " seri" : ""}</span><span class="t" id="gt">${G.left}</span></div>
+        <div class="card flash" style="min-height:170px"><div class="mid">${esc(v.w)} · ${esc(v.tr)}</div><div class="big" style="font-size:23px">${esc(pres)}</div>
+          <div class="big" style="font-size:21px;color:var(--acc)">${esc(PRON[p])} ${step ? esc(aux) : "___"} … ___.</div></div>
+        <div class="opts2" ${opts.length === 3 ? 'style="grid-template-columns:repeat(3,1fr)"' : ""}>${opts.map(o => `<button class="opt" style="min-height:60px">${esc(o)}</button>`).join("")}</div>
+        <p class="hint">${step ? "Partizip II hangisi?" : "Yardımcı fiil: haben mi sein mi?"}</p><div id="vd"></div>`;
+      let lock = 0;
+      $$(".opt").forEach(b => b.onclick = () => {
+        if (lock++) return;
+        const right = step ? part : aux, ok = b.textContent === right;
+        b.classList.add(ok ? "good" : "bad"); if (!ok) $$(".opt").find(x => x.textContent === right).classList.add("good");
+        if (!ok) { G.combo = 0; speak(perf); $("#vd").innerHTML = `<div class="tip"><b>${esc(perf)}</b></div>`; return later(() => G.left > 0 && draw(), 1700); }
+        if (step === 0) { step = 1; return later(show, 250); }
+        G.combo++; G.sc += G.combo >= 5 ? 2 : 1; speak(perf); later(() => G.left > 0 && draw(), 700);
+      });
+    };
+    show();
+  };
+  open(() => setTop("Perfekt'e Çevir", true));
+  gameTimer(60, () => gameOver("perf", "Perfekt'e Çevir", G.sc));
+  draw();
+}
+
+/* ---------- Cümle Ne Diyor? ---------- */
+function gDe2Tr(){
+  quiz("de2tr", "Cümle Ne Diyor?", shuffle(gamePool()), it => {
+    const opts = shuffle([it.tr].concat(distractors(it, 3, "tr").map(x => x.tr)));
+    return {top:`<div class="big" style="font-size:22px">${esc(it.de)}</div>`, opts, right: it.tr, say: it.de};
+  }, {n:10});
+}
+
+/* ---------- Cümle Sırala ---------- */
+function gOrder(){
+  const pool = shuffle(gamePool().filter(i => { const n = words(i).length; return n >= 3 && n <= 10; })).slice(0, 10);
+  if (!pool.length) return toast("Önce birkaç kart çalış");
+  G = {i:0, sc:0};
+  const draw = () => {
+    const it = pool[G.i];
+    if (!it) return gameOver("order", "Cümle Sırala", G.sc);
+    const w = words(it), sh = shuffle(w.map((x, i) => ({x, i}))), built = []; let miss = 0;
+    $("#view").innerHTML = `<div class="hud"><b>${G.sc}</b><span class="small muted">${G.i + 1}/${pool.length}</span></div>
+      <div class="card flash" style="min-height:90px"><div class="big" style="font-size:20px">${esc(it.tr)}</div></div>
+      <div class="built" id="built"></div>
+      <div class="pool">${sh.map((p, k) => `<button class="wd" data-k="${k}">${esc(p.x)}</button>`).join("")}</div>
+      <div style="margin-top:14px" class="row2"><button class="btn2" id="sk">Göster</button><button class="btn2" id="clr">Temizle</button></div>`;
+    const redraw = () => {
+      $("#built").innerHTML = built.map(k => `<span class="wd">${esc(sh[k].x)}</span>`).join("");
+      $$(".pool .wd").forEach(b => b.classList.toggle("used", built.includes(+b.dataset.k)));
+      if (built.length === w.length) {
+        const ok = norm(built.map(k => sh[k].x).join(" ")) === norm(w.join(" "));
+        $("#built").style.borderColor = ok ? "var(--ok)" : "var(--bad)";
+        if (ok) { if (!miss) G.sc++; speak(plain(it)); G.i++; later(draw, 900); }
+        else { miss++; later(() => { built.length = 0; $("#built").style.borderColor = ""; redraw(); }, 700); }
+      }
+    };
+    $$(".pool .wd").forEach(b => b.onclick = () => { if (!built.includes(+b.dataset.k) && built.length < w.length) { built.push(+b.dataset.k); redraw(); } });
+    $("#clr").onclick = () => { built.length = 0; redraw(); };
+    $("#sk").onclick = () => { miss++; toast(plain(it)); speak(plain(it)); };
+  };
+  open(() => setTop("Cümle Sırala", true));
+  draw();
+}
+
+/* ---------- Wo? Wohin? Woher? ---------- */
+// cümle (___ boşluk)|cevap|soru|kural
+const DATIV = `
+Ich gehe heute ___ Arzt.|zu dem|Wohin?|Bir kişiye/yere gitmek: zu + Dativ. Konuşmada: zum Arzt.
+Ich bin gerade ___ Arzt.|bei dem|Wo?|Birinin yanında/yerinde olmak: bei + Dativ. Konuşmada: beim Arzt.
+Ich komme gerade ___ Arzt.|von dem|Woher?|Bir kişiden/yerden gelmek: von + Dativ. Konuşmada: vom Arzt.
+Wir fahren morgen ___ Berlin.|nach|Wohin?|Şehir ve artikelsiz ülkelere gitmek: nach.
+Wir wohnen ___ Berlin.|in|Wo?|Şehirde/ülkede olmak: in.
+Er kommt ___ Berlin.|aus|Woher?|Şehirden/ülkeden gelmek: aus.
+Ich gehe ___ Supermarkt.|in den|Wohin?|Bir yerin içine gitmek: in + Akkusativ (der → den).
+Ich bin ___ Supermarkt.|in dem|Wo?|Bir yerin içinde olmak: in + Dativ. Konuşmada: im Supermarkt.
+Ich komme ___ Supermarkt.|aus dem|Woher?|Bir yerin içinden çıkmak: aus + Dativ.
+Gece geht ___ Kita.|in die|Wohin?|İçine gitmek: in + Akkusativ (die → die).
+Gece ist ___ Kita.|in der|Wo?|İçinde olmak: in + Dativ (die → der).
+Gece kommt ___ Kita.|aus der|Woher?|İçinden gelmek: aus + Dativ (die → der).
+Ich fahre ___ Oma.|zu der|Wohin?|Bir kişiye gitmek: zu + Dativ. Konuşmada: zur Oma.
+Ich bin ___ Oma.|bei der|Wo?|Birinin evinde olmak: bei + Dativ.
+Ich komme ___ Oma.|von der|Woher?|Birinin yanından gelmek: von + Dativ.
+Ich gehe jetzt ___ Hause.|nach|Wohin?|Eve gitmek kalıptır: nach Hause.
+Ich bin heute ___ Hause.|zu|Wo?|Evde olmak kalıptır: zu Hause.
+Wir fliegen ___ Türkei.|in die|Wohin?|Artikelli ülkeler (die Türkei) nach almaz: in die Türkei.
+Wir sind gerade ___ Türkei.|in der|Wo?|Artikelli ülkede olmak: in der Türkei.
+Sie kommt ___ Türkei.|aus der|Woher?|Artikelli ülkeden gelmek: aus der Türkei.
+Ich lege das Handy ___ Tisch.|auf den|Wohin?|Bir şeyin üstüne koymak: auf + Akkusativ.
+Das Handy liegt ___ Tisch.|auf dem|Wo?|Bir şeyin üstünde durmak: auf + Dativ.
+Wir gehen ___ Strand.|an den|Wohin?|Kenarına gitmek (deniz, göl): an + Akkusativ.
+Wir sind ___ Strand.|an dem|Wo?|Kenarında olmak: an + Dativ. Konuşmada: am Strand.
+Ich gehe schnell ___ Bäcker.|zu dem|Wohin?|Dükkana/kişiye gitmek: zu + Dativ. Konuşmada: zum Bäcker.
+Ich arbeite ___ Siemens.|bei|Wo?|Bir firmada çalışmak: bei.
+Ich hänge das Bild ___ Wand.|an die|Wohin?|Duvara asmak: an + Akkusativ.
+Das Bild hängt ___ Wand.|an der|Wo?|Duvarda asılı: an + Dativ.
+Wir fahren ___ Bahnhof.|zu dem|Wohin?|Bir yere gitmek: zu + Dativ. Konuşmada: zum Bahnhof.
+Ich bin schon ___ Bahnhof.|an dem|Wo?|İstasyonda olmak: am Bahnhof (an + Dativ).`.trim().split("\n").map(l => { const [s, a, q, r] = l.split("|"); return {s, a, q, r}; });
+function gDativ(){
+  const ALL = uniq(DATIV.map(x => x.a));
+  quiz("dativ", "Wo? Wohin? Woher?", shuffle(DATIV), it => {
+    const [pr, ar] = it.a.split(" ");
+    const near = ALL.filter(a => a !== it.a && (a.split(" ")[0] === pr || (ar && a.split(" ")[1] === ar)));
+    const opts = shuffle([it.a].concat(uniq(shuffle(near).concat(shuffle(ALL))).filter(a => a !== it.a).slice(0, 3)));
+    return {top:`<div class="mid">${it.q}</div><div class="big" style="font-size:22px">${esc(it.s).replace("___", '<span class="gapw">&nbsp;</span>')}</div>`,
+      opts, right: it.a, say: it.s.replace("___", it.a), note: esc(it.r), full: it.s.replace("___", it.a)};
+  }, {n:15});
+}
+
+/* ---------- um, am, im? ---------- */
+const TIMEQ = `
+Ich komme ___ acht Uhr.|um|Saat söylerken: um.
+Wir treffen uns ___ halb neun.|um|Saat (halb, Viertel) için: um.
+___ Mitternacht schlafen alle.|um|Mitternacht bir saat noktası: um.
+___ Montag habe ich frei.|am|Günler: am.
+Was machst du ___ Wochenende?|am|Wochenende: am.
+___ Abend gehen wir spazieren.|am|Günün bölümleri (Morgen, Mittag, Abend): am.
+Ich trinke ___ Morgen immer Kaffee.|am|Sabah: am Morgen.
+Mein Geburtstag ist ___ 3. Mai.|am|Tarihler: am.
+___ Juli fahren wir in die Türkei.|im|Aylar: im.
+___ Sommer ist es heiß.|im|Mevsimler: im.
+___ Winter wird es früh dunkel.|im|Mevsimler: im.
+Ich bin ___ Dezember geboren.|im|Aylar: im.
+Gece wacht ___ Nacht oft auf.|in der|Nacht istisnadır: in der Nacht.
+Ich bin ___ 1990 geboren.|—|Yıllardan önce edat yok: Ich bin 1990 geboren.
+Wir sehen uns ___ nächste Woche.|—|nächste Woche, letzten Monat gibi ifadeler edatsız (Akkusativ).
+Ich habe ___ heute keine Zeit.|—|heute, morgen, gestern edat almaz.
+Ich arbeite ___ jeden Tag.|—|jeden Tag edatsız (Akkusativ).
+Der Kurs beginnt ___ Viertel nach zehn.|um|Saat: um Viertel nach zehn.
+___ Freitagabend gehen wir essen.|am|Gün + bölüm: am Freitagabend.
+___ Frühling blühen die Blumen.|im|Mevsimler: im Frühling.
+___ Nachmittag schläft Gece.|am|Günün bölümü: am Nachmittag.
+Ich rufe dich ___ morgen an.|—|morgen edat almaz.
+Wir fliegen ___ August.|im|Aylar: im August.
+Ich stehe ___ sechs auf.|um|Saat: um sechs.`.trim().split("\n").map(l => { const [s, a, r] = l.split("|"); return {s, a, r}; });
+const timeFull = it => { const t = it.s.replace(it.a === "—" ? "___ " : "___", it.a === "—" ? "" : it.a); return t.charAt(0).toUpperCase() + t.slice(1); };
+function gTime(){
+  quiz("time", "um, am, im?", shuffle(TIMEQ), it => ({
+    top:`<div class="big" style="font-size:22px">${esc(it.s).replace("___", '<span class="gapw">&nbsp;</span>')}</div>`,
+    opts:["um", "am", "im", "in der", "—"], right: it.a, say: timeFull(it), note: esc(it.r), full: timeFull(it)
+  }), {n:15});
+}
+
+/* ---------- 9 Kelime ---------- */
+function gNine(){
+  const pool = shuffle(WORDS().filter(w => /^[A-Za-zÄÖÜäöüß]{3,10}$/.test(w.w)).sort((a, b) => a.o - b.o).slice(0, 100)).slice(0, 9).sort((a, b) => a.w.length - b.w.length);
+  G = {i:0, sc:0, res:[]};
+  const round = () => {
+    clearInterval(G.tm);
+    const it = pool[G.i];
+    if (!it) {
+      best("nine", G.sc); setTop("9 Kelime", true);
+      $("#view").innerHTML = `<div class="card flash" style="margin-top:14px;min-height:0"><div class="big">${G.sc}/9 kelime</div></div>
+        <div class="card plist" style="margin-top:12px">${G.res.map(r => `<div class="pi"><span class="dot ${r.ok ? "s2" : ""}"></span><div><div class="de">${esc(r.it.de)}</div><div class="tr">${esc(r.it.tr)}</div></div></div>`).join("")}</div>
+        <div class="foot"><button class="cta" id="nx">Tekrar oyna</button><button class="linkbtn" id="gb">Oyunlara dön</button></div>`;
+      $("#nx").onclick = () => gNine(); $("#gb").onclick = () => go("games"); return;
+    }
+    const W = it.w.toUpperCase(); let L = shuffle(W.split("").map((c, i) => ({c, i}))), built = [], shuf = 1;
+    const fin = ok => { clearInterval(G.tm); G.res.push({it, ok}); if (ok) G.sc++; speak(it.de); G.i++; later(round, ok ? 600 : 1400); if (!ok) $("#nb").innerHTML = esc(W.split("").join(" ")); };
+    const draw = () => {
+      $("#view").innerHTML = `<div class="hud"><b>${G.sc}</b><span class="small muted">${G.i + 1}/9</span><span class="t" id="gt">${G.left}</span></div>
+        <div class="card flash" style="min-height:120px"><div class="mid">${esc(it.tr)}</div><div class="big" id="nb" style="letter-spacing:.12em">${W.split("").map((c, i) => i < built.length ? L[built[i]].c : "_").join(" ")}</div></div>
+        <div class="pool">${L.map((x, k) => `<button class="wd" data-k="${k}" style="min-width:44px;font-size:20px;${built.includes(k) ? "visibility:hidden" : ""}">${x.c}</button>`).join("")}</div>
+        <div class="row2" style="margin-top:14px"><button class="btn2" id="nsh" ${shuf ? "" : "disabled style=\"opacity:.4\""}>🔀 Karıştır (${shuf})</button><button class="btn2" id="ndel">⌫ Sil</button></div>`;
+      $$(".wd[data-k]").forEach(b => b.onclick = () => {
+        built.push(+b.dataset.k); draw();
+        if (built.length === L.length) { if (built.map(k => L[k].c).join("") === W) fin(true); else { toast("Olmadı"); built = []; later(draw, 400); } }
+      });
+      $("#nsh").onclick = () => { if (shuf) { shuf--; built = []; L = shuffle(L); draw(); } };
+      $("#ndel").onclick = () => { built.pop(); draw(); };
+    };
+    G.left = 30; draw();
+    G.tm = setInterval(() => { if (screen === null) return clearInterval(G.tm); G.left--; const t = $("#gt"); if (t) { t.textContent = G.left; t.classList.toggle("low", G.left <= 10); } if (G.left <= 0) fin(false); }, 1000);
+    const tm = G.tm; onLeave = () => clearInterval(tm);
+  };
+  open(() => setTop("9 Kelime", true));
+  round();
+}
+
+/* ---------- Almanca Wordle ---------- */
+function gWordle(daily){
+  const cand = WORDS().filter(w => /^[A-Za-zÄÖÜäöü]{5}$/.test(w.w)).sort((a, b) => a.id.localeCompare(b.id));
+  if (!cand.length) return toast("Kelime yok");
+  const it = daily === false ? pick(cand) : cand[dayNo() * 7 % cand.length], W = it.w.toUpperCase();
+  const rows = [], KEYS = ["QWERTZUIOPÜ", "ASDFGHJKLÖÄ", "YXCVBNM"];
+  let cur = "", over = 0;
+  const score = g => { const r = Array(5).fill("x"), rest = W.split(""); g.split("").forEach((c, i) => { if (c === W[i]) { r[i] = "g"; rest[i] = null; } }); g.split("").forEach((c, i) => { if (r[i] !== "g") { const j = rest.indexOf(c); if (j >= 0) { r[i] = "y"; rest[j] = null; } } }); return r; };
+  const COL = {g:"var(--ok)", y:"var(--acc)", x:"var(--bg4)"};
+  const keyState = {};
+  const draw = () => {
+    const cell = (c, s) => `<div style="width:52px;height:52px;display:grid;place-items:center;border-radius:10px;font-weight:700;font-size:22px;${s ? `background:${COL[s]};color:${s === "x" ? "var(--tx)" : "#fff"}` : "border:2px solid var(--line)"}">${c || ""}</div>`;
+    const grid = Array.from({length:6}, (_, r) => `<div style="display:flex;gap:6px;justify-content:center">${rows[r] ? rows[r].g.split("").map((c, i) => cell(c, rows[r].s[i])).join("") : Array.from({length:5}, (_, i) => cell(r === rows.length ? cur[i] : "")).join("")}</div>`).join("");
+    $("#view").innerHTML = `<div class="hud"><span class="small muted">${esc(it.tr)}${it.art ? " · " + it.art : ""}?</span><span class="small muted">${rows.length}/6</span></div>
+      <div style="display:flex;flex-direction:column;gap:6px;margin:8px 0 14px">${grid}</div>
+      <div id="wmsg"></div>
+      ${KEYS.map((r, ri) => `<div style="display:flex;gap:4px;justify-content:center;margin-top:5px">${ri === 2 ? '<button class="wd" data-k="ENTER" style="padding:10px 8px;font-size:13px">OK</button>' : ""}${r.split("").map(k => `<button class="wd" data-k="${k}" style="flex:1;max-width:34px;padding:10px 0;font-size:15px;${keyState[k] ? `background:${COL[keyState[k]]};color:${keyState[k] === "x" ? "var(--tx3)" : "#fff"}` : ""}">${k}</button>`).join("")}${ri === 2 ? '<button class="wd" data-k="DEL" style="padding:10px 8px;font-size:13px">⌫</button>' : ""}</div>`).join("")}`;
+    $$(".wd[data-k]").forEach(b => b.onclick = () => key(b.dataset.k));
+    if (over) {
+      $("#wmsg").innerHTML = `<div class="tip"><b>${esc(it.de)}</b> · ${esc(it.tr)}</div><div class="foot"><button class="cta" id="wn">Yeni kelime</button><button class="linkbtn" id="gb">Oyunlara dön</button></div>`;
+      $("#wn").onclick = () => gWordle(false); $("#gb").onclick = () => go("games");
+    }
+  };
+  const key = k => {
+    if (over) return;
+    if (k === "DEL") cur = cur.slice(0, -1);
+    else if (k === "ENTER") {
+      if (cur.length < 5) return toast("5 harf gerekli");
+      const s = score(cur); rows.push({g:cur, s});
+      cur.split("").forEach((c, i) => { const o = keyState[c]; if (o !== "g" && !(o === "y" && s[i] === "x")) keyState[c] = s[i]; });
+      if (s.every(x => x === "g")) { over = 1; speak(it.de); best("wordle", rows.length, true); toast(rows.length + ". denemede buldun!"); }
+      else if (rows.length >= 6) { over = 1; speak(it.de); mark("game"); }
+      cur = "";
+    } else if (cur.length < 5) cur += k;
+    draw();
+  };
+  const h = e => { const k = e.key.toUpperCase(); if (k === "ENTER" || k === "BACKSPACE") key(k === "ENTER" ? "ENTER" : "DEL"); else if (/^[A-ZÄÖÜ]$/.test(k)) key(k); };
+  open(() => setTop("Almanca Wordle", true));
+  document.addEventListener("keydown", h); onLeave = () => document.removeEventListener("keydown", h);
+  draw();
+}
+
+/* ---------- Eşleştirme Izgarası ---------- */
+function gGrid(){
+  G = {sc:0, sel:null};
+  const board = () => {
+    const its = wordPool().filter(w => w.w.length <= 14 && w.tr.length <= 16).slice(0, 8);
+    G.cells = shuffle(its.flatMap(it => [{id:it.id, t:it.w, de:1}, {id:it.id, t:it.tr.split(",")[0]}])); G.done = 0; G.sel = null;
+    draw();
+  };
+  const draw = () => {
+    $("#view").innerHTML = `<div class="hud"><b>${G.sc}</b><span class="small muted">çift</span><span class="t" id="gt">${G.left}</span></div>
+      <div class="mgrid" style="grid-template-columns:repeat(4,1fr);gap:6px">${G.cells.map((c, i) => `<button class="mc ${c.gone ? "done" : ""} ${G.sel === i ? "sel" : ""}" data-i="${i}" style="min-height:74px;font-size:13px;padding:6px;${c.de ? "" : "color:var(--tx2)"}">${esc(c.t)}</button>`).join("")}</div>`;
+    $$(".mc").forEach(b => b.onclick = () => {
+      const i = +b.dataset.i, c = G.cells[i];
+      if (c.gone || G.lock) return;
+      if (G.sel === null || G.sel === i) { G.sel = G.sel === i ? null : i; if (c.de) speak(BYID[c.id].de); return draw(); }
+      const a = G.cells[G.sel];
+      if (a.id === c.id && a.de !== c.de) { a.gone = c.gone = 1; G.sel = null; G.sc++; G.done++; if (G.done === 8) { later(board, 300); } return draw(); }
+      b.classList.add("bad"); $$(".mc")[G.sel].classList.add("bad"); G.lock = 1; G.sel = null;
+      later(() => { G.lock = 0; draw(); }, 450);
+    });
+  };
+  open(() => setTop("Eşleştirme Izgarası", true));
+  gameTimer(60, () => gameOver("grid", "Eşleştirme Izgarası", G.sc));
+  board();
+}
+
+/* ---------- Artikel Kuralları ---------- */
+// artikel kelime|Türkçe|kural
+const ART_RULES = `
+die Zeitung|gazete|-ung ile biten kelimeler hep die.
+die Wohnung|daire, ev|-ung ile biten kelimeler hep die.
+die Rechnung|fatura, hesap|-ung ile biten kelimeler hep die.
+die Meinung|fikir|-ung ile biten kelimeler hep die.
+die Freiheit|özgürlük|-heit ile biten kelimeler hep die.
+die Gesundheit|sağlık|-heit ile biten kelimeler hep die.
+die Möglichkeit|imkan|-keit ile biten kelimeler hep die.
+die Freundschaft|arkadaşlık|-schaft ile biten kelimeler hep die.
+die Information|bilgi|-ion ile biten kelimeler hep die.
+die Universität|üniversite|-tät ile biten kelimeler hep die.
+die Bäckerei|fırın|-ei ile biten kelimeler die.
+die Tasche|çanta|-e ile biten kelimelerin çoğu die (istisnalar var: der Käse).
+die Lampe|lamba|-e ile biten kelimelerin çoğu die.
+die Straße|cadde|-e ile biten kelimelerin çoğu die.
+das Mädchen|kız çocuğu|-chen küçültme eki: hep das (das Mädchen bile).
+das Brötchen|küçük ekmek|-chen küçültme eki: hep das.
+das Fräulein|genç hanım|-lein küçültme eki: hep das.
+das Dokument|belge|-ment ile bitenler çoğunlukla das (istisna: der Moment).
+das Medikament|ilaç|-ment ile bitenler çoğunlukla das.
+der Moment|an|İstisna! -ment olmasına rağmen der Moment.
+das Museum|müze|-um ile biten kelimeler das.
+das Zentrum|merkez|-um ile biten kelimeler das.
+das Essen|yemek|Fiilden yapılan isimler (essen → das Essen) hep das.
+das Schwimmen|yüzme|Fiilden yapılan isimler hep das.
+das Gold|altın|Metaller ve malzemelerin çoğu das.
+das Glas|cam, bardak|Malzemelerin çoğu das.
+das Holz|tahta|Malzemelerin çoğu das.
+der Frühling|ilkbahar|Mevsimler der. Ayrıca -ling ile bitenler der.
+der Sommer|yaz|Mevsimler hep der.
+der Montag|pazartesi|Günler hep der.
+der Freitag|cuma|Günler hep der.
+der Januar|ocak|Aylar hep der.
+der Mai|mayıs|Aylar hep der.
+der Abend|akşam|Günün bölümleri der (istisna: die Nacht).
+die Nacht|gece|İstisna: günün bölümleri der ama die Nacht.
+der Lehrer|öğretmen|-er ile biten meslekler/kişiler der.
+die Lehrerin|kadın öğretmen|-in ile biten (kadın) kişiler hep die.
+der Tourismus|turizm|-ismus ile bitenler hep der.
+der Regen|yağmur|Hava olayları çoğunlukla der.
+der Schnee|kar|Hava olayları çoğunlukla der.`.trim().split("\n").map(l => { const [aw, tr, r] = l.split("|"); const [art, w] = aw.split(" "); return {art, w, tr, r, de: aw}; });
+// sadece güvenilir ekler (en az 3 harf, "hep" diyen kurallar): -ung, -heit, -keit, -schaft, -ion, -tät, -chen, -lein, -ismus
+const ruleFor = w => (ART_RULES.find(x => x.w === w) || ART_RULES.find(x => { const m = x.r.match(/^-(\w{3,})/); return m && x.r.includes("hep") && w.length > m[1].length + 2 && w.endsWith(m[1]); }) || {}).r;
+function gRules(){
+  quiz("rules", "Artikel Kuralları", shuffle(ART_RULES), it => ({
+    top:`<div class="big">${esc(it.w)}</div><div class="mid">${esc(it.tr)}</div>`, opts:["der", "die", "das"], right: it.art, say: it.de, note: "📏 " + esc(it.r), full: it.de
+  }), {n:20});
+}
+
+/* ---------- Resimden Bil ---------- */
+const IMG_NOUNS = `
+der Hund|köpek|🐶
+die Katze|kedi|🐱
+das Haus|ev|🏠
+das Auto|araba|🚗
+der Bus|otobüs|🚌
+der Zug|tren|🚆
+das Fahrrad|bisiklet|🚲
+die Blume|çiçek|🌸
+der Baum|ağaç|🌳
+die Sonne|güneş|☀️
+der Mond|ay|🌙
+der Schnee|kar|❄️
+das Buch|kitap|📖
+der Schlüssel|anahtar|🔑
+das Handy|cep telefonu|📱
+die Uhr|saat|⌚
+der Stuhl|sandalye|🪑
+das Bett|yatak|🛏️
+die Tür|kapı|🚪
+der Schuh|ayakkabı|👟
+die Hose|pantolon|👖
+die Jacke|ceket, mont|🧥
+die Brille|gözlük|👓
+der Ball|top|⚽
+das Baby|bebek|👶
+das Geld|para|💶
+das Herz|kalp|❤️
+das Ei|yumurta|🥚
+der Apfel|elma|🍎
+die Banane|muz|🍌
+die Erdbeere|çilek|🍓
+die Tomate|domates|🍅
+die Kartoffel|patates|🥔
+der Käse|peynir|🧀
+das Brot|ekmek|🍞
+die Milch|süt|🥛
+der Kaffee|kahve|☕
+die Pizza|pizza|🍕
+der Kuchen|pasta|🍰
+das Eis|dondurma|🍦
+der Fisch|balık|🐟
+der Regenschirm|şemsiye|☂️
+das Flugzeug|uçak|✈️
+das Schiff|gemi|🚢
+der Computer|bilgisayar|💻
+die Lampe|lamba|💡
+der Brief|mektup|✉️
+das Geschenk|hediye|🎁
+die Kerze|mum|🕯️
+die Zwiebel|soğan|🧅`.trim().split("\n").map(l => { const [de, tr, e] = l.split("|"); const [art, w] = de.split(" "); return {de, tr, e, art, w}; });
+function gImg(){
+  timedChoice("img", "Resimden Bil", shuffle(IMG_NOUNS), it => {
+    const wrongArt = pick(["der", "die", "das"].filter(a => a !== it.art)) + " " + it.w;
+    const others = shuffle(IMG_NOUNS.filter(x => x !== it)).slice(0, 2).map(x => x.de);
+    return {top:`<div style="font-size:84px;line-height:1">${it.e}</div>`, opts: shuffle([it.de, wrongArt].concat(others)), right: it.de, say: it.de};
+  });
+}
+
+/* ---------- Doğru mu Yanlış mı? ---------- */
+function gTF(){
+  const pool = wordPool("n");
+  G = {i:0, sc:0, combo:0};
+  const draw = () => {
+    const it = pool[G.i++ % pool.length], t = it.pl ? rnd(0, 2) : pick([0, 2]), truth = Math.random() < .5;
+    let st, right;
+    if (t === 0) { const a = truth ? it.art : pick(["der", "die", "das"].filter(x => x !== it.art)); st = a + " " + it.w; right = it.de; }
+    else if (t === 1) { const w = it.w, wr = pick([w + "e", w + "en", w + "s", umlaut(w) + "e", w + "n", w + "er"].filter(x => x !== it.pl)); st = it.de + " → die " + (truth ? it.pl : wr); right = it.de + " → die " + it.pl; }
+    else { const tr = truth ? it.tr : kindOther(it, 1, "tr")[0]; st = it.de + " = " + tr; right = it.de + " = " + it.tr; }
+    $("#view").innerHTML = `<div class="hud"><b>${G.sc}</b><span class="small muted">${G.combo >= 3 ? "🔥 " + G.combo + " seri" : ""}</span><span class="t" id="gt">${G.left}</span></div>
+      <div class="card flash" style="min-height:160px"><div class="mid">${["Artikel", "Çoğul", "Anlam"][t]}</div><div class="big" style="font-size:24px">${esc(st)}</div><div class="mid" id="tfr" style="visibility:hidden">${esc(right)}</div></div>
+      <div class="tfbtn" style="margin-top:14px"><button class="y" data-v="1">✓ Doğru</button><button class="n" data-v="0">✗ Yanlış</button></div>`;
+    let lock = 0;
+    $$(".tfbtn button").forEach(b => b.onclick = () => {
+      if (lock++) return;
+      const ok = (b.dataset.v === "1") === truth;
+      b.style.outline = "3px solid " + (ok ? "var(--ok)" : "var(--bad)");
+      if (ok) { G.combo++; G.sc += G.combo >= 5 ? 2 : 1; } else { G.combo = 0; $("#tfr").style.visibility = "visible"; speak(it.de); }
+      later(() => G.left > 0 && draw(), ok ? 350 : 1400);
+    });
+  };
+  open(() => setTop("Doğru mu Yanlış mı?", true));
+  gameTimer(60, () => gameOver("tf", "Doğru mu Yanlış mı?", G.sc));
+  draw();
+}
+
+/* ---------- Harf Salatası ---------- */
+function gSalad(){
+  const pool = wordPool().filter(w => /^[A-Za-zÄÖÜäöüß]{3,9}$/.test(w.w));
+  G = {i:0, sc:0};
+  const draw = () => {
+    const it = pool[G.i++ % pool.length], W = it.w.toUpperCase(), L = shuffle(W.split("")), built = [];
+    const pos = L.map((_, k) => ({x: 8 + (k % 4) * 22 + rnd(-4, 4), y: 10 + (k / 4 | 0) * 30 + rnd(-5, 5), r: rnd(-25, 25)}));
+    const show = () => {
+      $("#view").innerHTML = `<div class="hud"><b>${G.sc}</b><span class="small muted">${esc(it.tr)}${it.art ? " · " + it.art : ""}</span><span class="t" id="gt">${G.left}</span></div>
+        <div class="card flash" style="min-height:80px;padding:14px"><div class="big" style="letter-spacing:.12em">${W.split("").map((c, i) => i < built.length ? L[built[i]] : "_").join(" ")}</div></div>
+        <div style="position:relative;height:${Math.ceil(L.length / 4) * 30 + 30}%;min-height:200px;margin-top:14px;border-radius:50% 50% 46% 46%/30% 30% 70% 70%;background:var(--acc-d);border:2px solid var(--line)">
+          ${L.map((c, k) => `<button class="wd" data-k="${k}" style="position:absolute;left:${pos[k].x}%;top:${pos[k].y}%;transform:rotate(${pos[k].r}deg);width:46px;height:46px;padding:0;font-size:20px;${built.includes(k) ? "visibility:hidden" : ""}">${c}</button>`).join("")}</div>
+        <div class="row2" style="margin-top:14px"><button class="btn2" id="sdel">⌫ Sil</button><button class="btn2" id="sskip">Geç</button></div>`;
+      $$(".wd[data-k]").forEach(b => b.onclick = () => {
+        built.push(+b.dataset.k); show();
+        if (built.length === L.length) { if (built.map(k => L[k]).join("") === W) { G.sc++; speak(it.de); later(() => G.left > 0 && draw(), 500); } else { toast("Olmadı"); built.length = 0; later(show, 400); } }
+      });
+      $("#sdel").onclick = () => { built.pop(); show(); };
+      $("#sskip").onclick = () => { toast(it.de); speak(it.de); draw(); };
+    };
+    show();
+  };
+  open(() => setTop("Harf Salatası", true));
+  gameTimer(60, () => gameOver("salad", "Harf Salatası", G.sc));
+  draw();
+}
+
+/* ---------- Kelime Eşle (iki sütun) ---------- */
+function gMatch(){
+  const all = wordPool().filter(w => w.tr.length <= 22).slice(0, 20);
+  G = {r:0, t0:Date.now(), pen:0};
+  const round = () => {
+    const its = all.slice(G.r * 5, G.r * 5 + 5);
+    if (its.length < 5 || G.r >= 4) return gameOver("match", "Kelime Eşle", Math.round((Date.now() - G.t0) / 1000) + G.pen);
+    const L = shuffle(its), R = shuffle(its), gone = new Set(); let sel = null;
+    const draw = () => {
+      $("#view").innerHTML = `<div class="hud"><span class="small muted">Tur ${G.r + 1}/4</span><span class="small muted">${G.pen ? "+" + G.pen + " sn ceza" : ""}</span></div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px">
+          <div style="display:flex;flex-direction:column;gap:8px">${L.map(w => `<button class="mc ${gone.has(w.id) ? "done" : ""} ${sel === w.id ? "sel" : ""}" data-l="${w.id}" style="min-height:62px">${esc(w.de)}</button>`).join("")}</div>
+          <div style="display:flex;flex-direction:column;gap:8px">${R.map(w => `<button class="mc ${gone.has(w.id) ? "done" : ""}" data-r="${w.id}" style="min-height:62px;color:var(--tx2)">${esc(w.tr)}</button>`).join("")}</div></div>`;
+      $$("[data-l]").forEach(b => b.onclick = () => { sel = b.dataset.l; speak(BYID[sel].de); draw(); });
+      $$("[data-r]").forEach(b => b.onclick = () => {
+        if (!sel) return toast("Önce soldan seç");
+        if (b.dataset.r === sel) { gone.add(sel); sel = null; if (gone.size === 5) { G.r++; return later(round, 300); } draw(); }
+        else { G.pen += 3; b.classList.add("bad"); later(() => b.classList.remove("bad"), 400); }
+      });
+    };
+    draw();
+  };
+  open(() => setTop("Kelime Eşle", true));
+  round();
+}
+
+/* ---------- Kelime Tahmini (fiil + sıfat adam asmaca) ---------- */
+function gGuess(){
+  const pool = shuffle(WORDS().filter(w => w.kind !== "n" && /^[A-Za-zÄÖÜäöüß]{3,11}$/.test(w.w)));
+  G = {i:0, sc:0, lives:6};
+  const KEYS = "QWERTZUIOPÜASDFGHJKLÖÄYXCVBNMß".split("");
+  const round = () => {
+    const it = pool[G.i % pool.length], W = it.w.toUpperCase().replace(/ẞ/g, "ß"), got = new Set(), miss = new Set();
+    const draw = () => {
+      $("#view").innerHTML = `<div class="hud"><b>${G.sc}</b><span>${hearts(G.lives, 6)}</span></div>
+        <div class="card flash" style="min-height:150px"><div class="mid">${esc(it.tr)} · ${it.kind === "v" ? "fiil" : "sıfat"}</div>
+          <div class="big" style="letter-spacing:.12em;font-size:28px">${W.split("").map(c => got.has(c) ? c : "_").join(" ")}</div></div>
+        <div class="pool" style="gap:6px">${KEYS.map(k => `<button class="wd" data-k="${k}" style="min-width:34px;padding:9px 8px;${got.has(k) ? "background:var(--ok-d)" : miss.has(k) ? "opacity:.3" : ""}" ${got.has(k) || miss.has(k) ? "disabled" : ""}>${k}</button>`).join("")}</div>`;
+      $$(".pool .wd").forEach(b => b.onclick = () => {
+        const k = b.dataset.k;
+        if (G.lives <= 0 || W.split("").every(c => got.has(c))) return;
+        if (W.includes(k)) got.add(k); else { miss.add(k); G.lives--; }
+        if (W.split("").every(c => got.has(c))) { G.sc++; speak(it.w); toast("✓ " + it.w); G.i++; later(round, 900); }
+        else if (G.lives <= 0) { speak(it.w); toast(it.w); later(() => gameOver("guess", "Kelime Tahmini", G.sc), 1200); }
+        draw();
+      });
+    };
+    draw();
+  };
+  open(() => setTop("Kelime Tahmini", true));
+  round();
+}
+
+/* ---------- seçmeli kelime oyunları ---------- */
+function gVerbMC(){
+  timedChoice("gverb", "Fiili Bil", wordPool("v"), it => ({top:`<div class="big">${esc(it.w)}</div>`, opts: shuffle([it.tr].concat(kindOther(it, 3, "tr"))), right: it.tr, say: it.w}));
+}
+function gWordMC(){
+  timedChoice("gword", "Kelimeyi Bil", wordPool("n"), it => ({top:`<div class="big">${esc(it.de)}</div>`, opts: shuffle([it.tr].concat(kindOther(it, 3, "tr"))), right: it.tr, say: it.de}));
+}
+function gConj4(){
+  quiz("conj4", "Çekim Seçmeli", wordPool("v"), it => {
+    const p = rnd(0, 5), right = it.pr[p];
+    let opts = uniq(it.pr.filter(f => f !== right));
+    if (opts.length < 3) opts = opts.concat(kindOther(it, 3, "w").map(w => (BYID["v:" + w] || {pr:[]}).pr[p]).filter(Boolean));
+    opts = shuffle([right].concat(shuffle(uniq(opts.filter(f => f !== right))).slice(0, 3)));
+    return {top:`<div class="mid">${esc(it.w)} · ${esc(it.tr)}</div><div class="big">${PERS[p]} ___</div>`, opts, right, say: PERS[p].split("/")[0] + " " + right, full: PERS[p] + " " + right};
+  }, {lives:3});
+}
+function gPlural4(){
+  quiz("plural4", "Çoğul Seçmeli", wordPool("n").filter(w => w.pl), it => {
+    const w = it.w, wrong = uniq(shuffle([w + "e", w + "en", w + "s", umlaut(w) + "e", w + "n", w + "er", umlaut(w) + "er", w]).filter(x => x !== it.pl)).slice(0, 3);
+    return {top:`<div class="big">${esc(it.de)}</div><div class="mid">${esc(it.tr)} · çoğulu?</div>`, opts: shuffle([it.pl].concat(wrong)).map(x => "die " + x), right: "die " + it.pl, full: "die " + it.pl};
+  }, {lives:3});
+}
+function gArtGuess(){
+  quiz("artguess", "Artikel Tahmini", wordPool("n"), it => {
+    const r = ruleFor(it.w);
+    return {top:`<div class="big">${esc(it.w)}</div><div class="mid">${esc(it.tr)}</div>`, opts:["der", "die", "das"], right: it.art, say: it.de, note: r ? "📏 " + esc(r) : "", full: it.de};
+  }, {lives:3});
 }
 
 /* ================= YAZ ================= */
