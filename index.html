@@ -976,6 +976,13 @@ body.game #view.kbv > .flash{margin-top:10px!important;margin-bottom:0!important
 .tfbtn button.good{border-color:var(--ok)!important;background:color-mix(in srgb,var(--ok) 16%,transparent)!important}
 .tfbtn button.bad{border-color:var(--bad)!important;background:color-mix(in srgb,var(--bad) 16%,transparent)!important;animation:shake .3s}
 .tfbtn.done button:not(.good):not(.bad){opacity:.45}
+/* Sırala: dikeyde ortada, kelimeler çizginin üstünde */
+body.game #view > .talk{margin-top:auto}
+body.game #view > .talk ~ .pool{margin-bottom:auto}
+.built.lined{row-gap:14px;column-gap:8px;padding:0;min-height:120px;margin-top:18px;align-content:flex-start;background:repeating-linear-gradient(to bottom,transparent 0 54px,var(--line) 54px 56px,transparent 56px 60px)}
+.built.lined .wd,body.game .built.lined .wd{height:46px;min-height:46px;margin:0;padding:0 13px;display:inline-flex;align-items:center}
+body.game .pool .wd{height:46px;display:inline-flex;align-items:center}
+.pool{margin-top:18px}
 </style>
 </head>
 <body>
@@ -2420,7 +2427,10 @@ function resultSheet(it){
   rs.insertAdjacentHTML("afterbegin", `<span class="rsi">${I(ok ? "check" : "x")}</span>`);
   rs.appendChild(vd);
   const ex = $("#exa"); if (ex) rs.appendChild(ex);
-  rs.appendChild($(".foot"));
+  // panel açılınca soru yerinde kalsın: taşınan Devam alanının yerine aynı boyda boşluk
+  const f = $(".foot"), fh = f.offsetHeight;
+  if (fh) f.insertAdjacentHTML("beforebegin", `<div style="height:${fh + 16}px;flex:none"></div>`);
+  rs.appendChild(f);
   $("#view").appendChild(rs);
   document.body.classList.add("rs-open");
 }
