@@ -12,7 +12,7 @@
 <meta name="apple-mobile-web-app-title" content="Gedsche">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Rubik:wght@500;600;700;800&family=Figtree:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Lilita+One&family=Rubik:wght@500;600;700;800&family=Figtree:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
 :root{
   --bg:#F3F5FB; --bg2:#FFFFFF; --bg3:#EAEDF6; --bg4:#DCE1EE;
@@ -1036,6 +1036,59 @@ body.game:not(.sess) .host{top:-24px;width:46px;height:46px}
 .fsay{position:absolute;left:-6px;top:4px;transform:translateX(-100%);white-space:nowrap;font:800 15px var(--disp);padding:7px 13px;border-radius:16px 16px 4px 16px;background:var(--solid);border:1px solid var(--glass-b);box-shadow:0 6px 16px rgb(0 0 0/.14);color:var(--tx);animation:fsay .5s .7s cubic-bezier(.3,1.5,.5,1) both;z-index:2}
 @keyframes fsay{from{opacity:0;transform:translateX(-100%) translateY(8px) scale(.8)}}
 @media (prefers-reduced-motion:reduce){.host.hop,.host.talking .hsay,.res .finbat.dance,.res .finbat.dance svg.bat,.fsay{animation:none!important}.host.talking .hsay{opacity:1}}
+
+/* ===== Oyun kartları: enerjik, parlak ===== */
+.gtiles{gap:11px}
+.gtile.cz{position:relative;overflow:hidden;min-height:138px;align-content:start;gap:4px;padding:12px 12px 40px;border-radius:22px;color:#fff;
+  background:linear-gradient(155deg,var(--c1),var(--c2));border:2px solid rgb(255 255 255/.38)!important;
+  box-shadow:0 5px 0 var(--c3),0 10px 22px -6px var(--c2),inset 0 2px 0 rgb(255 255 255/.45);transition:transform .1s,box-shadow .1s}
+.gtile.cz::before{content:"";position:absolute;inset:0 0 52% 0;background:linear-gradient(rgb(255 255 255/.28),rgb(255 255 255/0));border-radius:20px 20px 60% 60%/20px 20px 22px 22px;pointer-events:none}
+.gtile.cz::after{content:"";position:absolute;top:-40%;left:-60%;width:40%;height:180%;background:linear-gradient(90deg,transparent,rgb(255 255 255/.55),transparent);transform:rotate(20deg);animation:gshine 5s var(--d,0s) infinite;pointer-events:none}
+@keyframes gshine{0%,72%{left:-60%}100%{left:130%}}
+.gtile.cz:active{transform:translateY(4px) scale(.98);box-shadow:0 1px 0 var(--c3),0 4px 10px -6px var(--c2),inset 0 2px 0 rgb(255 255 255/.45)}
+.gtile.cz i{position:absolute;right:-6px;top:-4px;width:64px!important;height:64px!important;transform:rotate(12deg);filter:drop-shadow(0 4px 4px rgb(0 0 0/.25));background:transparent!important;font-style:normal;font-size:44px;display:grid;place-items:center}
+.gtile.cz i svg{width:60px!important;height:60px!important;max-width:none!important;max-height:none!important}
+.gtile.cz b{position:relative;margin-top:36px;font:400 21px/1.02 "Lilita One",var(--disp);letter-spacing:.01em;text-shadow:0 2px 0 var(--c3),0 3px 8px rgb(0 0 0/.25);word-break:break-word;hyphens:auto}
+.gtile.cz small{position:relative;color:rgb(255 255 255/.92);font-size:11.5px;font-weight:700}
+.grec{position:absolute;left:10px;bottom:10px;font-style:normal;font-size:11.5px;font-weight:800;padding:3px 9px;border-radius:99px;background:rgb(0 0 0/.22);color:#fff}
+.grec.new{background:linear-gradient(180deg,#FFE066,#FFB800);color:#6B3A00;box-shadow:0 2px 0 #C77F00;letter-spacing:.06em;animation:gnew 1.6s ease-in-out infinite}
+@keyframes gnew{0%,100%{transform:scale(1)}50%{transform:scale(1.08)}}
+.z0{--c1:#FF4F8B;--c2:#E0216A;--c3:#A3124A}
+.z1{--c1:#FFA43A;--c2:#F06A0F;--c3:#B04700}
+.z2{--c1:#3DDC84;--c2:#16A34A;--c3:#0E6B31}
+.z3{--c1:#4F9BFF;--c2:#2563EB;--c3:#1A3FA3}
+.z4{--c1:#B57BFF;--c2:#8B3FEA;--c3:#5E22A8}
+.z5{--c1:#2ED3E6;--c2:#0891B2;--c3:#05607A}
+.z6{--c1:#FF6B6B;--c2:#E11D48;--c3:#9B1035}
+.z7{--c1:#FFC93C;--c2:#F59E0B;--c3:#A86400}
+.z7 b,.z7 small{color:#fff}
+/* günün oyunu: jackpot */
+.feat.jack{position:relative;overflow:hidden;padding:18px 16px;border-radius:24px;background:linear-gradient(135deg,#7C3AED,#DB2777 55%,#F59E0B);border:2px solid #FFE066!important;box-shadow:0 6px 0 #8A1C5C,0 12px 28px -8px #DB2777,inset 0 2px 0 rgb(255 255 255/.4)}
+.feat.jack::after{content:"";position:absolute;top:-50%;left:-60%;width:35%;height:200%;background:linear-gradient(90deg,transparent,rgb(255 255 255/.5),transparent);transform:rotate(20deg);animation:gshine 3.6s infinite;pointer-events:none}
+.feat.jack .ft b{display:block;font:400 26px/1.05 "Lilita One",var(--disp);text-shadow:0 2px 0 #8A1C5C}
+.feat.jack .ft small{font-weight:700;opacity:.95}
+.feat.jack .fi{background:rgb(255 255 255/.18);box-shadow:inset 0 0 0 2px rgb(255 255 255/.3)}
+.feat.jack .ft{flex:1;min-width:0}
+.feat.jack .fp{width:auto;height:auto;margin-left:auto;flex:none;font:400 17px "Lilita One",var(--disp);letter-spacing:.06em;color:#6B3A00;padding:10px 16px;border-radius:99px;background:linear-gradient(180deg,#FFE680,#FFB800);box-shadow:0 4px 0 #C77F00;animation:gnew 1.3s ease-in-out infinite}
+.feat.jack:active{transform:translateY(5px);box-shadow:0 1px 0 #8A1C5C}
+@media (prefers-reduced-motion:reduce){.gtile.cz::after,.feat.jack::after,.grec.new,.feat.jack .fp{animation:none}}
+
+/* ===== Hafıza ===== */
+.mstage{flex:1;min-height:120px;display:flex;align-items:center;justify-content:center;gap:10px}
+.mstage .mbat{display:block;animation:mbob 2.4s ease-in-out infinite}
+.mstage .msay{font:400 21px "Lilita One",var(--disp);padding:10px 16px;border-radius:18px 18px 18px 4px;background:var(--glass,rgb(255 255 255/.12));border:1.5px solid var(--glass-b);color:var(--tx)}
+.mstage.pop .msay{animation:mpop .35s cubic-bezier(.3,1.6,.5,1)}
+.mstage.pop .mbat{animation:mhop .45s ease,mbob 2.4s .45s ease-in-out infinite}
+@keyframes mbob{0%,100%{transform:translateY(0)}50%{transform:translateY(-6px)}}
+@keyframes mhop{0%{transform:translateY(0)}40%{transform:translateY(-16px) rotate(-6deg)}100%{transform:translateY(0)}}
+@keyframes mpop{0%{transform:scale(.6);opacity:0}100%{transform:scale(1);opacity:1}}
+.mem{gap:7px}
+.mem .mc{position:relative;min-height:86px;padding:6px 4px;font-size:13px;line-height:1.2;border-radius:14px;transition:transform .28s,background .2s,color .2s;transform-style:preserve-3d}
+.mem .mc.de{border-color:color-mix(in srgb,var(--acc) 55%,transparent)}
+.mem .mc.back{color:transparent;transform:rotateY(180deg);background:linear-gradient(150deg,#8B6CFF,#5B3FD9)!important;border-color:rgb(255 255 255/.35)!important;box-shadow:0 3px 0 #3E26A6}
+.mem .mc.back span{visibility:hidden}
+.mem .mc.back::after{content:"?";position:absolute;inset:0;display:grid;place-items:center;font:400 30px "Lilita One",var(--disp);color:rgb(255 255 255/.85);transform:rotateY(180deg)}
+.mem .mc.done{opacity:.3}
 </style>
 </head>
 <body>
@@ -3419,16 +3472,23 @@ function best(id, sc, lowerBetter){
   mark("game"); save();
   return nb;
 }
+// oyunların "logo" adları (kartta büyük); asıl ne olduğu altta ve oyunun içinde yazar
+const BRAND = {blitz:"Blitz 60!", memory:"Memo-Mania", build:"Satz-Boom", hearit:"Ohren auf!", artrace:"der·die·DAS", plural:"Plural-Party",
+  conj:"Verb-Turbo", hang:"Galgen-Gaudi", hunt:"Wort-Jäger", wheel:"Glücksrad", soli:"Solitär-Star", cats:"Sortier-Sturm",
+  artdrop:"Artikel-Regen", cmpdrop:"Mehr oder weniger", numdrop:"Zahlen-Hagel", cafe:"Café Berlin", perf:"Zeitmaschine", de2tr:"Was sagt er?",
+  order:"Wort-Puzzle", dativ:"Wo-Wohin-Wirbel", time:"Uhr-Rush", numtap:"Zahlen-Tipper", math:"Mathe-Mix", nine:"Neun-Knaller",
+  wordle:"WÖRDLE", grid:"Match-Matrix", rules:"Regel-Radar", img:"Bild-Blitz", tf:"Wahr? Falsch!", salad:"Buchstaben-Salat",
+  match:"Paar-Power", guess:"Rate-Rakete", gverb:"Verb-Detektiv", conj4:"Konjugier-Kick", plural4:"Plural-Pick", gword:"Wort-Orakel", artguess:"Artikel-Hut"};
 function renderGames(){
   setTop("Oyun");
   const E = Object.entries(GAMES), idx = k => E.findIndex(([x]) => x === k);
-  const bestTxt = (k, g) => S.games[k] !== undefined ? `Rekor ${S.games[k]} ${g.u}` : "Yeni";
+  const rec = (k, g) => S.games[k] !== undefined ? `<em class="grec">🏆 ${S.games[k]} ${g.u}</em>` : `<em class="grec new">YENİ</em>`;
   const tile = ([k, g]) => `
-      <button class="gtile" data-k="${k}"><i class="t-${tint(idx(k))}">${I(g.ic)}</i><b>${g.t}</b><small>${bestTxt(k, g)}</small></button>`;
+      <button class="gtile cz z${idx(k) % 8}" data-k="${k}" style="--d:${(idx(k) * .37) % 5}s"><i>${I(g.ic)}</i><b>${BRAND[k] || g.t}</b>${BRAND[k] && BRAND[k].replace("!", "") !== g.t ? `<small>${g.t}</small>` : ""}${rec(k, g)}</button>`;
   // günün oyunu: her gün başka biri
   const [fk, fg] = E[dayNo() % E.length];
   $("#view").innerHTML = `
-    <button class="feat" data-k="${fk}"><span class="fi">${I(fg.ic)}</span><span class="ft"><small>Günün oyunu</small><b>${fg.t}</b><small>${bestTxt(fk, fg)}</small></span><span class="fp">${I("play")}</span></button>
+    <button class="feat jack" data-k="${fk}"><span class="fi">${I(fg.ic)}</span><span class="ft"><small>⭐ Günün oyunu</small><b>${BRAND[fk] || fg.t}</b><small>${fg.t}</small></span><span class="fp">OYNA</span></button>
     <div class="sec">Düşen kelimeler</div>
     <div class="gtiles">${E.filter(([, g]) => g.g === "d").map(tile).join("")}</div>
     <div class="sec">Cümle oyunları</div>
@@ -3439,7 +3499,7 @@ function renderGames(){
     <div class="gtiles">${E.filter(([, g]) => g.g === "w").map(tile).join("")}</div>
     <p class="hint">Oyunlar senin kartlarından ve kelime listemizden gelir.</p>
     <div style="height:16px"></div>`;
-  $$("[data-k]").forEach(b => b.onclick = () => gameSheet(b.dataset.k));
+  $$("[data-k]").forEach(b => b.onclick = () => { sfx("tap"); GAMES[b.dataset.k].run(); });
 }
 // oyuna dokununca: açıklama, rekor ve Oyna
 function gameSheet(k){
@@ -3496,25 +3556,38 @@ function gBlitz(){
   draw();
 }
 
-/* Hafıza: 6 çift */
+/* Hafıza: 8 çift, başta kartlar kısa süre açık gösterilir */
 function gMemory(){
-  const its = shuffle(gamePool()).filter(i => plain(i).length <= 34).slice(0, 6);
+  const N = 8;
+  let its = shuffle(gamePool()).filter(i => plain(i).length <= 16 && i.tr.length <= 18);
+  if (its.length < N) its = its.concat(shuffle(gamePool()).filter(i => plain(i).length <= 26 && !its.includes(i)));
+  its = its.slice(0, N);
   const cards = shuffle(its.flatMap(it => [{id:it.id, t:plain(it), k:"de"}, {id:it.id, t:it.tr, k:"tr"}]));
-  G = {open:[], done:0, moves:0};
+  G = {open:[], done:0, moves:0, peek:true};
   open(() => setTop("Hafıza", true));
-  $("#view").innerHTML = `<div class="hud"><span class="small muted">Eşleşen: <b id="gd" style="font-size:16px">0</b>/6</span><span class="small muted">Hamle: <b id="gm" style="font-size:16px">0</b></span></div>
-    <div class="mgrid gpush" style="grid-template-columns:repeat(3,1fr)">${cards.map((c, i) => `<button class="mc back" data-i="${i}" style="min-height:84px;font-size:13px">${esc(c.t)}</button>`).join("")}</div>`;
+  const say = (t, mood) => { const st = $("#mst"); if (!st) return; st.querySelector(".mbat").innerHTML = bat(mood, 124, mood === "cheer" ? "party" : ""); st.querySelector(".msay").textContent = t; st.classList.remove("pop"); void st.offsetWidth; st.classList.add("pop"); };
+  $("#view").innerHTML = `<div class="hud"><span class="small muted">Eşleşen: <b id="gd" style="font-size:16px">0</b>/${N}</span><span class="small muted">Hamle: <b id="gm" style="font-size:16px">0</b></span></div>
+    <div class="mstage" id="mst"><span class="mbat"></span><span class="msay"></span></div>
+    <div class="mgrid gpush mem" style="grid-template-columns:repeat(4,1fr)">${cards.map((c, i) => `<button class="mc ${c.k}" data-i="${i}"><span>${esc(c.t)}</span></button>`).join("")}</div>`;
+  // ezber: kartlar açık, 3-2-1 sonra kapanır
+  let n = 3; say("Ezberle! " + n, "think");
+  const tick = () => { n--; if (n > 0) { say("Ezberle! " + n, "think"); later(tick, 1000); return; }
+    $$(".mem .mc").forEach((b, i) => setTimeout(() => b.classList.add("back"), i * 25));
+    later(() => { G.peek = false; say("Hadi, eşlerini bul!", "happy"); }, 450); };
+  later(tick, 1000);
   $$(".mc").forEach(b => b.onclick = () => {
     const c = cards[+b.dataset.i];
-    if (!b.classList.contains("back") || G.open.length >= 2) return;
+    if (G.peek || !b.classList.contains("back") || G.open.length >= 2) return;
     b.classList.remove("back"); if (c.k === "de") speak(BYID[c.id].de);
     G.open.push(b);
     if (G.open.length === 2) {
       G.moves++; $("#gm").textContent = G.moves;
       const [a, x] = G.open, ca = cards[+a.dataset.i], cx = cards[+x.dataset.i];
       if (ca.id === cx.id && ca.k !== cx.k) {
-        later(() => { a.classList.add("done"); x.classList.add("done"); G.open = []; G.done++; $("#gd").textContent = G.done; if (G.done === 6) later(() => gameOver("memory", "Hafıza", G.moves, "hamle", true), 500); }, 350);
-      } else { if (ca.k !== cx.k) miss(BYID[(ca.k === "de" ? ca : cx).id], GAMES.memory.t); later(() => { a.classList.add("back"); x.classList.add("back"); G.open = []; }, 900); }
+        later(() => { a.classList.add("done"); x.classList.add("done"); G.open = []; G.done++; $("#gd").textContent = G.done;
+          say(G.done === N ? "Hepsi tamam!" : HOST_OK[G.done % HOST_OK.length], "cheer");
+          if (G.done === N) later(() => gameOver("memory", "Hafıza", G.moves, "hamle", true), 700); }, 350);
+      } else { if (ca.k !== cx.k) miss(BYID[(ca.k === "de" ? ca : cx).id], GAMES.memory.t); say(HOST_BAD[G.moves % HOST_BAD.length], "think"); later(() => { a.classList.add("back"); x.classList.add("back"); G.open = []; }, 900); }
     }
   });
 }
