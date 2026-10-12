@@ -1184,6 +1184,7 @@ body.arcade:not(.sess) #fxbg{display:block}
 :root[data-theme="light"] #fxbg i{background:var(--c1)}
 @media (prefers-color-scheme: light){:root:not([data-theme="dark"]) #fxbg i{background:var(--c1)}}
 @media (prefers-reduced-motion:reduce){#fxbg{display:none!important}}
+body.gplain .mem .mc.back{background:linear-gradient(150deg,#8B6CFF,#5B3FD9)!important;box-shadow:0 4px 0 #3E26A6!important}
 </style>
 </head>
 <body>
@@ -3577,13 +3578,16 @@ const BRAND = {blitz:"Blitz 60!", memory:"Memo-Mania", build:"Satz-Boom", hearit
 function renderGames(){
   setTop("Oyun");
   const E = Object.entries(GAMES), idx = k => E.findIndex(([x]) => x === k);
+  const fx = (S.opt.gmode || "fx") === "fx";
+  const bestTxt = (k, g) => S.games[k] !== undefined ? `Rekor ${S.games[k]} ${g.u}` : "Yeni";
   const rec = (k, g) => S.games[k] !== undefined ? `<em class="grec">🏆 ${S.games[k]} ${g.u}</em>` : `<em class="grec new">YENİ</em>`;
-  const tile = ([k, g]) => `
+  const tile = ([k, g]) => !fx ? `
+      <button class="gtile" data-k="${k}"><i class="t-${tint(idx(k))}">${I(g.ic)}</i><b>${g.t}</b><small>${bestTxt(k, g)}</small></button>` : `
       <button class="gtile cz z${idx(k) % 8}" data-k="${k}" style="--d:${(idx(k) * .37) % 5}s"><i>${I(g.ic)}</i><b>${BRAND[k] || g.t}</b>${BRAND[k] && BRAND[k].replace("!", "") !== g.t ? `<small>${g.t}</small>` : ""}${rec(k, g)}</button>`;
   // günün oyunu: her gün başka biri
   const [fk, fg] = E[dayNo() % E.length];
   $("#view").innerHTML = `
-    <button class="feat jack" data-k="${fk}"><span class="fi">${I(fg.ic)}</span><span class="ft"><small>⭐ Günün oyunu</small><b>${BRAND[fk] || fg.t}</b><small>${fg.t}</small></span><span class="fp">OYNA</span></button>
+    ${!fx ? `<button class="feat" data-k="${fk}"><span class="fi">${I(fg.ic)}</span><span class="ft"><small>Günün oyunu</small><b>${fg.t}</b><small>${bestTxt(fk, fg)}</small></span><span class="fp">${I("play")}</span></button>` : `<button class="feat jack" data-k="${fk}"><span class="fi">${I(fg.ic)}</span><span class="ft"><small>⭐ Günün oyunu</small><b>${BRAND[fk] || fg.t}</b><small>${fg.t}</small></span><span class="fp">OYNA</span></button>`}
     <div class="sec">Düşen kelimeler</div>
     <div class="gtiles">${E.filter(([, g]) => g.g === "d").map(tile).join("")}</div>
     <div class="sec">Cümle oyunları</div>
@@ -4975,7 +4979,7 @@ function gArtGuess(){
 
 /* ---------- ortak: oyun düzeni ve titreşim ---------- */
 // her oyun açılınca body.game: içerik ortada, seçenekler altta (style.css)
-Object.values(GAMES).forEach((g, gi) => { const r = g.run; g.run = () => { document.body.classList.remove("sess"); document.body.classList.add("game", "arcade"); document.body.dataset.gz = gi % 8; FX.streak = 0; fxAmbient(); const g0 = G; r(); if (G && G !== g0) G.t0 = Date.now(); }; });
+Object.values(GAMES).forEach((g, gi) => { const r = g.run; g.run = () => { document.body.classList.remove("sess"); document.body.classList.add("game"); document.body.dataset.gz = gi % 8; FX.streak = 0; gmodeApply(); const g0 = G; r(); if (G && G !== g0) G.t0 = Date.now(); }; });
 // yanlış cevapta kısa titreşim (Android)
 new MutationObserver(ms => {
   if (!document.body.classList.contains("game") || !navigator.vibrate) return;
@@ -6300,6 +6304,16 @@ function fxAmbient(){
   document.body.appendChild(d);
 }
 
+// Oyun modu: "fx" (efektli, varsayılan) ya da "plain" (sade)
+const gmodeFx = () => (S.opt.gmode || "fx") === "fx";
+function gmodeApply(){
+  const b = document.body, inGame = b.classList.contains("game") && !b.classList.contains("sess");
+  b.classList.toggle("arcade", inGame && gmodeFx());
+  b.classList.toggle("gplain", !gmodeFx());
+  if (inGame && gmodeFx()) fxAmbient();
+  if (!inGame && tab === "games" && !screen) renderGames();
+}
+
 /* ================= EŞİTLEME: iki sürüm arasında kodla taşı, birleştir ================= */
 const SYNC_TAG = "ALMANCA1:";
 async function syncCode(){
@@ -6363,6 +6377,9 @@ $("#gear").onclick = () => {
 ${IN_CLAUDE ? "" : `<p class="small muted" style="margin:4px 2px">Otomatik: gündüz açık, 21:00'den sonra koyu.</p>`}
     <div class="lbl">Ses ve titreşim</div>
     <div class="seg" id="snd">${[[1,"Açık"],[0,"Kapalı"]].map(([k, t]) => `<button data-v="${k}" class="${(o.sound !== false) == !!k ? "on" : ""}">${t}</button>`).join("")}</div>
+    <div class="lbl">Oyun modu</div>
+    <div class="seg" id="gmd">${[["fx","Efektli"],["plain","Sade"]].map(([k, t]) => `<button data-v="${k}" class="${(o.gmode || "fx") === k ? "on" : ""}">${t}</button>`).join("")}</div>
+    <p class="small muted" style="margin:4px 2px">Efektli: renkli oyun kartları, patlamalar, yıldırımlar. Sade: sakin, efektsiz.</p>
     <div class="lbl">Okuma hızı</div>
     <div class="seg" id="rt">${[[0.75,"Yavaş"],[0.9,"Normal"],[1.05,"Hızlı"]].map(([k, t]) => `<button data-v="${k}" class="${o.rate==k?"on":""}">${t}</button>`).join("")}</div>
     <div class="lbl">Günde yeni kart</div>
@@ -6391,6 +6408,7 @@ ${IN_CLAUDE ? "" : `<p class="small muted" style="margin:4px 2px">Otomatik: gün
   $("#sheet").classList.add("show");
   $$("#th button").forEach(b => b.onclick = () => { o.theme = b.dataset.v; save(); applyTheme(); $("#gear").onclick(); });
   $$("#snd button").forEach(b => b.onclick = () => { o.sound = o.vib = !!+b.dataset.v; save(); sfx("ok"); $("#gear").onclick(); });
+  $$("#gmd button").forEach(b => b.onclick = () => { o.gmode = b.dataset.v; save(); gmodeApply(); $("#gear").onclick(); });
   $$("#rt button").forEach(b => b.onclick = () => { o.rate = +b.dataset.v; save(); speak("Das ist die neue Geschwindigkeit."); $("#gear").onclick(); });
   $$("#pc button").forEach(b => b.onclick = () => { o.pace = +b.dataset.v; save(); $("#gear").onclick(); });
   $$("#wp button").forEach(b => b.onclick = () => { o.wpace = +b.dataset.v; save(); $("#gear").onclick(); });
