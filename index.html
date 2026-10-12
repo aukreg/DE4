@@ -727,11 +727,6 @@ svg.bat{display:block;flex:none}
 .pnode.done .pdot svg.i{width:30px;height:30px}
 
 /* D4: tam ekran seri */
-.combo{position:fixed;inset:0;z-index:60;display:grid;place-items:center;align-content:center;gap:10px;text-align:center;color:#fff;background:radial-gradient(circle at 50% 40%,#3FE08F,#1FAF6E 60%,#138552);animation:cin .25s ease}
-.combo h2{font:800 34px var(--disp);margin:0}
-.combo p{margin:0;font-size:16px;opacity:.95}
-.combo .xpb{font:700 14px var(--disp);background:rgb(0 0 0/.16);padding:7px 14px;border-radius:99px}
-.combo.out{animation:cout .3s ease forwards}
 @keyframes cin{from{opacity:0;transform:scale(1.06)}}
 @keyframes cout{to{opacity:0;transform:scale(.96)}}
 
@@ -771,7 +766,7 @@ svg.bat{display:block;flex:none}
 .onb .cta{width:100%;max-width:360px}
 .msg .who{display:flex;align-items:center;gap:6px}
 .msg .who svg.av{width:22px;height:22px}
-@media (prefers-reduced-motion:reduce){.batrow .bat,.bx.chest.ready .bi,.combo,.chestfx svg.il{animation:none!important}}
+@media (prefers-reduced-motion:reduce){.batrow .bat,.bx.chest.ready .bi,.bpeek,.chestfx svg.il{animation:none!important}}
 .fin .finbat{position:relative;animation:pop .5s cubic-bezier(.3,1.6,.5,1)}
 .fin .finbat .badge.sm{position:absolute;right:-14px;bottom:4px;width:58px;height:58px;border-radius:18px;transform:rotate(8deg);animation:none}
 .fin .finbat .badge.sm svg.i{width:38px;height:38px}
@@ -851,6 +846,79 @@ body.full .top h1{font-size:19px}
 .qk i:has(> svg.bat){background:transparent!important}
 .tile .ic:has(> svg.bat){background:transparent!important}
 .foot.ffoot{background:color-mix(in srgb,var(--bg) 78%,transparent)!important;backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);margin:0 -16px;padding:10px 16px calc(12px + env(safe-area-inset-bottom));border-top:1px solid var(--glass-b)}
+
+/* seri: sağ kenardan süzülen yarasa */
+.bpeek{position:fixed;right:0;top:34%;z-index:60;display:flex;align-items:center;gap:2px;pointer-events:none;animation:bpeek 1.6s cubic-bezier(.3,1.4,.5,1) forwards}
+.bpeek .bat{width:64px;height:64px;filter:drop-shadow(0 6px 12px rgb(60 30 120/.35));animation:bwig .4s ease-in-out 3 alternate;transform-origin:70% 60%}
+.bpb{display:flex;flex-direction:column;align-items:flex-end;background:var(--solid);border:1px solid var(--glass-b);border-radius:14px 14px 4px 14px;padding:6px 10px;box-shadow:0 6px 18px rgb(0 0 0/.14);line-height:1.15}
+.bpb b{font:800 14px var(--disp);white-space:nowrap}
+.bpb i{font:800 12px var(--disp);font-style:normal;color:#F59E0B}
+.bpeek.big .bpb{background:linear-gradient(135deg,#7C5CFF,#3D7BFF);color:#fff;border:0}.bpeek.big .bpb i{color:#FFE27A}
+@keyframes bpeek{0%{transform:translateX(110%)}14%{transform:translateX(-6px)}22%,80%{transform:translateX(0)}100%{transform:translateX(110%)}}
+@keyframes bwig{from{transform:rotate(-8deg)}to{transform:rotate(8deg)}}
+
+/* ---------- sonuç ekranı (resultScreen) ---------- */
+.res{position:relative;display:grid;gap:14px;padding:18px 0 8px;min-height:calc(100dvh - 170px);align-content:center}
+.rhero{position:relative;display:grid;justify-items:center;text-align:center;gap:6px;padding:22px 18px 20px;border-radius:28px;background:var(--bg2);border:1px solid var(--glass-b);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);box-shadow:0 14px 40px rgb(40 20 90/.12);overflow:hidden}
+.rhero::before{content:"";position:absolute;inset:-40% -20% auto;height:70%;background:radial-gradient(closest-side,rgb(139 92 246/.28),transparent);pointer-events:none}
+.rtop{position:relative;display:flex;align-items:center;justify-content:center;gap:18px}
+.res .finbat{position:relative;animation:pop .5s cubic-bezier(.3,1.6,.5,1)}
+.res .finbat .bat{width:118px;height:118px}
+.res .finbat .badge.sm{position:absolute;right:-10px;bottom:2px;width:48px;height:48px;border-radius:16px;display:grid;place-items:center;background:var(--solid);border:1px solid var(--glass-b);box-shadow:0 6px 14px rgb(0 0 0/.12);transform:rotate(8deg)}
+.res .finbat .badge.sm svg.i{width:32px;height:32px}
+.rring{position:relative;width:92px;height:92px;display:grid;place-items:center;--k:#22C55E;animation:pop .5s .15s cubic-bezier(.3,1.6,.5,1) both}
+.rring.a{--k:#F59E0B}.rring.r{--k:#F43F5E}
+.rring svg{position:absolute;inset:0;width:100%;height:100%;transform:rotate(-90deg)}
+.rring circle{fill:none;stroke-width:8;stroke-linecap:round}
+.rring .tr{stroke:rgb(127 127 160/.18)}
+.rring .fg{stroke:var(--k);stroke-dasharray:var(--c);stroke-dashoffset:var(--c);animation:rfill 1s .3s cubic-bezier(.3,.8,.3,1) forwards}
+.rring b{font:800 22px var(--disp);color:var(--k)}
+@keyframes rfill{to{stroke-dashoffset:var(--o)}}
+.rhero h2{font:800 27px var(--disp);margin:8px 0 0;letter-spacing:-.01em;background:linear-gradient(135deg,#7C5CFF,#3D7BFF);-webkit-background-clip:text;background-clip:text;color:transparent}
+.rsub{margin:0;font:700 16px var(--disp);color:var(--tx)}
+.rmsg{margin:2px 0 0;color:var(--tx2);font-size:14.5px;max-width:300px}
+.rstats{display:grid;gap:10px;grid-template-columns:repeat(3,1fr)}
+.rstats.n1{grid-template-columns:1fr;max-width:200px;justify-self:center;width:100%}.rstats.n2{grid-template-columns:repeat(2,1fr)}
+.rs{display:grid;justify-items:center;gap:2px;padding:12px 6px 10px;border-radius:20px;background:var(--bg2);border:1px solid var(--glass-b);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);animation:rsin .45s var(--d) cubic-bezier(.3,1.4,.5,1) both}
+.rs svg.i{width:30px;height:30px;margin-bottom:2px}
+.rs b{font:800 19px var(--disp)}
+.rs small{font-size:12px;color:var(--tx2)}
+@keyframes rsin{from{opacity:0;transform:translateY(12px) scale(.94)}}
+.rwrong{display:flex;flex-wrap:wrap;gap:8px}
+.rwrong span{display:grid;padding:8px 12px;border-radius:14px;background:var(--bg2);border:1px solid var(--glass-b);font-size:12.5px;color:var(--tx2)}
+.rwrong b{font-size:14.5px;color:var(--tx)}
+.res .sec{margin:4px 2px 0}
+.rfoot{display:grid;gap:8px}
+.rfoot .cta,.rfoot .btn2{width:100%}
+@media (prefers-reduced-motion:reduce){.rring,.rring .fg,.rs,.res .finbat{animation:none!important}.rring .fg{stroke-dashoffset:var(--o)}}
+
+/* ---------- sade Pratik sekmesi ---------- */
+.phero{position:relative;display:grid;gap:12px;margin-top:8px;padding:20px 18px 14px;border-radius:26px;color:#fff;background:linear-gradient(140deg,#7C5CFF 0%,#5B6CFF 55%,#3D9BFF 100%);box-shadow:0 14px 34px rgb(80 60 200/.28);overflow:hidden}
+.phero::after{content:"";position:absolute;right:-50px;top:-60px;width:200px;height:200px;border-radius:50%;background:rgb(255 255 255/.12);pointer-events:none}
+.phtx{display:grid;gap:2px;padding-right:80px;position:relative;z-index:1}
+.phtx small{font:700 11px var(--body);letter-spacing:.12em;opacity:.8}
+.phtx b{font:800 24px var(--disp);line-height:1.15}
+.phtx span{font-size:14px;opacity:.9}
+.phill{position:absolute;right:16px;top:16px;width:66px;height:66px;display:grid;place-items:center;border-radius:20px;background:rgb(255 255 255/.18);z-index:1;animation:bfloat 3.2s ease-in-out infinite}
+.phill svg.i{width:46px;height:46px}
+.phero .cta{position:relative;z-index:1;width:100%;background:#fff!important;color:#4B3BD6!important;box-shadow:0 5px 0 rgb(30 20 120/.25)!important;display:flex;align-items:center;justify-content:center;gap:8px}
+.phero .cta svg.i{width:18px;height:18px}
+.phero .linkbtn{position:relative;z-index:1;margin:-4px auto -6px;padding:12px 10px;color:rgb(255 255 255/.92);text-decoration:none;display:flex;align-items:center;gap:6px;font-size:13.5px}
+.phero .linkbtn svg.i{width:16px;height:16px}
+.plist2{padding:4px 0!important;display:flex;flex-direction:column}
+.prow{display:flex;align-items:center;gap:13px;width:100%;padding:11px 14px;text-align:left;border-bottom:1px solid var(--line)}
+.prow:last-child{border-bottom:0}
+.prow:active{background:rgb(127 127 160/.08)}
+.pic{width:42px;height:42px;flex:none;display:grid;place-items:center}
+.pic svg.i{width:38px;height:38px}.pic .bat{width:42px;height:42px}
+.ptx{flex:1;display:grid;gap:1px;min-width:0}
+.ptx b{font:700 16px var(--disp)}
+.ptx small{font-size:13px;color:var(--tx2)}
+.prow .pch{width:18px;height:18px;color:var(--tx3,var(--tx2));opacity:.6}
+.psheet h2{font:800 21px var(--disp);margin:0 0 4px}
+.psheet .grp{margin-top:14px}
+.psheet .chips{flex-wrap:wrap}
+@media (prefers-reduced-motion:reduce){.phill{animation:none}}
 </style>
 </head>
 <body>
@@ -1673,11 +1741,8 @@ $("#back").onclick = () => go(tab);
 $$(".nav button").forEach(b => b.onclick = () => go(b.dataset.tab));
 // bir oturumu bitirdikten sonra: o sekmeye dön
 function endCard(icon, title, sub, btn, fn){
-  $("#view").innerHTML = `
-    <div class="card flash endc" style="margin-top:20px"><div class="endi">${typeof I === "function" ? I(icon) : icon}</div>
-      <div class="big">${title}</div>${sub ? `<div class="mid">${sub}</div>` : ""}</div>
-    <div class="foot"><button class="cta" id="nx">${btn || "Tamam"}</button></div>`;
-  $("#nx").onclick = fn || (() => go(tab));
+  const n = streak();
+  resultScreen({icon, title, sub, btn: btn || "Tamam", fn, top: $("#title").textContent, stats: n ? [["flame", n + " gün", "seri"]] : []});
 }
 
 const ILL = {
@@ -1988,28 +2053,41 @@ function addXP(n){
 }
 
 /* ---------- kutlama ekranı ---------- */
-function celebrate(o){
+// Ortak sonuç ekranı: yarasa + yüzde halkası + cam istatistik kutuları + tam genişlik düğmeler
+// o: {title, sub, msg, pct, icon, mood, stats:[[ikon, değer, etiket]], extra, btn, fn, btn2, fn2, top, party}
+function resultScreen(o){
   checkBadges();
-  setTop("", true);
+  setTop(o.top || "", true);
   document.body.classList.add("sess");
-  const cols = ["var(--amber)", "var(--ok)", "var(--acc)", "var(--rose)", "var(--violet)"];
-  const conf = Array.from({length: 26}, (_, i) => `<i style="left:${4 + Math.random() * 92}%;background:${cols[i % 5]};animation-delay:${(Math.random() * .5).toFixed(2)}s;--r:${Math.round(Math.random() * 360)}deg"></i>`).join("");
-  const n = streak();
+  const pct = o.pct, has = pct !== undefined && pct !== null;
+  const mood = o.mood || (!has || pct >= 80 ? "cheer" : pct >= 55 ? "happy" : "think");
+  const party = o.party !== undefined ? o.party : (!has || pct >= 60);
+  const cols = ["#FFB020", "#22C55E", "#3D7BFF", "#F43F5E", "#8B5CF6"];
+  const conf = party ? Array.from({length: 26}, (_, i) => `<i style="left:${4 + Math.random() * 92}%;background:${cols[i % 5]};animation-delay:${(Math.random() * .5).toFixed(2)}s;--r:${Math.round(Math.random() * 360)}deg"></i>`).join("") : "";
+  const C = 2 * Math.PI * 34, tone = !has ? "" : pct >= 80 ? "g" : pct >= 55 ? "a" : "r";
+  const ring = has ? `<div class="rring ${tone}" style="--c:${C.toFixed(1)};--o:${(C * (1 - pct / 100)).toFixed(1)}"><svg viewBox="0 0 80 80"><circle class="tr" cx="40" cy="40" r="34"/><circle class="fg" cx="40" cy="40" r="34"/></svg><b>%${pct}</b></div>` : "";
+  const st = (o.stats || []).filter(x => x && x[1] !== undefined && x[1] !== "");
   $("#view").innerHTML = `
-    <div class="fin"><div class="confetti" aria-hidden="true">${conf}</div>
-      <div class="finbat">${bat("cheer", 150)}<span class="badge sm">${I(o.icon || "trophy")}</span></div>
-      <h2>${esc(o.title)}</h2>
-      ${o.sub ? `<p>${esc(o.sub)}</p>` : ""}
-      <div class="stats3">
-        <div class="s1"><small>Puan</small><b>+${o.xp || 0}</b></div>
-        <div class="s2"><small>Doğru</small><b>${o.pct === undefined ? "–" : "%" + o.pct}</b></div>
-        <div class="s3"><small>Süre</small><b>${o.time || "–"}</b></div>
+    <div class="res">${conf ? `<div class="confetti" aria-hidden="true">${conf}</div>` : ""}
+      <div class="rhero">
+        <div class="rtop"><div class="finbat">${bat(mood, 118)}<span class="badge sm">${I(o.icon || "trophy")}</span></div>${ring}</div>
+        <h2>${esc(o.title)}</h2>
+        ${o.sub ? `<p class="rsub">${esc(o.sub)}</p>` : ""}
+        ${o.msg ? `<p class="rmsg">${esc(o.msg)}</p>` : ""}
       </div>
-      ${n ? `<div class="finstreak">${I("flame")} ${n} gündür her gün çalışıyorsun</div>` : ""}
+      ${st.length ? `<div class="rstats n${Math.min(st.length, 3)}">${st.map((x, i) => `<div class="rs" style="--d:${i * 70}ms">${I(x[0])}<b>${esc(String(x[1]))}</b><small>${esc(x[2])}</small></div>`).join("")}</div>` : ""}
+      ${o.extra || ""}
     </div>
-    <div class="foot"><button class="cta" id="nx">${esc(o.btn || "Devam")}</button></div>`;
-  sfx("win"); buzz([20, 40, 20]);
-  $("#nx").onclick = () => { document.body.classList.remove("sess"); (o.fn || (() => go(tab)))(); };
+    <div class="foot rfoot"><button class="cta" id="nx">${esc(o.btn || "Devam")}</button>${o.btn2 ? `<button class="btn2" id="nx2">${esc(o.btn2)}</button>` : ""}</div>`;
+  if (party) { sfx("win"); buzz([20, 40, 20]); }
+  const leave = f => () => { document.body.classList.remove("sess"); (f || (() => go(tab)))(); };
+  $("#nx").onclick = leave(o.fn);
+  if ($("#nx2")) $("#nx2").onclick = leave(o.fn2);
+}
+function celebrate(o){
+  const n = streak();
+  resultScreen(Object.assign({}, o, {stats: [["star", "+" + (o.xp || 0), "puan"], o.pct === undefined ? null : ["target", "%" + o.pct, "doğru"], o.time ? ["clock", o.time, "süre"] : null, n ? ["flame", n + " gün", "seri"] : null].filter(Boolean).slice(0, 3),
+    pct: undefined, party: true, mood: o.pct === undefined || o.pct >= 55 ? "cheer" : "happy"}));
 }
 const mmss = ms => { const s = Math.max(0, Math.round(ms / 1000)); return Math.floor(s / 60) + ":" + pad(s % 60); };
 
@@ -2833,52 +2911,68 @@ function srcCount(src){ return src === "mist" ? allMistakes().length : poolFor(s
 function renderPracticeTab(){
   setTop("Pratik");
   const o = S.opt; o.psrc = o.psrc || "ph"; o.pmode = o.pmode || "mix";
-  const isM = o.psrc === "mist", isW = o.psrc === "wd";
-  const okMode = (k, m) => (!["hear","dictate","speak"].includes(k) || m.need()) && (isW ? m.k !== "s" : m.k !== "w");
-  if (o.pmode !== "mix" && !okMode(o.pmode, MODES[o.pmode] || {})) o.pmode = "mix";
+  if (!srcCount(o.psrc)) o.psrc = "ph";
+  const isM = o.psrc === "mist";
+  if (o.pmode !== "mix" && !pOkMode(o.pmode)) o.pmode = "mix";
+  const mt = o.pmode === "mix" ? "Karışık" : MODES[o.pmode].t;
+  const row = (id, ic, t, d) => `<button class="prow" id="${id}"><span class="pic">${ic}</span><span class="ptx"><b>${t}</b><small>${d}</small></span>${I("chev", "ln pch")}</button>`;
   $("#view").innerHTML = `
-    <div class="sec" style="margin-top:8px">Claude ile</div>
-    <div class="tiles">
-      <button class="card tile" id="cw"><span class="ic t-acc">${I("pen")}</span><b>Yaz, düzeltsin</b><span>${SAMPLE ? "Günlük yazını Claude düzeltir" : "Yaz, Claude'a gönder"}</span></button>
-      <button class="card tile" id="cc"><span class="ic t-violet">${I("chat")}</span><b>Canlı konuş</b><span>Bir senaryoda Claude ile yazış</span></button>
-      <button class="card tile wide" id="cq"><span class="ic t-rose">${bat("happy", 46)}</span><span class="tx"><b>Fledi'ye sor</b><span>Asistanın: soru sor, durumunu konuş, bir konu için kart iste.</span></span></button>
-      <button class="card tile wide" id="cs"><span class="ic t-teal">${I("lang")}</span><span class="tx"><b>Nasıl derim?</b><span>Türkçe yaz, doğal Almancasını öğren; cümle destene eklenir.</span></span></button>
+    <div class="phero">
+      <div class="phtx"><small>HIZLI ALIŞTIRMA</small><b>${esc(PSRC[o.psrc].t)}</b><span>${isM ? srcCount("mist") + " yazı hatası" : `${mt} · ${o.n ? o.n + " kart" : "hepsi"}`}</span></div>
+      <span class="phill">${I(isM ? "pen" : o.psrc === "wd" ? "cards" : o.psrc === "ms" ? "target" : "chat")}</span>
+      <button class="cta" id="go">${I("play", "ln")} Başla</button>
+      <button class="linkbtn" id="pset">${I("gear", "ln")} Neyi, nasıl çalışacağını seç</button>
     </div>
-
-    <div class="sec">Kendi kendine</div>
-    <div class="grp" style="margin-top:0">NEYİ?</div>
-    <div class="chips" id="srcs">${Object.entries(PSRC).map(([k, v]) => { const c = srcCount(k); return `<button class="chip ${o.psrc === k ? "on" : ""}" data-k="${k}" ${c ? "" : "disabled style='opacity:.4'"}>${v.t}<small>${c}</small></button>`; }).join("")}</div>
-    <div id="mwrap" ${isM ? "hidden" : ""}>
-      <div class="grp">NASIL?</div>
-      <div class="chips" style="margin-bottom:4px"><button class="chip ${o.pmode === "mix" ? "on" : ""}" data-m="mix">${I("shuffle")} Karışık · önerilen</button></div>
-      ${GROUPS.map((g, gi) => `<div class="grp">${g.toUpperCase()}</div><div class="modes">${Object.entries(MODES).filter(([k, m]) => m.g === gi && okMode(k, m)).map(([k, m]) => `<button class="mode ${o.pmode === k ? "on" : ""}" data-m="${k}"><i>${I(m.ic)}</i>${m.t}</button>`).join("")}</div>`).join("")}
-      <div class="grp">KAÇ KART?</div>
-      <div class="seg" id="cnt">${[10, 20, 0].map(n => `<button data-n="${n}" class="${o.n === n ? "on" : ""}">${n || "Hepsi"}</button>`).join("")}</div>
+    <div class="sec">Fledi ve Claude ile</div>
+    <div class="card plist2">
+      ${row("cq", bat("happy", 40), "Fledi'ye sor", "Soru sor, durumunu konuş, kart iste")}
+      ${row("cw", I("pen"), "Yaz, düzeltsin", "Kısa bir yazı yaz, düzeltilsin")}
+      ${row("cc", I("chat"), "Canlı konuş", "Bir senaryoda yazışarak konuş")}
+      ${row("cs", I("lang"), "Nasıl derim?", "Türkçesini yaz, Almancasını öğren")}
     </div>
-    <div style="margin-top:18px"><button class="cta" id="go">${isM ? "Hatalarımı çalış" : "Başla · " + (o.pmode === "mix" ? "Karışık" : MODES[o.pmode].t)}</button></div>
-
-    <div class="sec">Eller serbest</div>
-    <button class="card tile wide" id="tb"><span class="ic t-amber">${I("bolt")}</span><span class="tx"><b>Turbo</b><span>${SR ? "Türkçeyi duyarsın, Almancasını söylersin; uygulama dinler ve düzeltir." : "Türkçeyi duyarsın, Almancasını yüksek sesle söylersin, sonra doğrusunu duyarsın."} Seçili kaynaktan.</span></span></button>
-    <button class="card tile wide" id="sh" style="margin-top:10px"><span class="ic t-ok">${I("wave")}</span><span class="tx"><b>Gölgeleme</b><span>${SR ? "Cümleyi duyarsın, hemen tekrar edersin; uygulama söyleyişini puanlar." : "Cümleyi duyarsın, hemen arkasından aynı tonla tekrar edersin."} Seçili kaynaktan.</span></span></button>
-    <button class="card tile wide" id="ls" style="margin-top:10px"><span class="ic t-blue">${I("head")}</span><span class="tx"><b>Dinle</b><span>Kalıpları, kitabı ve senaryoları arka arkaya dinle: bulaşıkta, yolda.</span></span></button>
+    <div class="sec">Sesli</div>
+    <div class="card plist2">
+      ${row("tb", I("bolt"), "Turbo", "Türkçeyi duy, Almancasını söyle")}
+      ${row("sh", I("wave"), "Gölgeleme", "Duy ve hemen aynı tonla tekrar et")}
+      ${row("ls", I("head"), "Dinle", "Arka arkaya dinle: yolda, bulaşıkta")}
+    </div>
     <div style="height:16px"></div>`;
+  $("#pset").onclick = pSheet;
   $("#ls").onclick = () => go("listen");
   $("#cs").onclick = () => open(renderSay);
   $("#cq").onclick = () => open(renderQA);
+  $("#cw").onclick = () => open(renderWrite);
+  $("#cc").onclick = () => open(renderScenPick);
   $("#sh").onclick = () => startShadow(isM ? "ph" : o.psrc);
-  $$("#srcs .chip").forEach(b => b.onclick = () => { o.psrc = b.dataset.k; save(); renderPracticeTab(); });
-  $$("[data-m]").forEach(b => b.onclick = () => { o.pmode = b.dataset.m; save(); renderPracticeTab(); });
-  $$("#cnt button").forEach(b => b.onclick = () => { o.n = +b.dataset.n; save(); renderPracticeTab(); });
+  $("#tb").onclick = () => startTurbo(isM ? "ph" : o.psrc);
   $("#go").onclick = () => {
     if (isM) return startMistakes();
     let its = srcItems(o.psrc);
     if (o.pmode !== "mix") { const f = its.filter(it => can(o.pmode, it)); if (f.length) its = f; }
     its = o.n ? its.slice(0, o.n) : its;
-    startSession({items: its, mode: o.pmode, title: (o.pmode === "mix" ? "Karışık" : MODES[o.pmode].t) + " · " + PSRC[o.psrc].t});
+    startSession({items: its, mode: o.pmode, title: mt + " · " + PSRC[o.psrc].t});
   };
-  $("#cw").onclick = () => open(renderWrite);
-  $("#cc").onclick = () => open(renderScenPick);
-  $("#tb").onclick = () => startTurbo(isM ? "ph" : o.psrc);
+}
+function pOkMode(k){
+  const m = MODES[k], isW = S.opt.psrc === "wd";
+  return !!m && (!["hear","dictate","speak"].includes(k) || m.need()) && (isW ? m.k !== "s" : m.k !== "w");
+}
+// ayarlar alttan açılan sayfada: ana ekran sade kalsın
+function pSheet(){
+  const o = S.opt, isM = o.psrc === "mist";
+  if (o.pmode !== "mix" && !pOkMode(o.pmode)) o.pmode = "mix";
+  sheetOpen(`<div class="psheet"><h2>Alıştırmayı ayarla</h2>
+    <div class="grp">NEYİ?</div>
+    <div class="chips" id="srcs">${Object.entries(PSRC).map(([k, v]) => { const c = srcCount(k); return c ? `<button class="chip ${o.psrc === k ? "on" : ""}" data-k="${k}">${v.t}<small>${c}</small></button>` : ""; }).join("")}</div>
+    ${isM ? "" : `<div class="grp">NASIL?</div>
+    <div class="chips"><button class="chip ${o.pmode === "mix" ? "on" : ""}" data-m="mix">${I("shuffle")} Karışık · önerilen</button>${Object.keys(MODES).filter(pOkMode).map(k => `<button class="chip ${o.pmode === k ? "on" : ""}" data-m="${k}">${MODES[k].t}</button>`).join("")}</div>
+    <div class="grp">KAÇ KART?</div>
+    <div class="seg" id="cnt">${[10, 20, 0].map(n => `<button data-n="${n}" class="${o.n === n ? "on" : ""}">${n || "Hepsi"}</button>`).join("")}</div>`}
+    <button class="cta" id="pok" style="width:100%;margin-top:18px">Tamam</button></div>`);
+  $$("#srcs .chip").forEach(b => b.onclick = () => { o.psrc = b.dataset.k; save(); pSheet(); });
+  $$(".psheet [data-m]").forEach(b => b.onclick = () => { o.pmode = b.dataset.m; save(); pSheet(); });
+  $$("#cnt button").forEach(b => b.onclick = () => { o.n = +b.dataset.n; save(); pSheet(); });
+  $("#pok").onclick = () => { sheetClose(); if (tab === "practice") renderPracticeTab(); };
 }
 function renderScenPick(){
   setTop("Canlı konuş", true);
@@ -5247,16 +5341,12 @@ function startWeekly(){
     const pct = n ? Math.round(ok / n * 100) : 0, key = weekKey(), wrong = Array.from(P.redo).map(id => BYID[id]).filter(Boolean);
     S.weeks[key] = {ok, n, pct, d:TODAY}; save();
     const w = weekSummary();
-    setTop("Haftalık kontrol", true);
-    $("#view").innerHTML = `
-      <div class="card flash" style="margin-top:20px"><div style="font-size:48px">${pct >= 85 ? "🏆" : pct >= 65 ? "💪" : "🌱"}</div>
-        <div class="big">%${pct}</div><div class="mid">${ok} / ${n} doğru</div>
-        <p class="small muted" style="margin-top:8px">${pct >= 85 ? "Bu haftanın kartları oturuyor." : pct >= 65 ? "İyi gidiyor; yanlışları bir kez daha çalış." : "Bu hafta biraz yavaşla, tekrarlara ağırlık ver."}</p></div>
-      <div class="card klist" style="margin-top:12px"><div><b>Bu hafta çalıştığın gün</b><span>${w.days} / 7</span></div><div><b>Yeni kart</b><span>${w.fresh}</span></div><div><b>Cevapladığın soru</b><span>${w.ans}</span></div></div>
-      ${wrong.length ? `<div class="sec">Yanlışların</div><div class="card plist">${wrong.map(i => `<div class="pi"><span><div class="de">${esc(i.de)}</div><div class="tr">${esc(i.tr)}</div></span></div>`).join("")}</div>` : ""}
-      <div class="foot"><div class="row2">${wrong.length ? `<button class="btn2" id="ww">Yanlışları çalış</button>` : ""}<button class="cta" id="nx">Tamam</button></div></div><div style="height:90px"></div>`;
-    $("#nx").onclick = () => go(tab);
-    if ($("#ww")) $("#ww").onclick = () => startSession({items: wrong, mode:"mix", title:"Haftanın yanlışları"});
+    resultScreen({top: "Haftalık kontrol", title: pct >= 85 ? "Harika bir hafta!" : pct >= 65 ? "İyi gidiyor" : "Tekrar zamanı", icon: pct >= 85 ? "trophy" : pct >= 65 ? "bolt" : "sun", pct,
+      sub: `${ok} / ${n} doğru`, msg: pct >= 85 ? "Bu haftanın kartları oturuyor." : pct >= 65 ? "Yanlışları bir kez daha çalışırsan tamam." : "Bu hafta biraz yavaşla, tekrarlara ağırlık ver.",
+      stats: [["calendar", w.days + "/7", "gün"], ["cards", w.fresh, "yeni kart"], ["checksq", w.ans, "soru"]],
+      extra: wrong.length ? `<div class="sec">Yanlışların</div><div class="rwrong">${wrong.map(i => `<span><b>${esc(i.de)}</b>${esc(i.tr)}</span>`).join("")}</div>` : "",
+      btn: wrong.length ? "Yanlışları çalış" : "Tamam", fn: wrong.length ? () => startSession({items: wrong, mode:"mix", title:"Haftanın yanlışları"}) : null,
+      btn2: wrong.length ? "Sonra" : "", fn2: null});
   }});
 }
 function weekBox(){
@@ -5640,8 +5730,8 @@ function openChest(){
   $("#chx").onclick = () => { sheetClose(); if (tab === "today") renderToday(); };
 }
 
-/* ---------- D4: art arda doğru = tam ekran kutlama ---------- */
-const COMBO_AT = {3: ["Üç doğru üst üste!", 5], 5: ["Beşte beş!", 10], 10: ["On doğru! Durdurulamıyorsun", 20], 15: ["On beş! Efsane", 25]};
+/* ---------- D4: art arda doğru = köşeden kısa yarasa selamı (akışı durdurmaz) ---------- */
+const COMBO_AT = {3: ["3 üst üste!", 5], 5: ["5'te 5!", 10], 10: ["10 seri!", 20], 15: ["15! Efsane", 25]};
 function comboCheck(ok){
   if (!P) return;
   P.combo = ok ? (P.combo || 0) + 1 : 0;
@@ -5649,13 +5739,14 @@ function comboCheck(ok){
   if (!c) return;
   addXP(c[1]);
   setTimeout(() => {
+    $$(".bpeek").forEach(x => x.remove());
     const el = document.createElement("div");
-    el.className = "combo";
-    el.innerHTML = `${typeof bat === "function" ? bat("wow", 150) : I("flame")}<h2>${c[0]}</h2><p>${P.combo} doğru üst üste</p><span class="xpb">+${c[1]} bonus puan</span>`;
-    document.body.appendChild(el); sfx("win");
-    const close = () => { if (!el.parentNode) return; el.classList.add("out"); setTimeout(() => el.remove(), 300); };
-    el.onclick = close; setTimeout(close, 1500);
-  }, 350);
+    el.className = "bpeek" + (P.combo >= 10 ? " big" : "");
+    el.setAttribute("aria-live", "polite");
+    el.innerHTML = `<span class="bpb"><b>${c[0]}</b><i>+${c[1]}</i></span>${typeof bat === "function" ? bat("wow", 64) : I("flame")}`;
+    document.body.appendChild(el);
+    setTimeout(() => el.remove(), 1700);
+  }, 250);
 }
 
 /* ---------- E10: haftalık rapor ---------- */
