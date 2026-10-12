@@ -305,6 +305,8 @@ textarea.imp{width:100%;min-height:90px;border-radius:12px;border:1.5px solid va
 .dbreak .big u{text-decoration-color:var(--bad);text-decoration-thickness:3px;text-underline-offset:4px}
 .dbreak .mid{color:var(--tx2)}
 .dbreak .ex{font-size:15px;font-style:italic;border-top:1px solid var(--line);padding-top:12px}
+.dw.pop{animation:dpop .26s ease-out forwards}
+@keyframes dpop{to{scale:1.6;opacity:0}}
 </style>
 </head>
 <body>
@@ -2160,23 +2162,23 @@ function gArtDrop(){
     w.className = "dw"; w.style.left = "50%"; w.querySelector("b").textContent = G.it.w; w.querySelector("span").textContent = G.it.tr;
     gates.forEach(g => g.classList.remove("good", "bad"));
   };
-  const pick = k => { if (G.pick !== null || G.pause) return; G.pick = k; G.x = (k * 2 + 1) * 100 / 6; w.style.left = G.x + "%"; };
+  const pick = k => { if (G.pick !== null || G.pause) return; G.pick = k; G.x = (k * 2 + 1) * 100 / 6; w.style.left = G.x + "%"; land(); };
   const land = () => {
     G.pause = 1;
     const right = ARTS.indexOf(G.it.art), ok = G.pick === right;
     gates[right].classList.add("good"); if (G.pick !== null && !ok) gates[G.pick].classList.add("bad");
-    w.querySelector("b").textContent = G.it.art + " " + G.it.w; w.classList.add(ok ? "ok" : "no");
+    w.querySelector("b").textContent = G.it.art + " " + G.it.w; w.classList.add(ok ? "ok" : "no", ok ? "pop" : "x");
     speak(G.it.de);
     if (ok) { G.ok++; G.combo++; G.sc += G.combo >= 5 ? 2 : 1; } else { G.combo = 0; G.life--; }
     hud();
-    later(() => G.life > 0 ? next() : dropEnd("artdrop", "Artikel Düşüşü", G.sc), ok ? 350 : 1500);
+    later(() => G.life > 0 ? next() : dropEnd("artdrop", "Artikel Düşüşü", G.sc), ok ? 260 : 1500);
   };
   gates.forEach(g => g.onclick = () => pick(+g.dataset.k));
   dropKeys(key => { const k = {ArrowLeft:0, ArrowDown:1, ArrowRight:2, 1:0, 2:1, 3:2}[key]; if (k === undefined) return false; pick(k); return true; });
   hud(); next();
   dropLoop(dt => {
     const H = f.clientHeight - gates[0].offsetHeight - w.offsetHeight;
-    G.y += dt * H / G.dur * (G.pick !== null ? 5 : 1);           // seçince hızla iner
+    G.y += dt * H / G.dur;
     if (G.y >= H) { G.y = H; land(); }
     w.style.transform = `translate(-50%, ${G.y}px)`;
   });
@@ -2187,7 +2189,7 @@ function gCmpDrop(){
   const pool = shuffle(ADJ_CMP.slice());
   G = {i:0, sc:0, combo:0, ok:0, left:90};
   open(() => setTop("Karşılaştırma Düşüşü", true));
-  const ROWS = [0.26, 0.53, 0.80], LBL = ["kelime", "daha …", "en …"];
+  const ROWS = [0.40, 0.63, 0.86], LBL = ["kelime", "daha …", "en …"];
   $("#view").innerHTML = `<div class="hud"><b id="ds">0</b><span class="small muted" id="dc"></span><span class="t" id="gt">90</span></div>
     <div class="drop" id="df"><div class="dw" id="dw"><b></b><span></span></div>
       ${ROWS.map((r, i) => `<div class="grow" data-r="${i}" style="top:${r * 100}%"><small>${LBL[i]}</small><button class="gate" data-c="0"></button><button class="gate" data-c="1"></button></div>`).join("")}
@@ -2199,11 +2201,11 @@ function gCmpDrop(){
     const a = G.a = pool[G.i++ % pool.length];
     G.opts = [[a.w, a.opp], [a.k, a.xk], [a.s, a.xs]].map(o => shuffle(o));
     G.right = [a.w, a.k, a.s]; G.row = 0; G.pick = null; G.y = 0; G.pause = 0;
-    G.dur = Math.max(4.5, 9 * Math.pow(0.95, G.ok));
+    G.dur = Math.max(6, 14 * Math.pow(0.96, G.ok));          // ilk sıraya ~5 sn
     w.className = "dw"; w.style.left = "50%"; w.querySelector("b").textContent = a.tr; w.querySelector("span").textContent = "";
     rows.forEach((r, i) => { r.className = "grow" + (i === 0 ? " on" : ""); r.querySelectorAll(".gate").forEach((g, c) => { g.textContent = G.opts[i][c]; g.className = "gate"; }); });
   };
-  const pick = c => { if (G.pick !== null || G.pause) return; G.pick = c; w.style.left = (c ? 75 : 25) + "%"; };
+  const pick = c => { if (G.pick !== null || G.pause) return; G.pick = c; w.style.left = (c ? 75 : 25) + "%"; G.opts[G.row][c] === G.right[G.row] ? pass() : fail(); };
   const fail = () => {
     G.pause = 1; G.combo = 0; hud();
     const g = rows[G.row].querySelectorAll(".gate");
@@ -2221,8 +2223,8 @@ function gCmpDrop(){
     G.row++; G.pick = null;
     if (G.row < 3) { rows[G.row].classList.add("on"); return; }
     G.ok++; G.combo++; G.sc += G.combo >= 4 ? 2 : 1; hud();
-    G.pause = 1; w.classList.add("ok"); speak(G.right.join(", "));
-    later(() => G.left > 0 && next(), 600);
+    G.pause = 1; w.classList.add("ok"); later(() => w.classList.add("pop"), 150); speak(G.right.join(", "));
+    later(() => G.left > 0 && next(), 450);
   };
   rows.forEach((r, i) => r.querySelectorAll(".gate").forEach((g, c) => g.onclick = () => i === G.row && pick(c)));
   dropKeys(key => { const c = {ArrowLeft:0, ArrowRight:1}[key]; if (c === undefined) return false; pick(c); return true; });
@@ -2231,8 +2233,8 @@ function gCmpDrop(){
   dropLoop(dt => {
     sec += dt; if (sec >= 1) { sec -= 1; G.left--; const t = $("#gt"); t.textContent = G.left; t.classList.toggle("low", G.left <= 10); if (G.left <= 0) return dropEnd("cmpdrop", "Karşılaştırma Düşüşü", G.sc); }
     const H = f.clientHeight, ty = ROWS[G.row] * H - w.offsetHeight - 6;
-    G.y += dt * H / G.dur * (G.pick !== null ? 4 : 1);
-    if (G.y >= ty) { G.y = ty; G.pick === null || G.opts[G.row][G.pick] !== G.right[G.row] ? fail() : pass(); }
+    G.y += dt * H / G.dur;
+    if (G.y >= ty) { G.y = ty; fail(); }                          // seçmeden sıraya değdi
     w.style.transform = `translate(-50%, ${G.y}px)`;
   });
 }
