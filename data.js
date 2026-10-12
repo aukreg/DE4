@@ -25,7 +25,7 @@ window.DATA = {
    "cat": "Tepki",
    "de": "Keine Ahnung.",
    "tr": "Hiç bilmiyorum / hiçbir fikrim yok.",
-   "ex": "Wo ist mein Handy? Keine Ahnung."
+   "ex": "– Wo ist mein Handy? – Keine Ahnung."
   },
   {
    "id": "p4",
@@ -57,7 +57,7 @@ window.DATA = {
    "cat": "Tepki",
    "de": "Das ist mir egal.",
    "tr": "Bana fark etmez / umurumda değil.",
-   "ex": "Pizza oder Döner? Ist mir egal."
+   "ex": "– Pizza oder Döner? – Ist mir egal."
   },
   {
    "id": "p8",
@@ -161,7 +161,7 @@ window.DATA = {
    "cat": "Sohbet",
    "de": "Wie sagt man … auf Deutsch?",
    "tr": "… Almancada nasıl denir?",
-   "ex": "Wie sagt man 'kolay gelsin' auf Deutsch?"
+   "ex": "Wie sagt man „kolay gelsin“ auf Deutsch?"
   },
   {
    "id": "p21",
@@ -209,7 +209,7 @@ window.DATA = {
    "cat": "Kafe & Alışveriş",
    "de": "Stimmt so.",
    "tr": "Üstü kalsın.",
-   "ex": "Das macht 8,40. – Hier sind zehn. Stimmt so."
+   "ex": "– Das macht 8,40. – Hier sind zehn. Stimmt so."
   },
   {
    "id": "p27",
@@ -581,7 +581,7 @@ window.DATA = {
      [
       "N",
       "Und jetzt noch die Schuhe.",
-      "Bir de şimdi ayakkabılar."
+      "Şimdi bir de ayakkabılar."
      ],
      [
       "A",
@@ -1614,8 +1614,8 @@ window.DATA = {
      ],
      [
       "A",
-      "Ein Projekt ist zu spät. Nicht meine Schuld, aber egal.",
-      "Bir proje gecikti. Benim suçum değil ama neyse."
+      "Ein Projekt hängt hinterher. Nicht meine Schuld, aber egal.",
+      "Bir proje gecikiyor. Benim suçum değil ama neyse."
      ],
      [
       "N",
@@ -1967,7 +1967,7 @@ window.DATA = {
      [
       "A",
       "Ich bin heute total kaputt.",
-      "Bugün tamamen bitiğim."
+      "Bugün tamamen bittim."
      ],
      [
       "N",
@@ -2565,7 +2565,7 @@ window.DATA = {
      [
       "N",
       "Im Korb, neben dem Wäscheständer.",
-      "Sepette, çamaşır askısının yanında."
+      "Sepette, çamaşır kurutmalığının yanında."
      ],
      [
       "A",
@@ -2696,7 +2696,7 @@ window.DATA = {
      [
       "N",
       "Super. Was machen wir zu essen?",
-      "Süper. Yemek olarak ne yapalım?"
+      "Süper. Ne ikram edelim?"
      ],
      [
       "A",
@@ -2974,7 +2974,7 @@ window.DATA = {
     [
      "U",
      "Hier, bitte.",
-     "Buyurun."
+     "Burada, lütfen."
     ],
     [
      "B",
@@ -3237,7 +3237,7 @@ window.DATA = {
     [
      "U",
      "Tut mir echt leid! Die Bahn stand ewig. Wartest du schon lange?",
-     "Gerçekten çok özür dilerim! Tren bir ömür bekledi. Çoktan mı bekliyorsun?"
+     "Gerçekten çok özür dilerim! Tren yolda bir ömür durdu. Çok mu bekledin?"
     ],
     [
      "F",
@@ -3299,7 +3299,7 @@ window.DATA = {
   },
   {
    "tr": "İşte bugün nasıl geçti?",
-   "start": "Die Arbeit war heute … weil …"
+   "start": "Die Arbeit war heute …, weil …"
   },
   {
    "tr": "Seni bugün ne yordu, ne mutlu etti?",
@@ -3319,7 +3319,7 @@ window.DATA = {
   },
   {
    "tr": "Bir alışveriş listesi yaz ve neden lazım olduğunu söyle.",
-   "start": "Wir brauchen … weil …"
+   "start": "Wir brauchen …, weil …"
   },
   {
    "tr": "Dün akşam ne yaptın?",
