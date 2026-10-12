@@ -837,6 +837,20 @@ svg.bat{display:block;flex:none}
 .dw.ok{background:color-mix(in srgb,var(--ok) 22%,var(--solid))!important}
 .dw.no{background:color-mix(in srgb,var(--bad) 22%,var(--solid))!important}
 body.full .top h1{font-size:19px}
+/* Fledi sohbeti */
+.cav svg.bat{display:block}
+.cb.fb{cursor:default;max-width:100%}
+.fpend{display:block;margin-top:4px;font-size:11.5px;opacity:.75}
+.fcards{display:grid;gap:6px;margin-top:9px}
+.fcard{display:block;text-align:left;padding:8px 10px;border-radius:12px;background:var(--bg3);border:1px solid var(--glass-b)}
+.fcard b{display:block;font-size:15px}
+.fcard span{display:block;font-size:12.5px;color:var(--tx2)}
+.fstudy,.fact{display:flex;align-items:center;justify-content:center;gap:6px;width:100%;margin-top:8px;padding:9px 10px;font-size:14px;font-weight:700}
+.fquick{margin:12px 0 6px;flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none}
+.fquick .chip{white-space:nowrap;flex:none}
+.qk i:has(> svg.bat){background:transparent!important}
+.tile .ic:has(> svg.bat){background:transparent!important}
+.foot.ffoot{background:color-mix(in srgb,var(--bg) 78%,transparent)!important;backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);margin:0 -16px;padding:10px 16px calc(12px + env(safe-area-inset-bottom));border-top:1px solid var(--glass-b)}
 </style>
 </head>
 <body>
@@ -1458,6 +1472,8 @@ function buildItems(){
   });
   // kendi cümlelerim ("Nasıl derim?")
   (S.mine || []).forEach(m => add({id:m.id, src:"my", de:m.de, tr:m.tr, ex:m.ex, note:m.note, d:m.d}));
+  // hata defterindeki kartsız hatalar (oyunlardan: sayılar, çekimler, kalıp cümleler)
+  if (typeof missCards === "function") missCards(add);
   // kelimeler: isim, fiil, sıfat
   const rows = t => t.trim().split("\n").map(l => l.split("|"));
   rows(W_NOUNS).forEach(([aw, pl, tr, cat, rk], i) => { const [art, w] = aw.split(" "); add({id:"n:" + w, src:"wd", kind:"n", de:aw, w, art, pl: pl === "–" ? "" : pl, tr, cat, o: rk ? +rk : 1000 + i}); });
@@ -1500,6 +1516,7 @@ function poolFor(src){
   if (src === "due") return dueItems();
   if (src === "wd") return WORDS();
   if (src === "my") return ITEMS.filter(i => i.src === "my");
+  if (src === "ms") return missItems();
   return [];
 }
 const dueItems = () => ITEMS.filter(isDue).sort((a, b) => S.prog[a.id].due.localeCompare(S.prog[b.id].due) || S.prog[a.id].b - S.prog[b.id].b);
@@ -2061,6 +2078,60 @@ function badgesHtml(compact){
   return `<div class="badges ${compact ? "cmp" : ""}">${list.map(b => `<div class="bdg ${B[b.id] ? "on" : ""} ${B[b.id] === TODAY ? "new" : ""}" style="--d:${(Math.random() * 4).toFixed(2)}s" title="${esc(b.d)}"><i>${I(B[b.id] ? b.ic : "lock", B[b.id] ? "" : "ln")}</i><b>${b.t}</b>${compact ? "" : `<small>${B[b.id] ? trDate(B[b.id]) : esc(b.d)}</small>`}</div>`).join("")}</div>`;
 }
 
+/* ================= HATA DEFTERİ: her yerdeki yanlışlar tek yerde ================= */
+// miss(x, src): x bir kart (ITEMS'tan, id'li) ya da {de, tr, note}; src nerede yanlış yapıldığı ("Alıştırma", oyun adı…)
+// Kartlı hatalar kendi kartına bağlanır; kartsızlar (sayılar, çekimler, oyun cümleleri) "m:" kartı olarak desteye girer.
+function missKey(de){ let h = 0; for (const ch of norm(de)) h = (h * 31 + ch.charCodeAt(0)) >>> 0; return "m:" + h.toString(36); }
+function miss(x, src){
+  try {
+    if (!x) return;
+    const it = x.id && BYID[x.id] && !/^m:/.test(x.id) ? BYID[x.id] : null;
+    const de = String(it ? it.de : x.de || "").trim();
+    if (!de) return;
+    const key = it ? it.id : missKey(de);
+    S.miss = S.miss || {};
+    const r = S.miss[key] || (S.miss[key] = {de, tr: String(it ? it.tr : x.tr || "").trim(), n: 0, f: TODAY});
+    if (!it && x.note) r.note = String(x.note);
+    if (!it && x.tr && !r.tr) r.tr = String(x.tr);
+    r.n++; r.last = TODAY; r.src = src || r.src || ""; r.ok = 0; delete r.done;
+    if (!it && !BYID[key]) buildItems();
+    clearTimeout(miss.t); miss.t = setTimeout(save, 400);
+  } catch(e) {}
+}
+// doğru cevap: iki kez üst üste doğru → hata defterinden "öğrendim"e geçer
+function missOk(it){
+  const r = S.miss && S.miss[it.id];
+  if (!r || r.done) return;
+  r.ok = (r.ok || 0) + 1;
+  if (r.ok >= 2) r.done = TODAY;
+}
+const missActive = () => Object.entries(S.miss || {}).filter(([, r]) => !r.done);
+const missItems = () => missActive().map(([k]) => BYID[k]).filter(Boolean);
+const missCount = () => missActive().length;
+
+// buildItems'tan çağrılır: kartı olmayan hatalar da çalışılabilir kart olur
+function missCards(add){
+  Object.entries(S.miss || {}).forEach(([k, r]) => { if (/^m:/.test(k)) add({id: k, src: "ms", de: r.de, tr: r.tr || "", note: r.note || "", ex: ""}); });
+}
+
+/* ---------- Hata defteri sayfası ---------- */
+function renderMissBook(){
+  setTop("Hata defteri", true);
+  const act = missActive().sort((a, b) => (b[1].last || "").localeCompare(a[1].last || "") || b[1].n - a[1].n);
+  const done = Object.entries(S.miss || {}).filter(([, r]) => r.done).length, wm = allMistakes().length;
+  const bySrc = {}; act.forEach(([, r]) => bySrc[r.src || "Diğer"] = (bySrc[r.src || "Diğer"] || 0) + 1);
+  $("#view").innerHTML = `
+    <div class="batrow">${bat(act.length ? "think" : "cheer", 84)}<div class="batsay"><b>${act.length ? act.length + " hata bekliyor" : "Hata defterin boş!"}</b>${act.length ? "Oyunlarda, alıştırmalarda ve dinlemede yanlış yaptığın her şey burada. İki kez üst üste doğru yapınca defterden çıkar." : "Yanlış yaptığın her şey otomatik buraya gelir."}${done ? ` Şimdiye kadar ${done} hatayı temizledin.` : ""}</div></div>
+    ${act.length ? `<button class="cta" id="mgo" style="width:100%">Hataları çalış (${Math.min(act.length, 20)})</button>` : ""}
+    ${wm ? `<button class="btn2" id="mwr" style="width:100%;margin-top:10px">${I("pen")} Yazı hataların (${wm})</button>` : ""}
+    ${Object.keys(bySrc).length > 1 ? `<div class="chips" style="margin-top:14px">${Object.entries(bySrc).sort((a, b) => b[1] - a[1]).map(([s, n]) => `<span class="chip">${esc(s)} · ${n}</span>`).join("")}</div>` : ""}
+    ${act.length ? `<div class="sec">Son hatalar</div><div class="card plist">${act.slice(0, 60).map(([k, r]) => `<button class="pi mi" data-k="${esc(k)}"><i class="dot s1"></i><span><div class="de">${esc(r.de)}</div><div class="tr">${esc(r.tr || "")}${r.tr ? " · " : ""}${esc(r.src || "")} · ${r.n}×</div></span></button>`).join("")}</div>` : ""}
+    <div style="height:20px"></div>`;
+  if ($("#mgo")) $("#mgo").onclick = () => startSession({items: shuffle(missItems()).slice(0, 20), mode: "mix", title: "Hata defteri", stepKey: "mist"});
+  if ($("#mwr")) $("#mwr").onclick = () => startMistakes();
+  $$(".mi").forEach(b => b.onclick = () => { const r = S.miss[b.dataset.k]; if (r) speak(r.de); });
+}
+
 /* ================= ALIŞTIRMA MOTORU ================= */
 // g: 0 tanı · 1 hatırla · 2 üret
 function gapCands(it){ return words(it).map((w, i) => ({w: w.replace(/[.,!?;:"„“]/g, ""), i})).filter(x => x.w.length >= 3 && /^[A-Za-zÄÖÜäöüß]+$/.test(x.w)); }
@@ -2144,6 +2215,7 @@ function flushSession(){
 function answer(it, ok){
   P.total++; if (ok) P.ok++;
   sfx(ok ? "ok" : "bad"); buzz(ok ? 12 : [30, 40, 30]); comboCheck(ok);
+  if (ok) missOk(it); else miss(it, "Alıştırma");
   if (ok) addXP(P.hint && P.hint.has(it.id) ? 5 : 10);
   if (ok) P.okI = P.i; else P.badI = P.i;
   seen(it);
@@ -2662,7 +2734,8 @@ function steps(){
   if (sc) out.push({k:"scen", ic:"chat", t:"Senaryo: " + sc.title, s: SAMPLE ? "Oku, sonra Claude ile canlı konuş" : "Rol yap, kendi replikini söyle", eve:1, run:() => openReader("scen", sc.id)});
   out.push({k:"write", ic:"pen", t:"Günlük yazı", s:pr.tr, eve:1, run:() => open(renderWrite)});
   if (weekDue()) out.push({k:"week", ic:"checksq", t:"Haftalık kontrol", s:"Bu haftanın kartlarından 5 dakikalık test", eve:1, run:() => startWeekly()});
-  if (ms.length) out.push({k:"mist", ic:"refresh", t:"Hatalarım", s:ms.length + " hata kartı", eve:1, run:() => startMistakes()});
+  const mc = missCount();
+  if (ms.length || mc) out.push({k:"mist", ic:"refresh", t:"Hata defteri", s:[mc ? mc + " hata" : "", ms.length ? ms.length + " yazı hatası" : ""].filter(Boolean).join(" · "), eve:1, run:() => open(renderMissBook)});
   out.forEach(s => s.done = !!rec[s.k]);
   if (!n && !rec.deck) out[0].done = true;
   return out;
@@ -2709,7 +2782,7 @@ function renderToday(){
       <button class="qk" id="q2"><i class="t-acc">${I("head")}</i><b>Dinle</b></button>
       <button class="qk" id="q4"><i class="t-ok">${I("wave")}</i><b>Gölgele</b></button>
       <button class="qk" id="q3"><i class="t-violet">${I("lang")}</i><b>Nasıl derim?</b></button>
-      <button class="qk" id="q5"><i class="t-rose">${I("question")}</i><b>Soru sor</b></button>
+      <button class="qk" id="q5"><i class="t-rose">${bat("happy", 46)}</i><b>Fledi'ye sor</b></button>
       <button class="qk" id="st"><i class="t-teal">${I("chart")}</i><b>İlerlemem</b></button>
     </div>
     <div class="sec">Son 5 hafta</div>
@@ -2745,7 +2818,8 @@ const PSRC = {
   bl:  {t:"Kitap cümleleri"},
   sc:  {t:"Senaryolar"},
   due: {t:"Tekrarı gelenler"},
-  mist:{t:"Hatalarım"},
+  ms:  {t:"Hata defteri"},
+  mist:{t:"Yazı hataları"},
 };
 // seçilen kaynaktan n kart: önce vadesi gelen, sonra yeni, sonra en zayıf
 function srcItems(src, n){
@@ -2767,7 +2841,7 @@ function renderPracticeTab(){
     <div class="tiles">
       <button class="card tile" id="cw"><span class="ic t-acc">${I("pen")}</span><b>Yaz, düzeltsin</b><span>${SAMPLE ? "Günlük yazını Claude düzeltir" : "Yaz, Claude'a gönder"}</span></button>
       <button class="card tile" id="cc"><span class="ic t-violet">${I("chat")}</span><b>Canlı konuş</b><span>Bir senaryoda Claude ile yazış</span></button>
-      <button class="card tile wide" id="cq"><span class="ic t-rose">${I("question")}</span><span class="tx"><b>Soru sor</b><span>Kafana takılanı sor; Claude cevaplar, örnek cümleyi destene ekler.</span></span></button>
+      <button class="card tile wide" id="cq"><span class="ic t-rose">${bat("happy", 46)}</span><span class="tx"><b>Fledi'ye sor</b><span>Asistanın: soru sor, durumunu konuş, bir konu için kart iste.</span></span></button>
       <button class="card tile wide" id="cs"><span class="ic t-teal">${I("lang")}</span><span class="tx"><b>Nasıl derim?</b><span>Türkçe yaz, doğal Almancasını öğren; cümle destene eklenir.</span></span></button>
     </div>
 
@@ -2856,7 +2930,7 @@ function renderTurbo(){
   $$("#tdir button").forEach(b => b.onclick = () => { T.dir = S.opt.tdir = b.dataset.v; save(); T.tok++; stopSpeak(); renderTurbo(); if (T.run) setTimeout(turboStep, 300); });
   $("#tp").onclick = () => { T.run = !T.run; T.tok++; stopSpeak(); if (T.rec) try { T.rec.abort(); } catch(e) {} renderTurbo(); if (T.run) setTimeout(turboStep, 300); };
   $("#tn").onclick = () => { T.tok++; stopSpeak(); T.i++; renderTurbo(); if (T.run) setTimeout(turboStep, 300); };
-  $$("#self button").forEach(b => b.onclick = () => { const it = T.items[T.i]; if (it) { T.res[it.id] = b.dataset.v === "1"; $("#self").style.visibility = "hidden"; toast(b.dataset.v === "1" ? "👍" : "Tekrar gelecek"); } });
+  $$("#self button").forEach(b => b.onclick = () => { const it = T.items[T.i]; if (it) { T.res[it.id] = b.dataset.v === "1"; if (b.dataset.v !== "1") miss(it, "Turbo"); $("#self").style.visibility = "hidden"; toast(b.dataset.v === "1" ? "👍" : "Tekrar gelecek"); } });
 }
 function turboStep(){
   if (!T || !T.run || screen !== renderTurbo) return;
@@ -2880,11 +2954,11 @@ function turboStep(){
       T.rec = listen(alts => {
         if (!live()) return;
         const said = alts.sort((a, b) => bestVariant(it, b) - bestVariant(it, a))[0], ok = bestVariant(it, said) >= 0.72;
-        T.res[it.id] = ok; reveal();
+        T.res[it.id] = ok; reveal(); if (!ok) miss(it, "Turbo");
         $("#vd").innerHTML = `<div class="verdict ${ok ? "good" : "bad"}" style="margin-top:8px">${ok ? "Doğru!" : "Sen: “" + esc(said) + "”"}</div>`;
         ph(ok ? "Doğru" : "Doğrusu");
         speak(it.de, 0, () => live() && nextIt(900));
-      }, () => { if (!live()) return; reveal(); ph("Doğrusu"); speak(it.de, 0, () => live() && nextIt(1200)); });
+      }, () => { if (!live()) return; miss(it, "Turbo"); reveal(); ph("Doğrusu"); speak(it.de, 0, () => live() && nextIt(1200)); });
     } else {
       ph("Şimdi sen söyle");
       setTimeout(() => { if (!live()) return; reveal(); ph("Doğrusu"); $("#self").style.visibility = "visible"; speak(it.de, 0, () => { if (!live()) return; setTimeout(() => live() && speak(it.de, 0, () => live() && nextIt(1800)), 700); }); }, think);
@@ -3083,7 +3157,7 @@ function gBlitz(){
     $$(".opt").forEach(b => b.onclick = () => {
       const ok = b.dataset.id === it.id;
       b.classList.add(ok ? "good" : "bad");
-      if (ok) { G.combo++; G.sc += G.combo >= 5 ? 2 : 1; } else G.combo = 0;
+      if (ok) { G.combo++; G.sc += G.combo >= 5 ? 2 : 1; } else { G.combo = 0; miss(it, GAMES.blitz.t); }
       G.i++; later(() => G.left > 0 && draw(), ok ? 180 : 600);
     });
   };
@@ -3110,7 +3184,7 @@ function gMemory(){
       const [a, x] = G.open, ca = cards[+a.dataset.i], cx = cards[+x.dataset.i];
       if (ca.id === cx.id && ca.k !== cx.k) {
         later(() => { a.classList.add("done"); x.classList.add("done"); G.open = []; G.done++; $("#gd").textContent = G.done; if (G.done === 6) later(() => gameOver("memory", "Hafıza", G.moves, "hamle", true), 500); }, 350);
-      } else later(() => { a.classList.add("back"); x.classList.add("back"); G.open = []; }, 900);
+      } else { if (ca.k !== cx.k) miss(BYID[(ca.k === "de" ? ca : cx).id], GAMES.memory.t); later(() => { a.classList.add("back"); x.classList.add("back"); G.open = []; }, 900); }
     }
   });
 }
@@ -3133,13 +3207,13 @@ function gBuild(){
       if (built.length === w.length) {
         const ok = norm(built.map(k => sh[k].x).join(" ")) === norm(w.join(" "));
         $("#built").style.borderColor = ok ? "var(--ok)" : "var(--bad)";
-        if (ok) { G.sc += w.length; speak(plain(it)); }
+        if (ok) { G.sc += w.length; speak(plain(it)); } else miss(it, GAMES.build.t);
         later(() => { if (G.left > 0) { if (ok) G.i++; else { built.length = 0; $("#built").style.borderColor = ""; return redraw(); } draw(); } }, ok ? 500 : 700);
       }
     };
     $$(".pool .wd").forEach(b => b.onclick = () => { if (!built.includes(+b.dataset.k) && built.length < w.length) { built.push(+b.dataset.k); redraw(); } });
     $("#clr").onclick = () => { built.length = 0; redraw(); };
-    $("#sk").onclick = () => { G.i++; draw(); };
+    $("#sk").onclick = () => { miss(it, GAMES.build.t); G.i++; draw(); };
   };
   open(() => setTop("Cümle Kur", true));
   gameTimer(90, () => gameOver("build", "Cümle Kur", G.sc, "puan"));
@@ -3164,7 +3238,7 @@ function gHear(){
       const ok = b.dataset.id === it.id;
       b.classList.add(ok ? "good" : "bad"); if (!ok) $(`.opt[data-id="${it.id}"]`).classList.add("good");
       $("#txt").style.visibility = "visible";
-      if (ok) G.sc++; else G.life--;
+      if (ok) G.sc++; else { G.life--; miss(it, GAMES.hearit.t); }
       G.i++;
       later(() => G.life > 0 ? draw() : gameOver("hearit", "Dinle & Seç", G.sc, "doğru"), ok ? 700 : 1600);
     });
@@ -3193,7 +3267,7 @@ function timedChoice(id, title, pool, make){
       if (G.lock) return; G.lock = 1;
       const ok = q.opts[+b.dataset.i] === q.right;
       b.classList.add(ok ? "good" : "bad");
-      if (ok) { G.combo++; G.sc += G.combo >= 5 ? 2 : 1; } else { G.combo = 0; $(`.opt[data-i="${q.opts.indexOf(q.right)}"]`).classList.add("good"); }
+      if (ok) { G.combo++; G.sc += G.combo >= 5 ? 2 : 1; } else { G.combo = 0; $(`.opt[data-i="${q.opts.indexOf(q.right)}"]`).classList.add("good"); miss(q.m || it, GAMES[id].t); }
       speak(q.say || it.de);
       G.i++; later(() => { G.lock = 0; if (G.left > 0) draw(); }, ok ? 300 : 1100);
     });
@@ -3208,14 +3282,15 @@ function gArtikel(){
 function gPlural(){
   timedChoice("plural", "Çoğul Avı", wordPool("n").filter(w => w.pl), it => {
     const w = it.w, wrong = pick([w + "e", w + "en", w + "s", umlaut(w) + "e", w + "n", w + "er"].filter(x => x !== it.pl));
-    return {top:`<div class="big">${esc(it.de)}</div><div class="mid">${esc(it.tr)} · çoğulu?</div>`, opts: shuffle(["die " + it.pl, "die " + wrong]), right:"die " + it.pl, say:"die " + it.pl};
+    return {top:`<div class="big">${esc(it.de)}</div><div class="mid">${esc(it.tr)} · çoğulu?</div>`, opts: shuffle(["die " + it.pl, "die " + wrong]), right:"die " + it.pl, say:"die " + it.pl, m:{de:"die " + it.pl, tr:it.tr + " (çoğul)", note:it.de + " → die " + it.pl}};
   });
 }
+const PERS_TR = ["ben", "sen", "o", "biz", "siz", "onlar/Siz"];
 function gConj(){
   timedChoice("conj", "Fiil Çekimi", wordPool("v"), it => {
     const p = Math.random() * 6 | 0, right = it.pr[p];
     const opts = shuffle(uniq(shuffle(it.pr.filter(f => f !== right))).slice(0, 2).concat(right));
-    return {top:`<div class="mid">${esc(it.w)} · ${esc(it.tr)}</div><div class="big">${PERS[p]} ___</div>`, opts, right, say: PERS[p].split("/")[0] + " " + right};
+    return {top:`<div class="mid">${esc(it.w)} · ${esc(it.tr)}</div><div class="big">${PERS[p]} ___</div>`, opts, right, say: PERS[p].split("/")[0] + " " + right, m:{de:PERS[p] + " " + right, tr:it.tr + ", " + PERS_TR[p], note:it.w}};
   });
 }
 
@@ -3238,7 +3313,7 @@ function gHang(){
         if (W.includes(k)) got.add(k); else { miss.add(k); G.lives--; }
         const won = W.split("").every(c => got.has(c));
         if (won) { G.sc++; speak(it.de); toast("✓ " + it.de); G.i++; later(round, 900); draw(); return; }
-        if (G.lives <= 0) { speak(it.de); toast(it.de); later(() => gameOver("hang", "Adam Asmaca", G.sc), 1200); }
+        if (G.lives <= 0) { window.miss(it, GAMES.hang.t); speak(it.de); toast(it.de); later(() => gameOver("hang", "Adam Asmaca", G.sc), 1200); }
         draw();
       });
     };
@@ -3276,6 +3351,7 @@ function gHunt(){
       const [y0, x0] = G.sel; G.sel = null;
       const p = placed.find(p => !G.found.has(p.it.id) && ((p.cells[0][0] === y0 && p.cells[0][1] === x0 && p.cells.at(-1)[0] === y && p.cells.at(-1)[1] === x) || (p.cells[0][0] === y && p.cells[0][1] === x && p.cells.at(-1)[0] === y0 && p.cells.at(-1)[1] === x0)));
       if (p) { G.found.add(p.it.id); speak(p.it.de); }
+      else { const q = placed.find(q => !G.found.has(q.it.id) && [[y0, x0], [y, x]].some(([a, b]) => q.cells[0][0] === a && q.cells[0][1] === b)); if (q) miss(q.it, GAMES.hunt.t); }
       draw();
       if (G.found.size === placed.length) later(() => gameOver("hunt", "Kelime Avı", Math.round((Date.now() - G.t0) / 1000)), 700);
     });
@@ -3307,7 +3383,7 @@ function gWheel(){
         if (built.length === L.length) {
           const ok = built.map(k => L[k].c).join("") === it.w.toUpperCase();
           if (ok) { G.sc += hint ? 1 : 2; speak(it.de); G.i++; later(round, 800); }
-          else { toast("Olmadı, tekrar dene"); built = []; later(draw, 500); }
+          else { miss(it, GAMES.wheel.t); toast("Olmadı, tekrar dene"); built = []; later(draw, 500); }
         }
       });
       $("#wsh").onclick = () => { built = []; L = shuffle(L); draw(); };
@@ -3342,7 +3418,7 @@ function gSoli(){
         table[+b.dataset.i] = stock.shift() || null;
         if (G.cleared === all.length) return gameOver("soli", "Kelime Solitaire", G.draws);
         nextTop(); draw();
-      } else { b.classList.add("bad"); later(() => b.classList.remove("bad"), 400); G.draws++; $(".hud b:last-child") && draw(); }
+      } else { miss(t, GAMES.soli.t); b.classList.add("bad"); later(() => b.classList.remove("bad"), 400); G.draws++; $(".hud b:last-child") && draw(); }
     });
     $("#sdraw").onclick = () => { G.draws++; nextTop(); draw(); };
   };
@@ -3369,7 +3445,7 @@ function gCats(){
       const ok = b.dataset.c === it.cat;
       b.classList.add(ok ? "good" : "bad"); if (!ok) $(`.opt[data-c="${it.cat}"]`).classList.add("good");
       $("#ctr").style.visibility = "visible";
-      if (ok) G.sc++;
+      if (ok) G.sc++; else miss(it, GAMES.cats.t);
       G.i++; later(draw, ok ? 600 : 1300);
     });
   };
@@ -3475,7 +3551,7 @@ function gArtDrop(){
     gates[right].classList.add("good"); if (G.pick !== null && !ok) gates[G.pick].classList.add("bad");
     w.querySelector("b").textContent = G.it.art + " " + G.it.w; w.classList.add(ok ? "ok" : "no", ok ? "pop" : "x");
     speak(G.it.de);
-    if (ok) { G.ok++; G.combo++; G.sc += G.combo >= 5 ? 2 : 1; } else { G.combo = 0; G.life--; }
+    if (ok) { G.ok++; G.combo++; G.sc += G.combo >= 5 ? 2 : 1; } else { G.combo = 0; G.life--; miss(G.it, GAMES.artdrop.t); }
     hud();
     later(() => G.life > 0 ? next() : dropEnd("artdrop", "Artikel Düşüşü", G.sc), ok ? 260 : 1500);
   };
@@ -3514,6 +3590,7 @@ function gCmpDrop(){
   const pick = c => { if (G.pick !== null || G.pause) return; G.pick = c; w.style.left = (c ? 75 : 25) + "%"; G.opts[G.row][c] === G.right[G.row] ? pass() : fail(); };
   const fail = () => {
     G.pause = 1; G.combo = 0; hud();
+    miss({de: G.right.join(" → "), tr: G.a.tr, note: G.a.exd + " = " + G.a.ext}, GAMES.cmpdrop.t);
     const g = rows[G.row].querySelectorAll(".gate");
     if (G.pick !== null) g[G.pick].classList.add("bad");
     g[G.opts[G.row].indexOf(G.right[G.row])].classList.add("good");
@@ -3614,7 +3691,7 @@ function quiz(id, title, pool, make, o){
       if (lock++) return;
       const ok = q.opts[i] === q.right, bs = $$(".opt");
       bs[i].classList.add(ok ? "good" : "bad"); if (!ok) bs[q.opts.indexOf(q.right)].classList.add("good");
-      if (ok) G.sc++; else if (max) G.life--;
+      if (ok) G.sc++; else { if (max) G.life--; miss(q.m || it, GAMES[id].t); }
       if (q.say !== "") speak(q.say || q.right);
       G.i++;
       if (!ok || q.note) {
@@ -3650,7 +3727,7 @@ function gNumDrop(){
     G.pause = 1; const right = G.opts.indexOf(G.n), ok = G.pick === right;
     gates[right].classList.add("good"); if (G.pick !== null && !ok) gates[G.pick].classList.add("bad");
     w.querySelector("span").textContent = G.n; w.classList.add(ok ? "ok" : "no", ok ? "pop" : "x");
-    if (ok) { G.ok++; G.combo++; G.sc += G.combo >= 5 ? 2 : 1; } else { G.combo = 0; speak(numDE(G.n)); }
+    if (ok) { G.ok++; G.combo++; G.sc += G.combo >= 5 ? 2 : 1; } else { G.combo = 0; speak(numDE(G.n)); miss({de: numDE(G.n), tr: String(G.n)}, GAMES.numdrop.t); }
     hud(); later(() => G.left > 0 && next(), ok ? 260 : 1300);
   };
   const pick = k => { if (G.pick !== null || G.pause) return; G.pick = k; w.style.left = (k * 2 + 1) * 100 / 6 + "%"; land(); };
@@ -3677,7 +3754,7 @@ function gNumTap(){
   const check = () => {
     if (!G.v || G.lock) return; G.lock = 1;
     const ok = +G.v === G.n; $("#nv").style.color = ok ? "var(--ok)" : "var(--bad)";
-    if (ok) { G.ok++; G.sc++; } else $("#nv").textContent = G.v + " → " + G.n;
+    if (ok) { G.ok++; G.sc++; } else { $("#nv").textContent = G.v + " → " + G.n; miss({de: numDE(G.n), tr: String(G.n)}, GAMES.numtap.t); }
     later(() => { G.lock = 0; if (G.left > 0) next(); }, ok ? 300 : 1300);
   };
   open(() => setTop("Sayı Tuşla", true));
@@ -3712,12 +3789,13 @@ function gMath(){
     G.r = fn(a, b); G.b = [];
     G.ok = G.r === 100 ? ["einhundert", "hundert"] : [numDE(G.r)];
     $("#mq").textContent = numDE(a) + " " + name + " " + numDE(b); $("#mn").textContent = a + " " + {plus:"+", minus:"−", mal:"×", "geteilt durch":"÷"}[name] + " " + b + " = ?";
+    G.q = {de: numDE(a) + " " + name + " " + numDE(b) + " = " + G.ok[0], tr: $("#mn").textContent.replace("?", G.r)};
     show();
   };
   const show = () => { $("#mb").textContent = G.b.join("") || "…"; $("#mb").style.color = ""; };
   const done = ok => {
     G.lock = 1; $("#mb").style.color = ok ? "var(--ok)" : "var(--bad)";
-    if (ok) G.sc++; else $("#mb").textContent = G.ok[0];
+    if (ok) G.sc++; else { $("#mb").textContent = G.ok[0]; miss(G.q, GAMES.math.t); }
     $("#ms").textContent = G.sc; speak(G.ok[0]);
     later(() => { G.lock = 0; if (G.left > 0) next(); }, ok ? 500 : 1600);
   };
@@ -3773,8 +3851,8 @@ function gCafe(){
   G = {sc:0, k:0, strikes:0};
   const hl = t => esc(t).replace(/\b(einen|eine|ein|keinen|keine|kein)\b/g, '<b style="color:var(--acc)">$1</b>');
   const strikeTxt = () => "❌".repeat(G.strikes) + "⚪".repeat(3 - G.strikes);
-  const after = (ok, msg, o) => {
-    if (!ok) G.strikes++;
+  const after = (ok, msg, o, m) => {
+    if (!ok) { G.strikes++; miss(m || {de: o.txt, tr: o.items.map(x => x.q + "× " + x.m.e + " " + x.m.n).join(", ")}, GAMES.cafe.t); }
     $("#view").innerHTML = `<div class="hud"><b>${G.sc}</b><span>${strikeTxt()}</span><span class="t" id="gt">${G.left}</span></div>
       <div class="card flash" style="min-height:200px"><div style="font-size:40px">${ok ? "😊" : "😕"}</div><div class="mid">${msg}</div>
         <div class="ex" style="font-style:normal">${hl(o.txt)}</div><div class="mid">${o.items.map(x => x.q + "× " + x.m.e + " " + esc(x.m.n)).join(" · ")} = <b>${priceNum(o.total)}</b></div></div>
@@ -3818,7 +3896,7 @@ function gCafe(){
       $$(".opt").forEach(b => b.onclick = () => {
         const good = +b.dataset.p === o.total; speak(priceDE(o.total));
         if (good) { G.sc += 1 + (fast ? 1 : 0); after(true, fast ? "Hızlı servis, bahşiş aldın! +2" : "Teşekkürler! +1", o); }
-        else after(false, "Fiyat yanlış: doğrusu " + priceDE(o.total) + ".", o);
+        else after(false, "Fiyat yanlış: doğrusu " + priceDE(o.total) + ".", o, {de: priceDE(o.total), tr: priceNum(o.total)});
       });
     };
   };
@@ -3852,7 +3930,7 @@ function gPerf(){
         if (lock++) return;
         const right = step ? part : aux, ok = b.textContent === right;
         b.classList.add(ok ? "good" : "bad"); if (!ok) $$(".opt").find(x => x.textContent === right).classList.add("good");
-        if (!ok) { G.combo = 0; speak(perf); $("#vd").innerHTML = `<div class="tip"><b>${esc(perf)}</b></div>`; return later(() => G.left > 0 && draw(), 1700); }
+        if (!ok) { G.combo = 0; speak(perf); miss({de: perf, tr: v.tr + ", " + PERS_TR[p] + " (geçmiş)", note: pres + " → " + perf}, GAMES.perf.t); $("#vd").innerHTML = `<div class="tip"><b>${esc(perf)}</b></div>`; return later(() => G.left > 0 && draw(), 1700); }
         if (step === 0) { step = 1; return later(show, 250); }
         G.combo++; G.sc += G.combo >= 5 ? 2 : 1; speak(perf); later(() => G.left > 0 && draw(), 700);
       });
@@ -3893,12 +3971,12 @@ function gOrder(){
         const ok = norm(built.map(k => sh[k].x).join(" ")) === norm(w.join(" "));
         $("#built").style.borderColor = ok ? "var(--ok)" : "var(--bad)";
         if (ok) { if (!miss) G.sc++; speak(plain(it)); G.i++; later(draw, 900); }
-        else { miss++; later(() => { built.length = 0; $("#built").style.borderColor = ""; redraw(); }, 700); }
+        else { miss++; window.miss(it, GAMES.order.t); later(() => { built.length = 0; $("#built").style.borderColor = ""; redraw(); }, 700); }
       }
     };
     $$(".pool .wd").forEach(b => b.onclick = () => { if (!built.includes(+b.dataset.k) && built.length < w.length) { built.push(+b.dataset.k); redraw(); } });
     $("#clr").onclick = () => { built.length = 0; redraw(); };
-    $("#sk").onclick = () => { miss++; toast(plain(it)); speak(plain(it)); };
+    $("#sk").onclick = () => { miss++; window.miss(it, GAMES.order.t); toast(plain(it)); speak(plain(it)); };
   };
   open(() => setTop("Cümle Sırala", true));
   draw();
@@ -3953,7 +4031,7 @@ function gDativ(){
     const near = ALL.filter(a => a !== it.a && (a.split(" ")[0] === pr || (ar && a.split(" ")[1] === ar)));
     const opts = shuffle([it.a].concat(uniq(shuffle(near).concat(shuffle(ALL))).filter(a => a !== it.a).slice(0, 3)));
     return {top:`<div class="mid">${it.q}</div><div class="big" style="font-size:22px">${esc(it.s).replace("___", '<span class="gapw">&nbsp;</span>')}</div>`,
-      opts, right: it.a, say: it.s.replace("___", it.a), note: esc(it.r), full: it.s.replace("___", it.a)};
+      opts, right: it.a, say: it.s.replace("___", it.a), note: esc(it.r), full: it.s.replace("___", it.a), m: {de: it.s.replace("___", it.a), tr: it.q + " " + it.r}};
   }, {n:15});
 }
 
@@ -3995,7 +4073,7 @@ const timeFull = it => { const t = it.s.replace(it.a === "—" ? "___ " : "___",
 function gTime(){
   quiz("time", "um, am, im?", shuffle(TIMEQ), it => ({
     top:`<div class="big" style="font-size:22px">${esc(it.s).replace("___", '<span class="gapw">&nbsp;</span>')}</div>`,
-    opts:["um", "am", "im", "in der", "—"], right: it.a, say: timeFull(it), note: esc(it.r), full: timeFull(it)
+    opts:["um", "am", "im", "in der", "—"], right: it.a, say: timeFull(it), note: esc(it.r), full: timeFull(it), m: {de: timeFull(it), tr: it.r}
   }), {n:15});
 }
 
@@ -4014,7 +4092,7 @@ function gNine(){
       $("#nx").onclick = () => gNine(); $("#gb").onclick = () => go("games"); return;
     }
     const W = it.w.toUpperCase(); let L = shuffle(W.split("").map((c, i) => ({c, i}))), built = [], shuf = 1;
-    const fin = ok => { clearInterval(G.tm); G.res.push({it, ok}); if (ok) G.sc++; speak(it.de); G.i++; later(round, ok ? 600 : 1400); if (!ok) $("#nb").innerHTML = esc(W.split("").join(" ")); };
+    const fin = ok => { clearInterval(G.tm); G.res.push({it, ok}); if (ok) G.sc++; else miss(it, GAMES.nine.t); speak(it.de); G.i++; later(round, ok ? 600 : 1400); if (!ok) $("#nb").innerHTML = esc(W.split("").join(" ")); };
     const draw = () => {
       $("#view").innerHTML = `<div class="hud"><b>${G.sc}</b><span class="small muted">${G.i + 1}/9</span><span class="t" id="gt">${G.left}</span></div>
         <div class="card flash" style="min-height:120px"><div class="mid">${esc(it.tr)}</div><div class="big" id="nb" style="letter-spacing:.12em">${W.split("").map((c, i) => i < built.length ? L[built[i]].c : "_").join(" ")}</div></div>
@@ -4066,7 +4144,7 @@ function gWordle(daily){
       const s = score(cur); rows.push({g:cur, s});
       cur.split("").forEach((c, i) => { const o = keyState[c]; if (o !== "g" && !(o === "y" && s[i] === "x")) keyState[c] = s[i]; });
       if (s.every(x => x === "g")) { over = 1; speak(it.de); best("wordle", rows.length, true); toast(rows.length + ". denemede buldun!"); }
-      else if (rows.length >= 6) { over = 1; speak(it.de); mark("game"); }
+      else if (rows.length >= 6) { over = 1; speak(it.de); mark("game"); miss(it, GAMES.wordle.t); }
       cur = "";
     } else if (cur.length < 5) cur += k;
     draw();
@@ -4099,6 +4177,7 @@ function gGrid(){
         a.gone = c.gone = 1; G.sel = null; G.sc++; G.done++;
         return later(() => { G.lock = 0; G.done === 8 ? board() : draw(); }, 280);
       }
+      miss(BYID[(c.de ? c : a).id], GAMES.grid.t);
       b.classList.add("bad"); $$(".ggrid .gt")[G.sel].classList.add("bad"); G.lock = 1; G.sel = null;
       later(() => { G.lock = 0; draw(); }, 450);
     });
@@ -4155,7 +4234,7 @@ der Schnee|kar|Hava olayları çoğunlukla der.`.trim().split("\n").map(l => { c
 const ruleFor = w => (ART_RULES.find(x => x.w === w) || ART_RULES.find(x => { const m = x.r.match(/^-(\w{3,})/); return m && x.r.includes("hep") && w.length > m[1].length + 2 && w.endsWith(m[1]); }) || {}).r;
 function gRules(){
   quiz("rules", "Artikel Kuralları", shuffle(ART_RULES), it => ({
-    top:`<div class="big">${esc(it.w)}</div><div class="mid">${esc(it.tr)}</div>`, opts:["der", "die", "das"], right: it.art, say: it.de, note: "📏 " + esc(it.r), full: it.de
+    top:`<div class="big">${esc(it.w)}</div><div class="mid">${esc(it.tr)}</div>`, opts:["der", "die", "das"], right: it.art, say: it.de, note: "📏 " + esc(it.r), full: it.de, m: {de: it.de, tr: it.tr, note: it.r}
   }), {n:20});
 }
 
@@ -4254,7 +4333,7 @@ function gImg(){
   timedChoice("img", "Resimden Bil", shuffle(IMG_NOUNS), it => {
     const wrongArt = pick(["der", "die", "das"].filter(a => a !== it.art)) + " " + it.w;
     const others = shuffle(IMG_NOUNS.filter(x => x !== it)).slice(0, 2).map(x => x.de);
-    return {top:`<div style="font-size:84px;line-height:1">${it.e}</div>`, opts: shuffle([it.de, wrongArt].concat(others)), right: it.de, say: it.de};
+    return {top:`<div style="font-size:84px;line-height:1">${it.e}</div>`, opts: shuffle([it.de, wrongArt].concat(others)), right: it.de, say: it.de, m: WORDS().find(w => w.de === it.de) || {de: it.de, tr: it.tr}};
   });
 }
 
@@ -4276,7 +4355,7 @@ function gTF(){
       if (lock++) return;
       const ok = (b.dataset.v === "1") === truth;
       b.style.outline = "3px solid " + (ok ? "var(--ok)" : "var(--bad)");
-      if (ok) { G.combo++; G.sc += G.combo >= 5 ? 2 : 1; } else { G.combo = 0; $("#tfr").style.visibility = "visible"; speak(it.de); }
+      if (ok) { G.combo++; G.sc += G.combo >= 5 ? 2 : 1; } else { G.combo = 0; $("#tfr").style.visibility = "visible"; speak(it.de); miss(t === 1 ? {de: "die " + it.pl, tr: it.tr + " (çoğul)", note: it.de + " → die " + it.pl} : it, GAMES.tf.t); }
       later(() => G.left > 0 && draw(), ok ? 350 : 1400);
     });
   };
@@ -4303,7 +4382,7 @@ function gSalad(){
         if (built.length === L.length) { if (built.map(k => L[k]).join("") === W) { G.sc++; speak(it.de); later(() => G.left > 0 && draw(), 500); } else { toast("Olmadı"); built.length = 0; later(show, 400); } }
       });
       $("#sdel").onclick = () => { built.pop(); show(); };
-      $("#sskip").onclick = () => { toast(it.de); speak(it.de); draw(); };
+      $("#sskip").onclick = () => { miss(it, GAMES.salad.t); toast(it.de); speak(it.de); draw(); };
     };
     show();
   };
@@ -4329,7 +4408,7 @@ function gMatch(){
       $$("[data-r]").forEach(b => b.onclick = () => {
         if (!sel) return toast("Önce soldan seç");
         if (b.dataset.r === sel) { gone.add(sel); sel = null; if (gone.size === 5) { G.r++; return later(round, 300); } draw(); }
-        else { G.pen += 3; b.classList.add("bad"); later(() => b.classList.remove("bad"), 400); }
+        else { G.pen += 3; miss(BYID[sel], GAMES.match.t); b.classList.add("bad"); later(() => b.classList.remove("bad"), 400); }
       });
     };
     draw();
@@ -4355,7 +4434,7 @@ function gGuess(){
         if (G.lives <= 0 || W.split("").every(c => got.has(c))) return;
         if (W.includes(k)) got.add(k); else { miss.add(k); G.lives--; }
         if (W.split("").every(c => got.has(c))) { G.sc++; speak(it.w); toast("✓ " + it.w); G.i++; later(round, 900); }
-        else if (G.lives <= 0) { speak(it.w); toast(it.w); later(() => gameOver("guess", "Kelime Tahmini", G.sc), 1200); }
+        else if (G.lives <= 0) { window.miss(it, GAMES.guess.t); speak(it.w); toast(it.w); later(() => gameOver("guess", "Kelime Tahmini", G.sc), 1200); }
         draw();
       });
     };
@@ -4378,13 +4457,13 @@ function gConj4(){
     let opts = uniq(it.pr.filter(f => f !== right));
     if (opts.length < 3) opts = opts.concat(kindOther(it, 3, "w").map(w => (BYID["v:" + w] || {pr:[]}).pr[p]).filter(Boolean));
     opts = shuffle([right].concat(shuffle(uniq(opts.filter(f => f !== right))).slice(0, 3)));
-    return {top:`<div class="mid">${esc(it.w)} · ${esc(it.tr)}</div><div class="big">${PERS[p]} ___</div>`, opts, right, say: PERS[p].split("/")[0] + " " + right, full: PERS[p] + " " + right};
+    return {top:`<div class="mid">${esc(it.w)} · ${esc(it.tr)}</div><div class="big">${PERS[p]} ___</div>`, opts, right, say: PERS[p].split("/")[0] + " " + right, full: PERS[p] + " " + right, m: {de: PERS[p] + " " + right, tr: it.tr + ", " + PERS_TR[p], note: it.w}};
   }, {lives:3});
 }
 function gPlural4(){
   quiz("plural4", "Çoğul Seçmeli", wordPool("n").filter(w => w.pl), it => {
     const w = it.w, wrong = uniq(shuffle([w + "e", w + "en", w + "s", umlaut(w) + "e", w + "n", w + "er", umlaut(w) + "er", w]).filter(x => x !== it.pl)).slice(0, 3);
-    return {top:`<div class="big">${esc(it.de)}</div><div class="mid">${esc(it.tr)} · çoğulu?</div>`, opts: shuffle([it.pl].concat(wrong)).map(x => "die " + x), right: "die " + it.pl, full: "die " + it.pl};
+    return {top:`<div class="big">${esc(it.de)}</div><div class="mid">${esc(it.tr)} · çoğulu?</div>`, opts: shuffle([it.pl].concat(wrong)).map(x => "die " + x), right: "die " + it.pl, full: "die " + it.pl, m: {de: "die " + it.pl, tr: it.tr + " (çoğul)", note: it.de + " → die " + it.pl}};
   }, {lives:3});
 }
 function gArtGuess(){
@@ -4649,7 +4728,7 @@ function openGrammar(id){
     $$(".gq").forEach(b => b.onclick = () => {
       const qi = b.dataset.q; if ($(`.gq[data-q="${qi}"].good, .gq[data-q="${qi}"].bad`)) return;
       const good = b.dataset.ok === "1";
-      b.classList.add(good ? "good" : "bad"); if (!good) $(`.gq[data-q="${qi}"][data-ok="1"]`).classList.add("good");
+      b.classList.add(good ? "good" : "bad"); if (!good) { $(`.gq[data-q="${qi}"][data-ok="1"]`).classList.add("good"); miss({de: c.q[qi][1], tr: c.q[qi][0], note: c.t}, "Kurallar"); }
       speak($(`.gq[data-q="${qi}"][data-ok="1"]`).textContent);
       done++; if (good) ok++;
       if (done === c.q.length) {
@@ -5266,7 +5345,7 @@ function qaCard(x, open){
         <div class="small muted">${esc(m.tr)}</div>${m.note ? `<div class="small" style="margin-top:4px">💡 ${esc(m.note)}</div>` : ""}</div>` : ""}`
       : `<div class="small muted">Cevap bekliyor${SAMPLE ? "" : ": Claude'da sor'a dokun"}.</div>`}</div>`;
 }
-function renderQA(res){
+function renderQAOld(res){
   setTop("Soru sor", true);
   const pend = S.qa.filter(x => !x.a), done = S.qa.filter(x => x.a).slice().reverse();
   const pasteBox = `<div id="pbox" hidden style="margin-top:8px"><textarea class="imp" id="pbt" placeholder="Kodu buraya yapıştır"></textarea><button class="btn2" id="pgo" style="width:100%;margin-top:8px">Tamam</button></div>`;
@@ -5350,15 +5429,153 @@ function askAbout(it){
     const q = $("#aq").value.trim();
     if (q.length < 3) { toast("Önce sorunu yaz ya da bir öneriye dokun"); return; }
     const x = {id: "a" + Date.now().toString(36), q, ctx, d: TODAY};
-    if (!SAMPLE) { S.qa.push(x); save(); toast("Kaydedildi. Soru sor ekranından Claude'a gönderebilirsin."); $("#sheet").classList.remove("show"); return; }
+    if (!SAMPLE) { fchat().push({id: fid(), r: "u", t: `(${ctx}) ${q}`, d: TODAY, p: 1}); save(); toast("Kaydedildi. Fledi ekranından Claude'a gönderebilirsin."); $("#sheet").classList.remove("show"); return; }
     const b = $("#aqgo"); b.disabled = true; b.textContent = "Claude düşünüyor…";
     try {
       await answerQs([x]);
+      fchat().push({id: fid(), r: "u", t: `(${ctx}) ${q}`, d: TODAY}, {id: fid(), r: "f", t: x.a, d: TODAY, cards: x.card ? [x.card] : []}); save();
       $("#aqres").innerHTML = qaCard(x);
       $$("#aqres .spq").forEach(s => s.onclick = () => speak(s.dataset.t));
       b.disabled = false; b.textContent = "Bir şey daha sor"; $("#aq").value = "";
     } catch(e) { $("#aqres").innerHTML = `<p class="small muted">${esc(errText(e))}</p>`; b.disabled = false; b.textContent = "Sor"; }
   };
+}
+
+/* ================= FLEDİ: asistan sohbeti (soru sor + durum + kart isteme) ================= */
+// S.fchat: [{id, r:"u"|"f", t, d, cards?:[id], act?:"ms"|"due"|"deck", p?:1 (cevap bekliyor)}]
+const fid = () => "f" + Date.now().toString(36) + Math.random().toString(36).slice(2, 5);
+function fchat(){ S.fchat = S.fchat || []; return S.fchat; }
+
+// eski "Soru sor" kayıtlarını bir kez sohbete taşı
+function fMigrate(){
+  if (S.fmig) return; S.fmig = 1;
+  (S.qa || []).forEach(x => {
+    fchat().push({id: x.id + "0", r: "u", t: x.ctx ? `(${x.ctx}) ${x.q}` : x.q, d: x.d, p: x.a ? 0 : 1});
+    if (x.a) fchat().push({id: x.id + "1", r: "f", t: x.a, d: x.ad || x.d, cards: x.card ? [x.card] : []});
+  });
+}
+
+// Fledi'nin bildiği her şey: ilerleme özeti
+function fContext(){
+  const lv = cefr(), lg = league(), st = steps();
+  const last7 = Array.from({length: 7}, (_, k) => { const d = new Date(); d.setDate(d.getDate() - k); return S.days[ymd(d)] || {}; });
+  const n7 = last7.reduce((a, r) => a + (r.n || 0), 0), ok7 = last7.reduce((a, r) => a + (r.ok || 0), 0);
+  const prog = Object.values(S.prog);
+  const weak = ITEMS.filter(i => (S.prog[i.id] || {}).x).sort((a, b) => S.prog[b.id].x - S.prog[a.id].x).slice(0, 6).map(i => `${i.de} (${i.tr}) ${S.prog[i.id].x}× yanlış`);
+  const ms = missActive().sort((a, b) => b[1].n - a[1].n).slice(0, 10).map(([, r]) => `${r.de}${r.tr ? " (" + r.tr + ")" : ""} · ${r.src || ""} · ${r.n}×`);
+  const wm = allMistakes().slice(-5).map(m => `${m.wrong} → ${m.right}`);
+  return [
+    `Bugün: ${trDate(TODAY)}, ${GUNLER[new Date().getDay()]}, saat ${new Date().getHours()}:${pad(new Date().getMinutes())}.`,
+    `Seri: ${streak()} gün. Toplam puan: ${S.xp || 0}. Bugünkü puan: ${dayRec().xp || 0}. Günlük hedef: ${S.opt.goal || 20} dk.`,
+    `Bugünün adımları: ${st.map(s => s.t + (s.done ? " ✓" : " (yapılmadı)")).join("; ")}.`,
+    `Son 7 gün: ${last7.filter(r => Object.keys(r).length).length} gün çalıştı, ${n7} cevap, doğru oranı ${n7 ? Math.round(ok7 / n7 * 100) + "%" : "–"}.`,
+    `Bu hafta ${lg.now} puan, geçen hafta ${lg.last}, rekor hafta ${lg.best}.`,
+    `Tahmini seviye: ${lv.lv}, ${lv.next}'ye %${lv.pct}.`,
+    `Kartlar: ${prog.length} başladı, ${prog.filter(r => r.b >= 4).length} oturdu. Kitap: ${Object.keys(S.book.read || {}).length}/${D.book.chapters.length} bölüm. Senaryo: ${Object.keys(S.scen.done || {}).length}/${D.scenarios.length}. Düzeltilmiş yazı: ${allWritings().length}.`,
+    `Hata defteri (${missCount()} aktif): ${ms.join("; ") || "boş"}.`,
+    `En çok zorlandığı kartlar: ${weak.join("; ") || "yok"}.`,
+    `Son yazı hataları: ${wm.join("; ") || "yok"}.`,
+  ].join("\n");
+}
+function fRules(){
+  return `Sen Fledi'sin: Atakan'ın Almanca uygulamasındaki sevimli yarasa maskot ve kişisel asistan. Atakan Türk, Almanya'da yaşıyor, seviyesi A2 civarı; eşi Nisa, 2 yaşında kızı Gece. Hedefi sınav Almancası değil, günlük hayatta doğal konuşmak.
+Türkçe konuş: sıcak, kısa, samimi (2-6 cümle; liste gerekiyorsa kısa madde). Ara sıra küçük bir yarasa esprisi olabilir ama abartma.
+Yapabildiklerin:
+1) Almanca sorularını cevapla: günlük konuşmada gerçekten nasıl kullanıldığını öne çıkar, 1-2 kısa Almanca örnek ver.
+2) Durumunu konuş: aşağıdaki ilerleme bilgisine dayan; somut ol (sayılar, hata defterindeki örnekler), ne çalışması gerektiğini öner. Bilgide olmayan şeyi uydurma.
+3) Kart iste: "restoranda 5 kart ver", "doktor için kelimeler" gibi isteklerde "cards" listesine doğal, günlük hayattan, A2-B1 seviyesinde kartlar koy (istenen sayı, verilmediyse 5; en fazla 10). Kelime istenirse isimlerde artikeliyle yaz. Kartlar destesine eklenir.
+4) Soru cevabında konuyu gösteren tek bir örnek kart ekleyebilirsin (cards içinde 1 kart). Sohbet/durum konuşmasında kart ekleme, istenmedikçe.
+"act": konuşma şunlardan birine yönlendiriyorsa koy: "ms" (hata defterini çalış), "due" (tekrarı gelen kartlar), "deck" (günün destesi); yoksa boş bırak.
+Sadece şu JSON'u döndür: {"reply":"...","cards":[{"de":"...","tr":"...","note":"Türkçe kısa ipucu (en fazla 110 karakter)"}],"act":""}
+
+Atakan'ın şu anki durumu:
+${fContext()}`;
+}
+
+async function fAsk(){
+  const L = fchat(), pend = L.filter(m => m.r === "u" && m.p);
+  if (!pend.length || !SAMPLE || renderQA.busy) return;
+  renderQA.busy = true; renderQA();
+  const input = [{role: "user", content: fRules() + "\n\n(Sohbet başlıyor.)"}, {role: "assistant", content: JSON.stringify({reply: "Merhaba Atakan!", cards: [], act: ""})}];
+  L.filter(m => !m.p).slice(-16).forEach(m => input.push(m.r === "u" ? {role: "user", content: m.t} : {role: "assistant", content: JSON.stringify({reply: m.t, cards: [], act: m.act || ""})}));
+  input.push({role: "user", content: pend.map(m => m.t).join("\n")});
+  // aynı rolden arka arkaya gelen mesajları birleştir
+  const msgs = input.reduce((a, m) => { const l = a[a.length - 1]; if (l && l.role === m.role) l.content += "\n" + m.content; else a.push(Object.assign({}, m)); return a; }, []);
+  try {
+    const r = await SAMPLE.json(msgs, {modelTier: "default", cache: false});
+    const reply = String(r.reply || r.a || "").trim() || "Hmm, bunu anlayamadım. Bir daha sorar mısın?";
+    const cards = (Array.isArray(r.cards) ? r.cards : []).slice(0, 10).filter(c => c && c.de).map(c => addMine({de: String(c.de).trim(), tr: String(c.tr || "").trim(), ex: "", note: String(c.note || "").trim(), alt: ""}).id);
+    pend.forEach(m => delete m.p);
+    L.push({id: fid(), r: "f", t: reply, d: TODAY, cards, act: ["ms", "due", "deck"].includes(r.act) ? r.act : ""});
+    if (cards.length) buildItems();
+    save(); sfx("ok");
+  } catch(e) { toast(errText(e)); }
+  renderQA.busy = false;
+  if (screen === renderQA) renderQA();
+}
+
+// telefondaki sürüm: Claude yok; durum sorularını kendi cevaplar, diğerlerini Claude sürümüne bırakır
+function fLocal(t){
+  const s = norm(t);
+  if (/durum|nasil gidiyor|ilerle|seviye|seri|puan|ne yapmaliyim|ne calis/.test(s)) {
+    const lv = cefr(), lg = league(), mc = missCount(), st = steps(), left = st.filter(x => !x.done);
+    return {t: `${streak()} gündür aralıksız çalışıyorsun. Bu hafta ${lg.now} puan topladın${lg.last ? `, geçen hafta ${lg.last}` : ""}. Tahmini seviyen ${lv.lv}, ${lv.next}'ye %${lv.pct} yol aldın.\n${left.length ? `Bugün ${left.length} adım kaldı: ${left.map(x => x.t).join(", ")}.` : "Bugünün bütün adımları bitti, süpersin!"}${mc ? `\nHata defterinde ${mc} hata bekliyor; onları çalışmak en hızlı ilerleme.` : ""}`, act: mc ? "ms" : left.length ? "deck" : ""};
+  }
+  if (/hata/.test(s)) {
+    const ms = missActive().sort((a, b) => b[1].n - a[1].n).slice(0, 5);
+    return {t: ms.length ? `Hata defterinde ${missCount()} hata var. En çok takıldıkların:\n${ms.map(([, r]) => `• ${r.de}${r.tr ? " = " + r.tr : ""} (${r.n}×)`).join("\n")}\nİstersen hemen çalışalım.` : "Hata defterin boş, harika! Yanlış yaptığın her şey otomatik oraya gelir.", act: ms.length ? "ms" : ""};
+  }
+  return null;
+}
+
+function renderQA(){
+  fMigrate();
+  setTop("Fledi", true);
+  const L = fchat(), pend = L.filter(m => m.r === "u" && m.p), busy = renderQA.busy;
+  const quick = ["Durumum nasıl?", "Hatalarımı konuşalım", "Bana restoran için 5 kart ver", "'doch' ne zaman kullanılır?", "Bu hafta neye odaklanayım?"];
+  const actBtn = {ms: ["Hata defterini çalış", "refresh"], due: ["Tekrarı gelenleri çalış", "cards"], deck: ["Günün destesine başla", "play"]};
+  const bubble = m => {
+    const cs = (m.cards || []).map(id => BYID[id]).filter(Boolean);
+    return `<div class="cmsg ${m.r === "u" ? "me" : ""}">${m.r === "f" ? `<span class="cav">${bat("happy", 40)}</span>` : ""}<div class="cb fb"><span class="de" style="white-space:pre-line">${esc(m.t)}</span>
+      ${m.p ? `<small class="fpend">${SAMPLE ? "cevaplanacak" : "Claude sürümünde cevaplanacak"}</small>` : ""}
+      ${cs.length ? `<div class="fcards">${cs.map(c => `<button class="fcard" data-t="${esc(c.de)}"><b>${esc(c.de)}</b><span>${esc(c.tr)}</span></button>`).join("")}<button class="btn2 fstudy" data-ids="${cs.map(c => c.id).join(",")}">${I("cards")} ${cs.length} kartı şimdi çalış</button></div>` : ""}
+      ${m.act && actBtn[m.act] ? `<button class="btn2 fact" data-a="${m.act}">${I(actBtn[m.act][1])} ${actBtn[m.act][0]}</button>` : ""}</div></div>`;
+  };
+  $("#view").innerHTML = `
+    ${L.length ? "" : `<div class="batrow">${bat("wave", 92)}<div class="batsay"><b>Selam, ben Fledi!</b>Almancayla ilgili ne istersen sor, durumunu konuşalım ya da bir konu için kart iste. ${SAMPLE ? "" : "Durum ve hata sorularını burada cevaplarım; diğerlerini Claude sürümünde."}</div></div>`}
+    ${!SAMPLE && pend.length ? `<div class="card" style="padding:12px 14px;margin-bottom:10px"><b>${pend.length} mesaj Claude sürümünü bekliyor</b><div class="row2" style="margin-top:8px"><button class="btn2" id="toc">Claude'a götür</button><button class="btn2" id="fpaste">Cevapları yapıştır</button></div></div>` : ""}
+    ${SAMPLE && !pend.length ? `<button class="linkbtn" id="fpaste" style="width:100%;margin:0 0 6px">📋 Telefondaki uygulamadan gelen mesajları yapıştır</button>` : ""}
+    <div class="chatlog" id="flog">${L.slice(-40).map(bubble).join("")}
+      ${busy ? `<div class="cmsg"><span class="cav">${bat("think", 40)}</span><div class="cb typing"><i></i><i></i><i></i></div></div>` : ""}</div>
+    <div class="chips fquick">${quick.map(q => `<button class="chip">${esc(q)}</button>`).join("")}</div>
+    ${L.length ? `<button class="linkbtn" id="fclr" style="width:100%">Sohbeti temizle</button>` : ""}
+    <div class="foot ffoot"><div class="chatin"><textarea id="fin" rows="1" placeholder="Fledi'ye yaz…"></textarea>${SR ? `<button class="btn2" id="fmic" aria-label="Söyle" style="width:50px;min-height:50px;padding:0">${I("mic")}</button>` : ""}<button class="cta" id="fsend" ${busy ? "disabled" : ""}>Gönder</button></div></div>`;
+  const send = t => {
+    t = (t || "").trim(); if (t.length < 2 || renderQA.busy) return;
+    L.push({id: fid(), r: "u", t, d: TODAY, p: 1});
+    if (!SAMPLE) {
+      const a = fLocal(t);
+      if (a) { L[L.length - 1].p = 0; L.push({id: fid(), r: "f", t: a.t, d: TODAY, act: a.act}); }
+      else L.push({id: fid(), r: "f", t: "Bunu Claude sürümünde cevaplayabilirim; mesajını kaydettim. Yukarıdan 'Claude'a götür'e dokun, orada beni açınca cevabım hazır olur.", d: TODAY});
+      save(); renderQA(); return;
+    }
+    save(); fAsk();
+  };
+  $("#fsend").onclick = () => send($("#fin").value);
+  $("#fin").onkeydown = e => { if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); send($("#fin").value); } };
+  $$(".fquick .chip").forEach(b => b.onclick = () => { const t = b.textContent; if (/kart ver/.test(t)) { $("#fin").value = t; $("#fin").focus(); } else send(t); });
+  $$(".fcard").forEach(b => b.onclick = () => speak(b.dataset.t));
+  $$(".fstudy").forEach(b => b.onclick = () => startSession({items: b.dataset.ids.split(",").map(id => BYID[id]).filter(Boolean), mode: "mix", title: "Fledi'nin kartları"}));
+  $$(".fact").forEach(b => b.onclick = () => { const a = b.dataset.a; if (a === "ms") open(renderMissBook); else if (a === "due") startSession({items: srcItems("due", 20), mode: "mix", title: "Tekrarı gelenler"}); else steps()[0].run(); });
+  if ($("#fmic")) $("#fmic").onclick = () => { toast("Dinliyorum…"); listen(a => { const v = (a[0] || "").trim(); if (v) $("#fin").value = v.charAt(0).toUpperCase() + v.slice(1); }, () => toast("Duyamadım"), "tr-TR"); };
+  if ($("#fclr")) $("#fclr").onclick = e => { const b = e.currentTarget; if (!b.dataset.sure) { b.dataset.sure = 1; b.textContent = "Emin misin? Silmek için tekrar dokun (kartlar destende kalır)"; return; } S.fchat = []; save(); renderQA(); };
+  if ($("#toc")) $("#toc").onclick = async () => {
+    copy(await syncCode(), "Kopyalandı. Claude sayfasında Fledi → Yapıştır'a dokun.");
+    setTimeout(() => { const l = document.createElement("a"); l.href = ART_URL; l.target = "_blank"; l.rel = "noopener"; document.body.appendChild(l); l.click(); l.remove(); }, 600);
+  };
+  if ($("#fpaste")) $("#fpaste").onclick = () => pasteCode(() => { renderQA(); if (SAMPLE) fAsk(); });
+  setTimeout(() => window.scrollTo(0, document.body.scrollHeight), 30);
+  if (SAMPLE && pend.length && !busy && !renderQA.auto) { renderQA.auto = 1; fAsk(); }
 }
 
 /* ================= SÜRÜM 3: pano kutuları, seri kutlaması, sandık, lig, seviye, rapor, tur ================= */
@@ -5536,6 +5753,9 @@ function mergeState(a, b){
   b.qa.forEach(x => { const i = m.qa.findIndex(y => y.id === x.id); if (i < 0) m.qa.push(x); else if (x.a && !m.qa[i].a) m.qa[i] = x; });
   b.mine.forEach(x => { if (!m.mine.some(y => y.id === x.id)) m.mine.push(x); });
   Object.keys(b.weeks).forEach(k => { if (!m.weeks[k] || (b.weeks[k].n || 0) > (m.weeks[k].n || 0)) m.weeks[k] = b.weeks[k]; });
+  const mm = m.miss = m.miss || {}; Object.entries(b.miss || {}).forEach(([k, r]) => { const x = mm[k]; if (!x || (r.last || "") > (x.last || "") || ((r.last || "") === (x.last || "") && (r.n || 0) > (x.n || 0))) mm[k] = r; });
+  const fc = m.fchat = m.fchat || []; (b.fchat || []).forEach(x => { const i = fc.findIndex(y => y.id === x.id); if (i < 0) fc.push(x); else if (fc[i].p && !x.p) fc[i] = x; });
+  fc.sort((a, b) => a.id.localeCompare(b.id)); m.fmig = m.fmig || b.fmig;
   m.xp = Math.max(m.xp || 0, b.xp || 0); m.badges = Object.assign({}, b.badges || {}, m.badges || {});
   Object.keys(b.games).forEach(k => { const x = m.games[k], y = b.games[k], low = GAMES[k] && GAMES[k].low; m.games[k] = x === undefined ? y : low ? Math.min(x, y) : Math.max(x, y); });
   return m;
