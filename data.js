@@ -3274,6 +3274,1405 @@ window.DATA = {
     ]
    ],
    "vary": "Başka bir sebep uydur: uyuyakaldın (Ich hab verschlafen) ya da Gece hasta."
+  },
+  {
+   "id": "s6",
+   "day": 6,
+   "title": "Fırında",
+   "lvl": "Kolay",
+   "desc": "Sabah fırına gidiyorsun, ekmek ve kızın için bir Brezel alıyorsun.",
+   "roles": {
+    "V": "Satıcı",
+    "U": "Sen"
+   },
+   "lines": [
+    [
+     "V",
+     "Guten Morgen! Was bekommen Sie?",
+     "Günaydın! Ne alırsınız?"
+    ],
+    [
+     "U",
+     "Morgen! Ich nehme vier Brötchen, bitte.",
+     "Günaydın! Dört tane Brötchen alayım lütfen."
+    ],
+    [
+     "V",
+     "Normale oder Körnerbrötchen?",
+     "Normal mi, tahıllı mı?"
+    ],
+    [
+     "U",
+     "Zwei normale und zwei mit Körnern.",
+     "İki normal, iki tahıllı."
+    ],
+    [
+     "V",
+     "Gern. Darf's sonst noch was sein?",
+     "Tabii. Başka bir şey ister misiniz?"
+    ],
+    [
+     "U",
+     "Ja, ein Vollkornbrot. Können Sie es bitte schneiden?",
+     "Evet, bir tam buğday ekmeği. Dilimleyebilir misiniz lütfen?"
+    ],
+    [
+     "V",
+     "Klar, kein Problem.",
+     "Tabii, sorun değil."
+    ],
+    [
+     "U",
+     "Und eine Brezel für meine Tochter, bitte.",
+     "Bir de kızım için bir Brezel lütfen."
+    ],
+    [
+     "V",
+     "Gern. Das macht dann 7,40 Euro.",
+     "Tabii. Hepsi 7,40 euro tutuyor."
+    ],
+    [
+     "U",
+     "Hier sind acht Euro. Stimmt so.",
+     "Buyurun, sekiz euro. Üstü kalsın."
+    ],
+    [
+     "V",
+     "Oh, danke schön! Einen schönen Tag noch!",
+     "Aa, çok teşekkürler! İyi günler!"
+    ],
+    [
+     "U",
+     "Danke, Ihnen auch!",
+     "Teşekkürler, size de!"
+    ]
+   ],
+   "k": [
+    [
+     "Ich nehme …",
+     "… alayım"
+    ],
+    [
+     "Darf's sonst noch was sein?",
+     "başka bir şey ister misiniz?"
+    ],
+    [
+     "Können Sie es schneiden?",
+     "dilimleyebilir misiniz?"
+    ],
+    [
+     "Stimmt so.",
+     "üstü kalsın"
+    ],
+    [
+     "Ihnen auch!",
+     "size de!"
+    ]
+   ],
+   "vary": "Varyasyon dene: istediğin ekmek bitmiş olsun (Die sind leider schon aus), poşet iste (Kann ich eine Tüte haben?) ya da sadece büyük paran olsun (Ich habe leider nur einen Fünfziger)."
+  },
+  {
+   "id": "s7",
+   "day": 7,
+   "title": "Süpermarket kasasında",
+   "lvl": "Kolay",
+   "desc": "Süpermarkette kasadasın: bulamadığın bir şeyi soruyorsun, depozito fişini verip ödüyorsun.",
+   "roles": {
+    "K": "Kasiyer",
+    "U": "Sen"
+   },
+   "lines": [
+    [
+     "K",
+     "Hallo!",
+     "Merhaba!"
+    ],
+    [
+     "U",
+     "Hallo! Entschuldigung, haben Sie noch Eier? Ich habe keine gefunden.",
+     "Merhaba! Affedersiniz, hiç yumurta kaldı mı? Bulamadım."
+    ],
+    [
+     "K",
+     "Die sind leider aus. Morgen früh kommen neue.",
+     "Maalesef bitti. Yarın sabah yenileri geliyor."
+    ],
+    [
+     "U",
+     "Ach so, schade. Dann nur das hier.",
+     "Haa, yazık. O zaman sadece bunlar."
+    ],
+    [
+     "K",
+     "Brauchen Sie eine Tüte?",
+     "Poşet ister misiniz?"
+    ],
+    [
+     "U",
+     "Nein, danke, ich habe eine dabei. Ach, und hier ist noch ein Pfandbon.",
+     "Hayır, teşekkürler, yanımda var. Ha, bir de bu depozito fişi var."
+    ],
+    [
+     "K",
+     "Danke. Dann macht das 23,15 Euro.",
+     "Teşekkürler. O zaman 23,15 euro tutuyor."
+    ],
+    [
+     "U",
+     "Mit Karte, bitte.",
+     "Kartla, lütfen."
+    ],
+    [
+     "K",
+     "Brauchen Sie den Bon?",
+     "Fişi ister misiniz?"
+    ],
+    [
+     "U",
+     "Nein, danke. Schönen Tag noch!",
+     "Hayır, teşekkürler. İyi günler!"
+    ],
+    [
+     "K",
+     "Danke, gleichfalls! Tschüss!",
+     "Teşekkürler, size de! Hoşça kalın!"
+    ]
+   ],
+   "k": [
+    [
+     "Haben Sie noch …?",
+     "hiç … kaldı mı?"
+    ],
+    [
+     "… ist/sind leider aus",
+     "… maalesef bitti"
+    ],
+    [
+     "Brauchen Sie eine Tüte?",
+     "poşet ister misiniz?"
+    ],
+    [
+     "der Pfandbon",
+     "depozito fişi"
+    ],
+    [
+     "Gleichfalls!",
+     "size de!"
+    ]
+   ],
+   "vary": "Başka bir durum dene: bir çalışana bir şeyin yerini sor (Entschuldigung, wo finde ich Reis?), nakit öde (Bar, bitte) ya da fiyat yanlış olsun (Ich glaube, der Preis stimmt nicht)."
+  },
+  {
+   "id": "s8",
+   "day": 8,
+   "title": "Yol sormak",
+   "lvl": "Kolay",
+   "desc": "Sokakta birine istasyona nasıl gideceğini soruyorsun.",
+   "roles": {
+    "P": "Yoldan geçen",
+    "U": "Sen"
+   },
+   "lines": [
+    [
+     "U",
+     "Entschuldigung, wie komme ich zum Bahnhof?",
+     "Affedersiniz, istasyona nasıl giderim?"
+    ],
+    [
+     "P",
+     "Zum Bahnhof? Gehen Sie hier geradeaus bis zur Ampel.",
+     "İstasyona mı? Buradan ışıklara kadar dümdüz gidin."
+    ],
+    [
+     "U",
+     "Bis zur Ampel, okay.",
+     "Işıklara kadar, tamam."
+    ],
+    [
+     "P",
+     "Dann links und die zweite Straße rechts.",
+     "Sonra sola, sonra ikinci sokaktan sağa."
+    ],
+    [
+     "U",
+     "Können Sie das bitte noch mal langsam sagen?",
+     "Lütfen bir daha yavaşça söyler misiniz?"
+    ],
+    [
+     "P",
+     "Klar: geradeaus bis zur Ampel, dann links, dann die zweite rechts.",
+     "Tabii: ışıklara kadar düz, sonra sola, sonra ikinciden sağa."
+    ],
+    [
+     "U",
+     "Ist das weit? Kann ich zu Fuß gehen?",
+     "Uzak mı? Yürüyerek gidebilir miyim?"
+    ],
+    [
+     "P",
+     "Ja, klar. Das sind ungefähr zehn Minuten zu Fuß.",
+     "Evet, tabii. Yürüyerek yaklaşık on dakika."
+    ],
+    [
+     "U",
+     "Und gibt es hier auch einen Bus?",
+     "Peki burada otobüs de var mı?"
+    ],
+    [
+     "P",
+     "Ja, die 5 fährt direkt zum Bahnhof. Die Haltestelle ist da drüben.",
+     "Evet, 5 numara direkt istasyona gidiyor. Durak şurada, karşıda."
+    ],
+    [
+     "U",
+     "Super, vielen Dank!",
+     "Süper, çok teşekkürler!"
+    ],
+    [
+     "P",
+     "Gern geschehen!",
+     "Rica ederim!"
+    ]
+   ],
+   "k": [
+    [
+     "Wie komme ich zum/zur …?",
+     "…'e nasıl giderim?"
+    ],
+    [
+     "geradeaus, links, rechts",
+     "düz, sol, sağ"
+    ],
+    [
+     "Ist das weit?",
+     "uzak mı?"
+    ],
+    [
+     "Können Sie das noch mal langsam sagen?",
+     "bir daha yavaşça söyler misiniz?"
+    ],
+    [
+     "Gern geschehen!",
+     "rica ederim!"
+    ]
+   ],
+   "vary": "Başka bir yer sor (Wo ist hier die nächste Apotheke?), adam da buralı olmasın (Tut mir leid, ich bin nicht von hier) ya da otobüsü sor (Welcher Bus fährt zum Rathaus?)."
+  },
+  {
+   "id": "s9",
+   "day": 9,
+   "title": "Eczanede",
+   "lvl": "Kolay",
+   "desc": "Eczaneye reçeteyle gidiyorsun ve kızın için öksürük şurubu istiyorsun.",
+   "roles": {
+    "A": "Eczacı",
+    "U": "Sen"
+   },
+   "lines": [
+    [
+     "A",
+     "Guten Tag! Was kann ich für Sie tun?",
+     "İyi günler! Size nasıl yardımcı olabilirim?"
+    ],
+    [
+     "U",
+     "Hallo! Ich habe ein Rezept. Hier, bitte.",
+     "Merhaba! Reçetem var. Buyurun."
+    ],
+    [
+     "A",
+     "Danke. Einen Moment … Das haben wir leider nicht da. Ich kann es bestellen.",
+     "Teşekkürler. Bir saniye… Maalesef elimizde yok. Sipariş edebilirim."
+    ],
+    [
+     "U",
+     "Wann ist es da?",
+     "Ne zaman gelir?"
+    ],
+    [
+     "A",
+     "Heute Nachmittag, ab 15 Uhr.",
+     "Bugün öğleden sonra, saat 15'ten itibaren."
+    ],
+    [
+     "U",
+     "Okay, dann komme ich später noch mal. Ich brauche auch etwas gegen Husten für meine Tochter.",
+     "Tamam, o zaman sonra tekrar gelirim. Bir de kızım için öksürüğe karşı bir şey lazım."
+    ],
+    [
+     "A",
+     "Wie alt ist sie denn?",
+     "Kaç yaşında?"
+    ],
+    [
+     "U",
+     "Drei Jahre.",
+     "Üç yaşında."
+    ],
+    [
+     "A",
+     "Dann empfehle ich diesen Saft hier. Dreimal am Tag fünf Milliliter.",
+     "O zaman bu şurubu öneririm. Günde üç kez beş mililitre."
+    ],
+    [
+     "U",
+     "Vor oder nach dem Essen?",
+     "Yemekten önce mi, sonra mı?"
+    ],
+    [
+     "A",
+     "Am besten nach dem Essen. Das macht 8,95 Euro.",
+     "En iyisi yemekten sonra. 8,95 euro tutuyor."
+    ],
+    [
+     "U",
+     "Danke für die Hilfe!",
+     "Yardımınız için teşekkürler!"
+    ]
+   ],
+   "k": [
+    [
+     "Ich habe ein Rezept.",
+     "reçetem var"
+    ],
+    [
+     "etwas gegen …",
+     "…'e karşı bir şey"
+    ],
+    [
+     "Das haben wir leider nicht da.",
+     "maalesef elimizde yok"
+    ],
+    [
+     "dreimal am Tag",
+     "günde üç kez"
+    ],
+    [
+     "Vor oder nach dem Essen?",
+     "yemekten önce mi, sonra mı?"
+    ]
+   ],
+   "vary": "Başka şeyler iste: baş ağrısı için (Ich brauche etwas gegen Kopfschmerzen), reçete gerekip gerekmediğini sor (Brauche ich dafür ein Rezept?) ya da küçük paket iste (Haben Sie auch eine kleinere Packung?)."
+  },
+  {
+   "id": "s10",
+   "day": 10,
+   "title": "Restoranda sipariş ve hesap",
+   "lvl": "Kolay",
+   "desc": "Ailenle bir restorana gidiyorsun: masa istiyorsun, sipariş veriyorsun, sonra hesabı ödüyorsun.",
+   "roles": {
+    "K": "Garson",
+    "U": "Sen"
+   },
+   "lines": [
+    [
+     "K",
+     "Guten Abend! Haben Sie reserviert?",
+     "İyi akşamlar! Rezervasyonunuz var mı?"
+    ],
+    [
+     "U",
+     "Nein, leider nicht. Haben Sie noch einen Tisch für drei?",
+     "Hayır, maalesef. Üç kişilik bir masanız var mı?"
+    ],
+    [
+     "K",
+     "Ja, da hinten am Fenster. Was möchten Sie trinken?",
+     "Evet, arkada pencerenin yanında. Ne içmek istersiniz?"
+    ],
+    [
+     "U",
+     "Eine Apfelschorle und zwei Wasser, bitte.",
+     "Bir Apfelschorle (maden sulu elma suyu) ve iki su lütfen."
+    ],
+    [
+     "K",
+     "Gern. Haben Sie schon gewählt?",
+     "Tabii. Seçtiniz mi?"
+    ],
+    [
+     "U",
+     "Ja. Ist in der Nummer zwölf Schweinefleisch drin?",
+     "Evet. On iki numarada domuz eti var mı?"
+    ],
+    [
+     "K",
+     "Nein, das ist mit Hähnchen.",
+     "Hayır, o tavuklu."
+    ],
+    [
+     "U",
+     "Gut, dann nehme ich die Zwölf, bitte.",
+     "İyi, o zaman on ikiyi alayım lütfen."
+    ],
+    [
+     "K",
+     "Hat's geschmeckt?",
+     "Beğendiniz mi?"
+    ],
+    [
+     "U",
+     "Ja, sehr lecker, danke! Wir möchten bitte zahlen.",
+     "Evet, çok lezzetliydi, teşekkürler! Hesabı alabilir miyiz lütfen?"
+    ],
+    [
+     "K",
+     "Gern. Das macht 38,50 Euro.",
+     "Tabii. 38,50 euro tutuyor."
+    ],
+    [
+     "U",
+     "Machen Sie 42. Danke!",
+     "42 yapın. Teşekkürler!"
+    ]
+   ],
+   "k": [
+    [
+     "Haben Sie noch einen Tisch für …?",
+     "… kişilik masanız var mı?"
+    ],
+    [
+     "Ist da Schweinefleisch drin?",
+     "içinde domuz eti var mı?"
+    ],
+    [
+     "Hat's geschmeckt?",
+     "beğendiniz mi?"
+    ],
+    [
+     "Wir möchten bitte zahlen.",
+     "hesabı alabilir miyiz?"
+    ],
+    [
+     "Machen Sie … (Euro).",
+     "… (euro) yapın (bahşişle)"
+    ]
+   ],
+   "vary": "Hesabı ayrı öde (Getrennt, bitte), çocuk için mama sandalyesi iste (Haben Sie einen Kinderstuhl?) ya da yemek soğuk gelsin (Entschuldigung, das Essen ist kalt)."
+  },
+  {
+   "id": "s11",
+   "day": 11,
+   "title": "Telefonla randevu değiştirmek",
+   "lvl": "Orta",
+   "desc": "Doktor muayenehanesini arıyorsun, yarınki randevunu iptal edip yeni bir randevu alıyorsun.",
+   "roles": {
+    "A": "Resepsiyon",
+    "U": "Sen"
+   },
+   "lines": [
+    [
+     "A",
+     "Praxis Dr. Weber, guten Tag!",
+     "Dr. Weber muayenehanesi, iyi günler!"
+    ],
+    [
+     "U",
+     "Guten Tag, mein Name ist … Ich habe morgen um 10 Uhr einen Termin.",
+     "İyi günler, adım … Yarın saat 10'da randevum var."
+    ],
+    [
+     "A",
+     "Ja, genau. Was kann ich für Sie tun?",
+     "Evet, doğru. Nasıl yardımcı olabilirim?"
+    ],
+    [
+     "U",
+     "Leider kann ich morgen nicht kommen. Ich muss den Termin absagen.",
+     "Maalesef yarın gelemiyorum. Randevuyu iptal etmem gerekiyor."
+    ],
+    [
+     "A",
+     "Kein Problem. Möchten Sie gleich einen neuen Termin?",
+     "Sorun değil. Hemen yeni bir randevu ister misiniz?"
+    ],
+    [
+     "U",
+     "Ja, gern. Geht es nächste Woche?",
+     "Evet, olur. Haftaya olur mu?"
+    ],
+    [
+     "A",
+     "Am Dienstag um 8:30 Uhr oder am Donnerstag um 14 Uhr.",
+     "Salı 8:30'da ya da perşembe saat 14'te."
+    ],
+    [
+     "U",
+     "Donnerstag passt mir besser.",
+     "Perşembe bana daha uygun."
+    ],
+    [
+     "A",
+     "Gut, dann Donnerstag um 14 Uhr. Wie ist Ihr Geburtsdatum?",
+     "Tamam, perşembe saat 14. Doğum tarihiniz nedir?"
+    ],
+    [
+     "U",
+     "Der 3. Mai 1990.",
+     "3 Mayıs 1990."
+    ],
+    [
+     "A",
+     "Danke, ist eingetragen. Bis Donnerstag!",
+     "Teşekkürler, kaydettim. Perşembe görüşürüz!"
+    ],
+    [
+     "U",
+     "Vielen Dank. Auf Wiederhören!",
+     "Çok teşekkürler. Hoşça kalın!"
+    ]
+   ],
+   "k": [
+    [
+     "Ich muss den Termin absagen.",
+     "randevuyu iptal etmem gerekiyor"
+    ],
+    [
+     "Geht es nächste Woche?",
+     "haftaya olur mu?"
+    ],
+    [
+     "… passt mir besser.",
+     "… bana daha uygun"
+    ],
+    [
+     "Auf Wiederhören!",
+     "hoşça kalın (telefonda)"
+    ]
+   ],
+   "vary": "Yeni randevu al (Ich hätte gern einen Termin für meine Tochter), acil olsun (Es ist dringend, sie hat hohes Fieber) ya da randevuyu ertele (Kann ich den Termin verschieben?)."
+  },
+  {
+   "id": "s12",
+   "day": 12,
+   "title": "Doktorda muayene",
+   "lvl": "Orta",
+   "desc": "Boğaz ağrısı ve ateşle doktora gidiyorsun, şikâyetini anlatıyorsun ve rapor istiyorsun.",
+   "roles": {
+    "D": "Doktor",
+    "U": "Sen"
+   },
+   "lines": [
+    [
+     "D",
+     "Guten Tag! Was fehlt Ihnen denn?",
+     "İyi günler! Neyiniz var?"
+    ],
+    [
+     "U",
+     "Ich habe seit drei Tagen Halsschmerzen und Fieber.",
+     "Üç gündür boğazım ağrıyor ve ateşim var."
+    ],
+    [
+     "D",
+     "Haben Sie auch Husten?",
+     "Öksürüğünüz de var mı?"
+    ],
+    [
+     "U",
+     "Ja, ein bisschen. Und ich bin total müde.",
+     "Evet, biraz. Ve çok yorgunum."
+    ],
+    [
+     "D",
+     "Machen Sie bitte mal den Mund auf. … Ja, der Hals ist ziemlich rot.",
+     "Lütfen ağzınızı bir açın. … Evet, boğazınız epey kırmızı."
+    ],
+    [
+     "U",
+     "Ist es schlimm?",
+     "Kötü bir şey mi?"
+    ],
+    [
+     "D",
+     "Nein, das ist eine Erkältung. Ich schreibe Ihnen etwas gegen die Schmerzen auf.",
+     "Hayır, soğuk algınlığı. Size ağrıya karşı bir şey yazıyorum."
+    ],
+    [
+     "U",
+     "Danke. Können Sie mich bitte krankschreiben? Ich kann so nicht arbeiten.",
+     "Teşekkürler. Bana rapor verebilir misiniz? Bu hâlde çalışamam."
+    ],
+    [
+     "D",
+     "Ja, natürlich. Erst mal bis Freitag. Trinken Sie viel und ruhen Sie sich aus.",
+     "Evet, tabii. Şimdilik cumaya kadar. Bol sıvı için ve dinlenin."
+    ],
+    [
+     "U",
+     "Und wenn es nicht besser wird?",
+     "Peki geçmezse?"
+    ],
+    [
+     "D",
+     "Dann kommen Sie nächste Woche noch mal vorbei. Gute Besserung!",
+     "O zaman haftaya tekrar uğrayın. Geçmiş olsun!"
+    ],
+    [
+     "U",
+     "Vielen Dank. Auf Wiedersehen!",
+     "Çok teşekkürler. Hoşça kalın!"
+    ]
+   ],
+   "k": [
+    [
+     "Was fehlt Ihnen?",
+     "neyiniz var?"
+    ],
+    [
+     "Ich habe seit … Halsschmerzen.",
+     "…dür boğazım ağrıyor"
+    ],
+    [
+     "Können Sie mich krankschreiben?",
+     "rapor verebilir misiniz?"
+    ],
+    [
+     "Wenn es nicht besser wird …",
+     "geçmezse…"
+    ],
+    [
+     "Gute Besserung!",
+     "geçmiş olsun!"
+    ]
+   ],
+   "vary": "Başka bir şikâyet dene: baş ağrısı (Ich habe starke Kopfschmerzen), Gece hasta olsun (Meine Tochter hat seit gestern Fieber) ya da alerjin olsun (Ich bin allergisch gegen Penicillin)."
+  },
+  {
+   "id": "s13",
+   "day": 13,
+   "title": "Kreşte öğretmenle",
+   "lvl": "Orta",
+   "desc": "Sabah Gece'yi kreşe bırakırken öğretmenle kısaca konuşuyorsun: kimin alacağı, Gece'nin öksürüğü, yarınki gezi.",
+   "roles": {
+    "E": "Öğretmen",
+    "U": "Sen"
+   },
+   "lines": [
+    [
+     "U",
+     "Guten Morgen, Frau Becker! Nur zur Info: Heute holt Nisa Gece ab, schon um zwei.",
+     "Günaydın Frau Becker! Bilginiz olsun: Bugün Gece'yi Nisa alacak, erkenden, saat ikide."
+    ],
+    [
+     "E",
+     "Alles klar, danke für die Info. Wie geht's Gece? Gestern war sie ein bisschen müde.",
+     "Tamamdır, haber verdiğiniz için teşekkürler. Gece nasıl? Dün biraz yorgundu."
+    ],
+    [
+     "U",
+     "Sie hat in der Nacht ein bisschen gehustet.",
+     "Dün gece biraz öksürdü."
+    ],
+    [
+     "E",
+     "Okay. Hat sie Fieber?",
+     "Tamam. Ateşi var mı?"
+    ],
+    [
+     "U",
+     "Nein, heute Morgen nicht. Bitte rufen Sie mich an, wenn es ihr schlechter geht.",
+     "Hayır, bu sabah yoktu. Kötüleşirse lütfen beni arayın."
+    ],
+    [
+     "E",
+     "Natürlich. Ist Ihre Handynummer noch aktuell?",
+     "Tabii. Cep numaranız hâlâ aynı mı?"
+    ],
+    [
+     "U",
+     "Ja, die ist noch aktuell. Ach, und braucht sie morgen etwas für den Ausflug?",
+     "Evet, aynı. Ha, yarınki gezi için bir şey lazım mı?"
+    ],
+    [
+     "E",
+     "Ja, bitte geben Sie ihr eine Brotdose und eine Trinkflasche mit.",
+     "Evet, lütfen yanına beslenme kutusu ve suluk verin."
+    ],
+    [
+     "U",
+     "Okay, mache ich. Tschüss, Gece! Bis später!",
+     "Tamam, veririm. Hoşça kal Gece! Sonra görüşürüz!"
+    ],
+    [
+     "E",
+     "Tschüss! Schönen Tag noch!",
+     "Hoşça kalın! İyi günler!"
+    ]
+   ],
+   "k": [
+    [
+     "Nur zur Info: …",
+     "bilginiz olsun: …"
+    ],
+    [
+     "… holt Gece ab",
+     "Gece'yi … alacak"
+    ],
+    [
+     "Rufen Sie mich bitte an, wenn …",
+     "… olursa lütfen beni arayın"
+    ],
+    [
+     "mitgeben",
+     "yanına vermek"
+    ]
+   ],
+   "vary": "Gece hasta olsun ve kreşi ara (Gece ist krank und bleibt heute zu Hause), erken almak iste (Kann ich sie heute früher abholen?) ya da başka biri alsın (Heute holt meine Nachbarin sie ab)."
+  },
+  {
+   "id": "s14",
+   "day": 14,
+   "title": "Komşuyla: paket ve gürültü",
+   "lvl": "Kolay",
+   "desc": "Komşun senin paketini teslim almış; paketi alıyorsun ve dün akşamki gürültü için özür diliyorsun.",
+   "roles": {
+    "N": "Komşu",
+    "U": "Sen"
+   },
+   "lines": [
+    [
+     "N",
+     "Hallo! Ich habe ein Paket für Sie angenommen.",
+     "Merhaba! Sizin için bir paket teslim aldım."
+    ],
+    [
+     "U",
+     "Oh, super! Vielen Dank, das ist sehr nett.",
+     "Ah, süper! Çok teşekkürler, çok naziksiniz."
+    ],
+    [
+     "N",
+     "Kein Problem. Moment, ich hole es schnell.",
+     "Sorun değil. Bir dakika, hemen getiriyorum."
+    ],
+    [
+     "U",
+     "Danke! Und Entschuldigung wegen gestern Abend. Gece hat lange geweint.",
+     "Teşekkürler! Bir de dün akşam için kusura bakmayın. Gece uzun süre ağladı."
+    ],
+    [
+     "N",
+     "Ach, das ist doch normal mit kleinen Kindern.",
+     "Aa, küçük çocuklarla bu çok normal."
+    ],
+    [
+     "U",
+     "Trotzdem tut es mir leid. Ich hoffe, es war nicht zu laut.",
+     "Yine de özür dilerim. Umarım çok gürültü olmamıştır."
+    ],
+    [
+     "N",
+     "Nein, nein, alles gut. Hier ist das Paket.",
+     "Yok, yok, her şey yolunda. İşte paket."
+    ],
+    [
+     "U",
+     "Danke! Wenn Sie mal etwas brauchen, klingeln Sie einfach.",
+     "Teşekkürler! Bir şeye ihtiyacınız olursa zili çalmanız yeter."
+    ],
+    [
+     "N",
+     "Das ist lieb, danke. Schönen Abend noch!",
+     "Çok tatlısınız, teşekkürler. İyi akşamlar!"
+    ],
+    [
+     "U",
+     "Danke, Ihnen auch!",
+     "Teşekkürler, size de!"
+    ]
+   ],
+   "k": [
+    [
+     "Ich habe ein Paket für Sie angenommen.",
+     "sizin için paket teslim aldım"
+    ],
+    [
+     "Das ist sehr nett.",
+     "çok naziksiniz"
+    ],
+    [
+     "Entschuldigung wegen …",
+     "… için kusura bakmayın"
+    ],
+    [
+     "Klingeln Sie einfach.",
+     "zili çalmanız yeter"
+    ]
+   ],
+   "vary": "Bu sefer sen komşuna paketini sor (Haben Sie vielleicht ein Paket für mich?), komşu gürültüden şikâyet etsin (Es war gestern Abend sehr laut) ya da bir şey ödünç iste (Haben Sie vielleicht etwas Salz für mich?)."
+  },
+  {
+   "id": "s15",
+   "day": 15,
+   "title": "Tren bileti ve rötar",
+   "lvl": "Orta",
+   "desc": "İstasyondaki bilet gişesinde Köln'e bilet alıyorsun ve trenin rötarlı olduğunu öğreniyorsun.",
+   "roles": {
+    "B": "Gişe görevlisi",
+    "U": "Sen"
+   },
+   "lines": [
+    [
+     "U",
+     "Hallo, ich brauche eine Fahrkarte nach Köln, bitte.",
+     "Merhaba, Köln'e bir bilet lazım lütfen."
+    ],
+    [
+     "B",
+     "Für heute? Einfach oder hin und zurück?",
+     "Bugün için mi? Tek yön mü, gidiş-dönüş mü?"
+    ],
+    [
+     "U",
+     "Hin und zurück. Ich komme morgen Abend zurück.",
+     "Gidiş-dönüş. Yarın akşam dönüyorum."
+    ],
+    [
+     "B",
+     "Haben Sie eine BahnCard?",
+     "BahnCard'ınız var mı?"
+    ],
+    [
+     "U",
+     "Nein. Gibt es eine günstigere Verbindung?",
+     "Hayır. Daha ucuz bir bağlantı var mı?"
+    ],
+    [
+     "B",
+     "Der Zug um 10:12 Uhr ist günstiger, aber Sie müssen in Frankfurt umsteigen.",
+     "10:12 treni daha ucuz, ama Frankfurt'ta aktarma yapmanız gerekiyor."
+    ],
+    [
+     "U",
+     "Das ist okay. Von welchem Gleis fährt der Zug?",
+     "Sorun değil. Tren hangi perondan kalkıyor?"
+    ],
+    [
+     "B",
+     "Von Gleis 7. Aber er hat gerade 20 Minuten Verspätung.",
+     "7. perondan. Ama şu an 20 dakika rötarlı."
+    ],
+    [
+     "U",
+     "Oh nein. Schaffe ich dann noch meinen Anschluss in Frankfurt?",
+     "Eyvah. O zaman Frankfurt'taki aktarmama yetişir miyim?"
+    ],
+    [
+     "B",
+     "Das wird knapp. Sonst nehmen Sie einfach den nächsten Zug. Ihr Ticket gilt trotzdem.",
+     "Zor olur. Yetişemezseniz bir sonraki trene binin. Biletiniz yine geçerli."
+    ],
+    [
+     "U",
+     "Okay, danke für die Info!",
+     "Tamam, bilgi için teşekkürler!"
+    ],
+    [
+     "B",
+     "Gern. Gute Reise!",
+     "Rica ederim. İyi yolculuklar!"
+    ]
+   ],
+   "k": [
+    [
+     "Einfach oder hin und zurück?",
+     "tek yön mü, gidiş-dönüş mü?"
+    ],
+    [
+     "umsteigen",
+     "aktarma yapmak"
+    ],
+    [
+     "Von welchem Gleis fährt der Zug?",
+     "tren hangi perondan kalkıyor?"
+    ],
+    [
+     "Verspätung haben",
+     "rötarlı olmak"
+    ],
+    [
+     "Das wird knapp.",
+     "yetişmek zor olur"
+    ]
+   ],
+   "vary": "Otobüs şoförüne sor (Fährt der Bus zum Hauptbahnhof?), tren iptal olsun (Der Zug fällt heute aus) ya da Deutschlandticket'ı sor (Gilt das Deutschlandticket auch im ICE?)."
+  },
+  {
+   "id": "s16",
+   "day": 16,
+   "title": "Mağazada beden ve iade",
+   "lvl": "Orta",
+   "desc": "Bir giyim mağazasında mont deniyorsun ve geçen hafta aldığın pantolonu iade ediyorsun.",
+   "roles": {
+    "V": "Satış görevlisi",
+    "U": "Sen"
+   },
+   "lines": [
+    [
+     "V",
+     "Hallo! Kann ich Ihnen helfen?",
+     "Merhaba! Yardımcı olabilir miyim?"
+    ],
+    [
+     "U",
+     "Ja, gern. Haben Sie diese Jacke auch in M?",
+     "Evet, lütfen. Bu montun M bedeni var mı?"
+    ],
+    [
+     "V",
+     "Moment, ich schaue mal. … Ja, hier, bitte.",
+     "Bir saniye, bakayım. … Evet, buyurun."
+    ],
+    [
+     "U",
+     "Danke. Wo kann ich sie anprobieren?",
+     "Teşekkürler. Nerede deneyebilirim?"
+    ],
+    [
+     "V",
+     "Die Umkleiden sind da hinten.",
+     "Kabinler arkada."
+    ],
+    [
+     "U",
+     "Die passt perfekt, ich nehme sie. Ach, und ich möchte diese Hose zurückgeben.",
+     "Tam oldu, alıyorum. Ha, bir de bu pantolonu iade etmek istiyorum."
+    ],
+    [
+     "V",
+     "Was ist denn das Problem?",
+     "Sorun nedir?"
+    ],
+    [
+     "U",
+     "Sie ist zu klein. Ich habe sie letzte Woche gekauft.",
+     "Çok küçük. Geçen hafta aldım."
+    ],
+    [
+     "V",
+     "Haben Sie den Kassenbon dabei?",
+     "Fişiniz yanınızda mı?"
+    ],
+    [
+     "U",
+     "Ja, hier. Kann ich das Geld zurückbekommen?",
+     "Evet, burada. Paramı geri alabilir miyim?"
+    ],
+    [
+     "V",
+     "Ja, klar. Das Geld geht zurück auf Ihre Karte.",
+     "Evet, tabii. Para kartınıza iade edilir."
+    ],
+    [
+     "U",
+     "Perfekt, danke schön!",
+     "Harika, çok teşekkürler!"
+    ]
+   ],
+   "k": [
+    [
+     "Haben Sie das auch in M?",
+     "bunun M bedeni var mı?"
+    ],
+    [
+     "anprobieren",
+     "(giysi) denemek"
+    ],
+    [
+     "zu klein, zu groß",
+     "çok küçük, çok büyük"
+    ],
+    [
+     "Ich möchte das zurückgeben.",
+     "bunu iade etmek istiyorum"
+    ],
+    [
+     "Kann ich das Geld zurückbekommen?",
+     "paramı geri alabilir miyim?"
+    ]
+   ],
+   "vary": "Başka bir renk iste (Gibt es die auch in Schwarz?), iade yerine değiştir (Kann ich die Hose umtauschen?) ya da fişin olmasın (Ich habe den Bon leider nicht mehr)."
+  },
+  {
+   "id": "s17",
+   "day": 17,
+   "title": "Postanede paket",
+   "lvl": "Kolay",
+   "desc": "Postanede Türkiye'ye paket gönderiyorsun ve pul alıyorsun.",
+   "roles": {
+    "P": "Görevli",
+    "U": "Sen"
+   },
+   "lines": [
+    [
+     "P",
+     "Der Nächste, bitte! Hallo.",
+     "Sıradaki lütfen! Merhaba."
+    ],
+    [
+     "U",
+     "Hallo! Ich möchte dieses Paket in die Türkei schicken.",
+     "Merhaba! Bu paketi Türkiye'ye göndermek istiyorum."
+    ],
+    [
+     "P",
+     "Gern. Was ist denn drin?",
+     "Tabii. İçinde ne var?"
+    ],
+    [
+     "U",
+     "Kleidung und ein Geschenk für meine Mutter.",
+     "Kıyafet ve annem için bir hediye."
+    ],
+    [
+     "P",
+     "Dann müssen Sie noch dieses Formular ausfüllen.",
+     "O zaman şu formu da doldurmanız gerekiyor."
+    ],
+    [
+     "U",
+     "Okay. Wie lange dauert das ungefähr?",
+     "Tamam. Yaklaşık ne kadar sürer?"
+    ],
+    [
+     "P",
+     "Ungefähr ein bis zwei Wochen.",
+     "Yaklaşık bir iki hafta."
+    ],
+    [
+     "U",
+     "Und was kostet das?",
+     "Peki ne kadar tutuyor?"
+    ],
+    [
+     "P",
+     "Das Paket wiegt vier Kilo. Das macht 39,99 Euro.",
+     "Paket dört kilo geliyor. 39,99 euro tutuyor."
+    ],
+    [
+     "U",
+     "Okay. Und ich brauche noch drei Briefmarken für Deutschland.",
+     "Tamam. Bir de Almanya içi için üç pul lazım."
+    ],
+    [
+     "P",
+     "Gern. Zusammen 42,84 Euro. Die Sendungsnummer steht auf dem Beleg.",
+     "Tabii. Hepsi 42,84 euro. Takip numarası fişin üstünde yazıyor."
+    ],
+    [
+     "U",
+     "Super, danke schön. Tschüss!",
+     "Süper, çok teşekkürler. Hoşça kalın!"
+    ]
+   ],
+   "k": [
+    [
+     "Der Nächste, bitte!",
+     "sıradaki lütfen!"
+    ],
+    [
+     "Ich möchte … in die Türkei schicken.",
+     "…'i Türkiye'ye göndermek istiyorum"
+    ],
+    [
+     "ein Formular ausfüllen",
+     "form doldurmak"
+    ],
+    [
+     "Wie lange dauert das?",
+     "ne kadar sürer?"
+    ],
+    [
+     "die Briefmarke",
+     "pul"
+    ]
+   ],
+   "vary": "Bir paket teslim al (Ich möchte ein Paket abholen. Die Karte war in meinem Briefkasten), mektubu taahhütlü gönder (Als Einschreiben, bitte) ya da paket çok ağır olsun (Das ist leider zu schwer)."
+  },
+  {
+   "id": "s18",
+   "day": 18,
+   "title": "Ev sahibine arıza bildirmek",
+   "lvl": "Orta",
+   "desc": "Ev sahibini arayıp çocuk odasındaki kaloriferin çalışmadığını söylüyorsun.",
+   "roles": {
+    "V": "Ev sahibi",
+    "U": "Sen"
+   },
+   "lines": [
+    [
+     "V",
+     "Krüger, hallo?",
+     "Krüger, alo?"
+    ],
+    [
+     "U",
+     "Hallo Herr Krüger, hier ist … aus der Bergstraße 12, zweiter Stock.",
+     "Merhaba Herr Krüger, ben …, Bergstraße 12, ikinci kattan."
+    ],
+    [
+     "V",
+     "Ah, hallo! Was gibt's?",
+     "Ah, merhaba! Ne oldu?"
+    ],
+    [
+     "U",
+     "Die Heizung im Kinderzimmer funktioniert nicht. Sie bleibt kalt.",
+     "Çocuk odasındaki kalorifer çalışmıyor. Hep soğuk kalıyor."
+    ],
+    [
+     "V",
+     "Seit wann ist das so?",
+     "Ne zamandan beri böyle?"
+    ],
+    [
+     "U",
+     "Seit gestern. Und es ist gerade ziemlich kalt.",
+     "Dünden beri. Şu an da hava epey soğuk."
+    ],
+    [
+     "V",
+     "Das tut mir leid. Ich schicke Ihnen einen Handwerker.",
+     "Üzgünüm. Size bir usta gönderiyorum."
+    ],
+    [
+     "U",
+     "Danke! Wann kann er kommen?",
+     "Teşekkürler! Ne zaman gelebilir?"
+    ],
+    [
+     "V",
+     "Wahrscheinlich morgen Vormittag. Sind Sie da zu Hause?",
+     "Muhtemelen yarın öğleden önce. O saatte evde misiniz?"
+    ],
+    [
+     "U",
+     "Ja, ich bin ab acht Uhr zu Hause.",
+     "Evet, saat sekizden itibaren evdeyim."
+    ],
+    [
+     "V",
+     "Gut. Er ruft Sie vorher kurz an.",
+     "İyi. Gelmeden önce sizi kısaca arar."
+    ],
+    [
+     "U",
+     "Perfekt, danke für die schnelle Hilfe!",
+     "Harika, hızlı yardımınız için teşekkürler!"
+    ]
+   ],
+   "k": [
+    [
+     "… funktioniert nicht.",
+     "… çalışmıyor"
+    ],
+    [
+     "Seit wann?",
+     "ne zamandan beri?"
+    ],
+    [
+     "der Handwerker",
+     "usta, tamirci"
+    ],
+    [
+     "Sind Sie zu Hause?",
+     "evde misiniz?"
+    ]
+   ],
+   "vary": "Başka bir arıza bildir (Wir haben kein warmes Wasser / Das Fenster geht nicht mehr zu), usta gelmesin (Der Handwerker ist nicht gekommen) ya da e-posta yaz (Sehr geehrter Herr Krüger, leider funktioniert …)."
+  },
+  {
+   "id": "s19",
+   "day": 19,
+   "title": "Bürgeramt'ta Anmeldung",
+   "lvl": "Orta",
+   "desc": "Yeni eve taşındınız; Bürgeramt'ta ailen için adres kaydı yaptırıyorsun.",
+   "roles": {
+    "B": "Memur",
+    "U": "Sen"
+   },
+   "lines": [
+    [
+     "B",
+     "Guten Tag. Haben Sie einen Termin?",
+     "İyi günler. Randevunuz var mı?"
+    ],
+    [
+     "U",
+     "Ja, um 9:20 Uhr. Ich möchte mich anmelden. Wir sind umgezogen.",
+     "Evet, 9:20'de. Adres kaydı yaptırmak istiyorum. Taşındık."
+    ],
+    [
+     "B",
+     "Haben Sie Ihren Ausweis und die Bestätigung vom Vermieter dabei?",
+     "Kimliğiniz ve ev sahibinden aldığınız onay belgesi yanınızda mı?"
+    ],
+    [
+     "U",
+     "Ja, hier ist mein Pass und hier die Bestätigung.",
+     "Evet, işte pasaportum, işte de onay belgesi."
+    ],
+    [
+     "B",
+     "Danke. Ist das nur für Sie oder für die ganze Familie?",
+     "Teşekkürler. Sadece sizin için mi, yoksa bütün aile için mi?"
+    ],
+    [
+     "U",
+     "Für uns drei: meine Partnerin, meine Tochter und mich.",
+     "Üçümüz için: partnerim, kızım ve ben."
+    ],
+    [
+     "B",
+     "Dann brauche ich auch die Pässe von Ihrer Partnerin und Ihrer Tochter.",
+     "O zaman partnerinizin ve kızınızın pasaportları da lazım."
+    ],
+    [
+     "U",
+     "Die habe ich auch dabei. Hier, bitte.",
+     "Onlar da yanımda. Buyurun."
+    ],
+    [
+     "B",
+     "Gut. Seit wann wohnen Sie in der neuen Wohnung?",
+     "İyi. Yeni dairede ne zamandan beri oturuyorsunuz?"
+    ],
+    [
+     "U",
+     "Seit dem ersten Oktober.",
+     "Bir Ekim'den beri."
+    ],
+    [
+     "B",
+     "Bitte unterschreiben Sie hier. … So, das ist Ihre Meldebescheinigung.",
+     "Lütfen burayı imzalayın. … Evet, bu da adres kayıt belgeniz."
+    ],
+    [
+     "U",
+     "Vielen Dank! Auf Wiedersehen.",
+     "Çok teşekkürler! Hoşça kalın."
+    ]
+   ],
+   "k": [
+    [
+     "Ich möchte mich anmelden.",
+     "adres kaydı yaptırmak istiyorum"
+    ],
+    [
+     "Wir sind umgezogen.",
+     "taşındık"
+    ],
+    [
+     "Haben Sie … dabei?",
+     "… yanınızda mı?"
+    ],
+    [
+     "Bitte unterschreiben Sie hier.",
+     "lütfen burayı imzalayın"
+    ],
+    [
+     "die Meldebescheinigung",
+     "adres kayıt belgesi"
+    ]
+   ],
+   "vary": "Bir belgen eksik olsun (Das habe ich leider vergessen. Kann ich es per E-Mail schicken?), randevusuz gel (Kann ich auch ohne Termin kommen?) ya da anlamadığını söyle (Was bedeutet das genau?)."
+  },
+  {
+   "id": "s20",
+   "day": 20,
+   "title": "Doğum günü daveti",
+   "lvl": "Kolay",
+   "desc": "Kreşteki bir arkadaşın annesi Gece'yi kızının doğum gününe davet ediyor.",
+   "roles": {
+    "A": "Anna (bir anne)",
+    "U": "Sen"
+   },
+   "lines": [
+    [
+     "A",
+     "Hallo! Mia wird am Samstag vier. Gece ist herzlich eingeladen!",
+     "Merhaba! Mia cumartesi dört yaşına giriyor. Gece'yi de davet ediyoruz!"
+    ],
+    [
+     "U",
+     "Oh, wie schön! Danke für die Einladung. Wann genau?",
+     "Aa, ne güzel! Davet için teşekkürler. Tam olarak ne zaman?"
+    ],
+    [
+     "A",
+     "Von drei bis sechs, bei uns zu Hause.",
+     "Üçten altıya kadar, bizim evde."
+    ],
+    [
+     "U",
+     "Super, wir kommen gern. Soll ich etwas mitbringen?",
+     "Süper, seve seve geliriz. Bir şey getireyim mi?"
+    ],
+    [
+     "A",
+     "Nein, nicht nötig. Isst Gece alles?",
+     "Hayır, gerek yok. Gece her şeyi yiyor mu?"
+    ],
+    [
+     "U",
+     "Ja, fast alles. Nur kein Schweinefleisch, bitte.",
+     "Evet, hemen hemen her şeyi. Sadece domuz eti olmasın lütfen."
+    ],
+    [
+     "A",
+     "Kein Problem. Es gibt Kuchen und Pizza mit Gemüse.",
+     "Sorun değil. Pasta ve sebzeli pizza olacak."
+    ],
+    [
+     "U",
+     "Perfekt. Was wünscht sich Mia denn?",
+     "Harika. Mia hediye olarak ne istiyor?"
+    ],
+    [
+     "A",
+     "Sie malt total gern. Vielleicht etwas zum Malen?",
+     "Resim yapmayı çok seviyor. Belki boyama için bir şey?"
+    ],
+    [
+     "U",
+     "Gute Idee! Bleiben die Eltern auch da?",
+     "İyi fikir! Ebeveynler de kalıyor mu?"
+    ],
+    [
+     "A",
+     "Wie du magst. Du kannst gern bleiben, es gibt auch Kaffee.",
+     "Nasıl istersen. İstersen kalabilirsin, kahve de var."
+    ],
+    [
+     "U",
+     "Super, dann bis Samstag! Gece freut sich bestimmt.",
+     "Süper, o zaman cumartesi görüşürüz! Gece kesin çok sevinecek."
+    ]
+   ],
+   "k": [
+    [
+     "Danke für die Einladung!",
+     "davet için teşekkürler!"
+    ],
+    [
+     "Soll ich etwas mitbringen?",
+     "bir şey getireyim mi?"
+    ],
+    [
+     "Was wünscht sich …?",
+     "… hediye olarak ne istiyor?"
+    ],
+    [
+     "Wie du magst.",
+     "nasıl istersen"
+    ],
+    [
+     "… ist herzlich eingeladen.",
+     "… davetli"
+    ]
+   ],
+   "vary": "Daveti kibarca reddet (Schade, am Samstag können wir leider nicht), adresi iste (Schickst du mir die Adresse?) ya da partide hediyeyi ver (Das ist für dich, Mia. Alles Gute zum Geburtstag!)."
   }
  ],
  "prompts": [
