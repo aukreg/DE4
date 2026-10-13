@@ -1256,6 +1256,17 @@ body.full:not(.game) #view > .foot:has(.chatin){margin-top:auto}
 .rsheet{padding-bottom:var(--bgap)}
 .sheet .in{padding-bottom:var(--bgap)}
 .okpill{bottom:var(--bgap)}
+/* Kaydır: kart ekranı doldursun, düğmeler cam tasarımla uyumlu */
+body.game #view > .swz{flex:1 1 auto;height:auto;min-height:340px;max-height:560px;margin:8px 0 16px}
+.swz .swf .big{font-size:40px}
+.swbtn{gap:10px;width:100%;box-sizing:border-box}
+.swbtn button{width:auto;height:58px;border-radius:18px;display:flex;align-items:center;justify-content:center;gap:7px;font:800 16px var(--disp);transition:transform .08s,box-shadow .08s}
+.swbtn button svg{width:22px;height:22px}
+.swbtn .n,.swbtn .y{flex:1 1 0;min-width:0;padding:0 10px;white-space:nowrap}
+.swbtn .n{background:var(--bg2);color:var(--bad);border:1.5px solid color-mix(in srgb,var(--bad) 55%,transparent);box-shadow:0 4px 0 color-mix(in srgb,var(--bad) 40%,transparent);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px)}
+.swbtn .y{background:linear-gradient(180deg,color-mix(in srgb,var(--ok) 88%,#fff),var(--ok));color:#fff;border:1.5px solid rgb(255 255 255/.25);box-shadow:0 4px 0 var(--ok-s),inset 0 1px 0 rgb(255 255 255/.35);text-shadow:0 1px 0 rgb(0 0 0/.15)}
+.swbtn .say{flex:0 0 58px;width:58px;height:58px;border-radius:18px;background:var(--bg2);border:1px solid var(--glass-b);color:var(--acc);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px)}
+.swbtn .n:active,.swbtn .y:active{transform:translateY(4px);box-shadow:none}
 </style>
 </head>
 <body>
@@ -4042,7 +4053,7 @@ const R_MODE = {
       <div class="swz"><span class="swl no">${I("x")} Bilmiyorum</span><span class="swl yes">Biliyorum ${I("check")}</span>
         <div class="swc" id="swc"><div class="swf"><div class="big">${esc(it.de)}</div><span class="tap">${I("refresh", "ln")} Çevirmek için dokun</span></div>
         <div class="swb"><div class="de">${esc(it.de)}</div><div class="big">${esc(it.tr)}</div>${exHtml(it, true)}${it.note ? `<div class="small" style="color:var(--tx2)">💡 ${esc(it.note)}</div>` : ""}</div></div></div>
-      <div class="swbtn"><button class="n" id="sn" aria-label="Bilmiyorum">${I("x")}</button><button class="say" id="spk" aria-label="Dinle">${ICON_SPK}</button><button class="y" id="sy" aria-label="Biliyorum">${I("check")}</button></div>
+      <div class="swbtn"><button class="n" id="sn">${I("x", "ln")}<span>Bilmiyorum</span></button><button class="say" id="spk" aria-label="Dinle">${ICON_SPK}</button><button class="y" id="sy">${I("check", "ln")}<span>Biliyorum</span></button></div>
       <div id="vd"></div><div class="foot" hidden></div>`;
     const c = $("#swc"), z = $(".swz");
     speak(it.de); $("#spk").onclick = () => speak(it.de);
