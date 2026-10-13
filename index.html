@@ -703,10 +703,10 @@ svg.bat{display:block;flex:none}
 .bx .s{font-size:12.5px;color:var(--tx2);line-height:1.3}
 .bx .bi{position:absolute;right:8px;top:8px;width:40px;height:40px}
 .bx.wide{grid-column:1/3;flex-direction:row;align-items:center;gap:14px;min-height:0;padding:16px}
-.bx.hero{background:linear-gradient(135deg,#4F46E5,#3654F4 55%,#0EA5E9)!important;color:#fff;border:0!important;box-shadow:0 12px 26px -12px rgb(54 84 244/.65)}
+.bx.hero{background:var(--hero,linear-gradient(135deg,#4F46E5,#3654F4 55%,#0EA5E9))!important;color:#fff;border:0!important;box-shadow:0 12px 26px -12px color-mix(in srgb,var(--acc) 65%,transparent)}
 .bx.hero small{color:rgb(255 255 255/.8)}
 .bx.hero .s{color:rgb(255 255 255/.85)}
-.bx.hero .go{margin-left:auto;background:#fff;color:#2B3FD1;border-radius:14px;padding:10px 16px;font:800 14px var(--disp);box-shadow:0 4px 0 rgb(0 0 40/.25);white-space:nowrap}
+.bx.hero .go{margin-left:auto;background:#fff;color:var(--acc-s);border-radius:14px;padding:10px 16px;font:800 14px var(--disp);box-shadow:0 4px 0 rgb(0 0 40/.25);white-space:nowrap}
 .bx.hero .gring{background:conic-gradient(#fff calc(var(--p)*1%),rgb(255 255 255/.22) 0)}
 .bx.hero .gring b{background:#3448E6;color:#fff;font-size:14px}
 .mini7{display:flex;gap:4px;margin-top:auto}
@@ -735,7 +735,7 @@ svg.bat{display:block;flex:none}
 .chestfx svg.il{width:120px;height:120px;animation:pop .5s cubic-bezier(.3,1.6,.5,1)}
 @keyframes pop{from{transform:scale(.4);opacity:0}}
 .chestfx b{font:800 30px var(--disp);color:var(--amber-s)}
-.wday{text-align:center;padding:26px 18px 22px;border-radius:26px;background:linear-gradient(150deg,#6D5BFF,#3654F4 50%,#0EA5E9);color:#fff;position:relative;overflow:hidden}
+.wday{text-align:center;padding:26px 18px 22px;border-radius:26px;background:var(--hero,linear-gradient(150deg,#6D5BFF,#3654F4 50%,#0EA5E9));color:#fff;position:relative;overflow:hidden}
 .wday small{font:700 11.5px var(--body);letter-spacing:.14em;opacity:.85}
 .wday h2{font:800 34px var(--disp);margin:8px 0 2px}
 .wday .tr{font-size:17px;opacity:.95}
@@ -1267,6 +1267,37 @@ body.game #view > .swz{flex:1 1 auto;height:auto;min-height:340px;max-height:560
 .swbtn .y{background:linear-gradient(180deg,color-mix(in srgb,var(--ok) 88%,#fff),var(--ok));color:#fff;border:1.5px solid rgb(255 255 255/.25);box-shadow:0 4px 0 var(--ok-s),inset 0 1px 0 rgb(255 255 255/.35);text-shadow:0 1px 0 rgb(0 0 0/.15)}
 .swbtn .say{flex:0 0 58px;width:58px;height:58px;border-radius:18px;background:var(--bg2);border:1px solid var(--glass-b);color:var(--acc);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px)}
 .swbtn .n:active,.swbtn .y:active{transform:translateY(4px);box-shadow:none}
+
+/* ---------- Renk temaları (Ayarlar → Renk teması) ---------- */
+:root[data-pal="okyanus"]:not([data-theme="dark"]){--acc:#0284C7;--acc2:#0272AD;--acc-s:#015A88;--acc-d:#DDF0FB;--bg:#EEF7FB;--mesh:radial-gradient(70% 45% at 0% 0%,#BDE6F7 0%,transparent 70%),radial-gradient(60% 40% at 100% 18%,#C3D3FF 0%,transparent 70%),radial-gradient(70% 45% at 30% 100%,#C8F5EA 0%,transparent 70%),radial-gradient(50% 35% at 100% 85%,#FFE7CF 0%,transparent 70%),#EEF7FB}
+@media (prefers-color-scheme: dark){:root[data-pal="okyanus"]:not([data-theme="light"]){--acc:#38BDF8;--acc2:#5CCBFA;--acc-s:#0E85BC;--acc-d:#0E2C3D;--bg:#061826;--solid:#0E2636;--nav:rgb(8 28 42/.74);--mesh:radial-gradient(80% 50% at 0% 0%,#0B5E8A 0%,transparent 62%),radial-gradient(70% 45% at 100% 35%,#1450B0 0%,transparent 64%),radial-gradient(60% 40% at 20% 100%,#0B7A70 0%,transparent 66%),#061826;}}
+:root[data-pal="okyanus"][data-theme="dark"]{--acc:#38BDF8;--acc2:#5CCBFA;--acc-s:#0E85BC;--acc-d:#0E2C3D;--bg:#061826;--solid:#0E2636;--nav:rgb(8 28 42/.74);--mesh:radial-gradient(80% 50% at 0% 0%,#0B5E8A 0%,transparent 62%),radial-gradient(70% 45% at 100% 35%,#1450B0 0%,transparent 64%),radial-gradient(60% 40% at 20% 100%,#0B7A70 0%,transparent 66%),#061826;}
+:root[data-pal="gunbatimi"]:not([data-theme="dark"]){--acc:#EA580C;--acc2:#D24D08;--acc-s:#A63C05;--acc-d:#FFEBDD;--bg:#FFF5EE;--mesh:radial-gradient(70% 45% at 0% 0%,#FFD3B8 0%,transparent 70%),radial-gradient(60% 40% at 100% 18%,#FFC9DE 0%,transparent 70%),radial-gradient(70% 45% at 30% 100%,#FFF0B8 0%,transparent 70%),radial-gradient(50% 35% at 100% 85%,#E3D4FF 0%,transparent 70%),#FFF5EE}
+@media (prefers-color-scheme: dark){:root[data-pal="gunbatimi"]:not([data-theme="light"]){--acc:#FF8A4C;--acc2:#FFA06B;--acc-s:#C9551C;--acc-d:#3A2014;--bg:#1A0E14;--solid:#2A1820;--nav:rgb(40 20 28/.74);--mesh:radial-gradient(80% 50% at 0% 0%,#B33A1E 0%,transparent 62%),radial-gradient(70% 45% at 100% 35%,#9E2A6B 0%,transparent 64%),radial-gradient(60% 40% at 20% 100%,#B8740F 0%,transparent 66%),#1A0E14;}}
+:root[data-pal="gunbatimi"][data-theme="dark"]{--acc:#FF8A4C;--acc2:#FFA06B;--acc-s:#C9551C;--acc-d:#3A2014;--bg:#1A0E14;--solid:#2A1820;--nav:rgb(40 20 28/.74);--mesh:radial-gradient(80% 50% at 0% 0%,#B33A1E 0%,transparent 62%),radial-gradient(70% 45% at 100% 35%,#9E2A6B 0%,transparent 64%),radial-gradient(60% 40% at 20% 100%,#B8740F 0%,transparent 66%),#1A0E14;}
+:root[data-pal="orman"]:not([data-theme="dark"]){--acc:#0F8A6E;--acc2:#0C775F;--acc-s:#095C49;--acc-d:#DAF3EC;--bg:#F0F8F3;--mesh:radial-gradient(70% 45% at 0% 0%,#C6EFD2 0%,transparent 70%),radial-gradient(60% 40% at 100% 18%,#E5F5C0 0%,transparent 70%),radial-gradient(70% 45% at 30% 100%,#C8EAF0 0%,transparent 70%),radial-gradient(50% 35% at 100% 85%,#F5E6C8 0%,transparent 70%),#F0F8F3}
+@media (prefers-color-scheme: dark){:root[data-pal="orman"]:not([data-theme="light"]){--acc:#2CC79E;--acc2:#4FD4B0;--acc-s:#17916F;--acc-d:#0F2E26;--bg:#07170F;--solid:#10261C;--nav:rgb(10 30 22/.74);--mesh:radial-gradient(80% 50% at 0% 0%,#11603A 0%,transparent 62%),radial-gradient(70% 45% at 100% 35%,#3A6B12 0%,transparent 64%),radial-gradient(60% 40% at 20% 100%,#0E5560 0%,transparent 66%),#07170F;}}
+:root[data-pal="orman"][data-theme="dark"]{--acc:#2CC79E;--acc2:#4FD4B0;--acc-s:#17916F;--acc-d:#0F2E26;--bg:#07170F;--solid:#10261C;--nav:rgb(10 30 22/.74);--mesh:radial-gradient(80% 50% at 0% 0%,#11603A 0%,transparent 62%),radial-gradient(70% 45% at 100% 35%,#3A6B12 0%,transparent 64%),radial-gradient(60% 40% at 20% 100%,#0E5560 0%,transparent 66%),#07170F;}
+:root[data-pal="pembe"]:not([data-theme="dark"]){--acc:#DB2777;--acc2:#C2216A;--acc-s:#9D174D;--acc-d:#FDE4F0;--bg:#FFF2F8;--mesh:radial-gradient(70% 45% at 0% 0%,#FFC6E2 0%,transparent 70%),radial-gradient(60% 40% at 100% 18%,#E6CCFF 0%,transparent 70%),radial-gradient(70% 45% at 30% 100%,#FFE0CC 0%,transparent 70%),radial-gradient(50% 35% at 100% 85%,#CCE9FF 0%,transparent 70%),#FFF2F8}
+@media (prefers-color-scheme: dark){:root[data-pal="pembe"]:not([data-theme="light"]){--acc:#F472B6;--acc2:#F78FC5;--acc-s:#BE3F84;--acc-d:#3A1630;--bg:#170A1A;--solid:#2A1430;--nav:rgb(36 14 40/.74);--mesh:radial-gradient(80% 50% at 0% 0%,#9D1F6B 0%,transparent 62%),radial-gradient(70% 45% at 100% 35%,#5B2BB5 0%,transparent 64%),radial-gradient(60% 40% at 20% 100%,#B33B5A 0%,transparent 66%),#170A1A;}}
+:root[data-pal="pembe"][data-theme="dark"]{--acc:#F472B6;--acc2:#F78FC5;--acc-s:#BE3F84;--acc-d:#3A1630;--bg:#170A1A;--solid:#2A1430;--nav:rgb(36 14 40/.74);--mesh:radial-gradient(80% 50% at 0% 0%,#9D1F6B 0%,transparent 62%),radial-gradient(70% 45% at 100% 35%,#5B2BB5 0%,transparent 64%),radial-gradient(60% 40% at 20% 100%,#B33B5A 0%,transparent 66%),#170A1A;}
+:root[data-pal="gece"]:not([data-theme="dark"]){--acc:#4338CA;--acc2:#3730A3;--acc-s:#2A2580;--acc-d:#E4E3FB;--bg:#F1F2F8;--mesh:radial-gradient(70% 45% at 0% 0%,#D5D8EE 0%,transparent 70%),radial-gradient(60% 40% at 100% 18%,#DCE3F5 0%,transparent 70%),radial-gradient(70% 45% at 30% 100%,#E6E0F2 0%,transparent 70%),radial-gradient(50% 35% at 100% 85%,#E0EAF0 0%,transparent 70%),#F1F2F8}
+@media (prefers-color-scheme: dark){:root[data-pal="gece"]:not([data-theme="light"]){--acc:#818CF8;--acc2:#99A2FA;--acc-s:#4F56C9;--acc-d:#1C1F40;--bg:#05060D;--solid:#11131F;--nav:rgb(10 11 20/.8);--mesh:radial-gradient(80% 50% at 0% 0%,#1B1F4A 0%,transparent 62%),radial-gradient(70% 45% at 100% 35%,#141A33 0%,transparent 64%),radial-gradient(60% 40% at 20% 100%,#221638 0%,transparent 66%),#05060D;}}
+:root[data-pal="gece"][data-theme="dark"]{--acc:#818CF8;--acc2:#99A2FA;--acc-s:#4F56C9;--acc-d:#1C1F40;--bg:#05060D;--solid:#11131F;--nav:rgb(10 11 20/.8);--mesh:radial-gradient(80% 50% at 0% 0%,#1B1F4A 0%,transparent 62%),radial-gradient(70% 45% at 100% 35%,#141A33 0%,transparent 64%),radial-gradient(60% 40% at 20% 100%,#221638 0%,transparent 66%),#05060D;}
+/* Düz tasarım: cam ve renkli arka plan yok, sade düz kartlar */
+:root[data-look="flat"] body::before{background:var(--bg)}
+:root[data-look="flat"] .card,:root[data-look="flat"] .opt,:root[data-look="flat"] .swf,:root[data-look="flat"] .swb,:root[data-look="flat"] .qk,:root[data-look="flat"] .gtile,:root[data-look="flat"] .kbd{backdrop-filter:none!important;-webkit-backdrop-filter:none!important}
+:root[data-look="flat"]{--bg2:var(--solid);--glass-b:var(--line)}
+/* tema seçici */
+.palg{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:6px 0 8px}
+.palg button{display:grid;justify-items:center;gap:6px;padding:10px 4px 8px;border-radius:14px;background:var(--bg3);border:2px solid transparent;font-size:12.5px;font-weight:700;color:var(--tx2)}
+.palg button.on{border-color:var(--acc);color:var(--tx);background:var(--bg2)}
+.palg i{width:38px;height:38px;border-radius:50%;box-shadow:inset 0 0 0 2px rgb(255 255 255/.5),0 3px 8px -3px rgb(0 0 0/.35)}
+:root[data-pal="okyanus"]{--hero:linear-gradient(135deg,#0369A1,#0284C7 55%,#14B8A6)}
+:root[data-pal="gunbatimi"]{--hero:linear-gradient(135deg,#DB2777,#EA580C 55%,#F59E0B)}
+:root[data-pal="orman"]{--hero:linear-gradient(135deg,#065F46,#0F8A6E 55%,#65A30D)}
+:root[data-pal="pembe"]{--hero:linear-gradient(135deg,#9333EA,#DB2777 55%,#FB7185)}
+:root[data-pal="gece"]{--hero:linear-gradient(135deg,#1E1B4B,#3730A3 55%,#4338CA)}
 </style>
 </head>
 <body>
@@ -7822,15 +7853,27 @@ async function importCode(txt, stay){
 
 /* ================= AYARLAR ================= */
 // Otomatik: gündüz açık, 21:00 ile 06:00 arası koyu (akşam modu)
-function applyTheme(){ if (IN_CLAUDE) return; let t = S.opt.theme; if (t === "auto") { const h = new Date().getHours(); t = h >= 21 || h < 6 ? "dark" : "light"; } document.documentElement.setAttribute("data-theme", t); }
+const PALS = [["mor","Gedsche moru","#6A5CFF","#38BDF8"],["okyanus","Okyanus","#0284C7","#1450B0"],["gunbatimi","Gün batımı","#EA580C","#9E2A6B"],["orman","Orman","#0F8A6E","#3A6B12"],["pembe","Gedsche pembesi","#DB2777","#5B2BB5"],["gece","Gece mavisi","#4338CA","#05060D"]];
+function applyTheme(){
+  const r = document.documentElement, o = S.opt;
+  if (o.pal && o.pal !== "mor") r.setAttribute("data-pal", o.pal); else r.removeAttribute("data-pal");
+  if (o.look === "flat") r.setAttribute("data-look", "flat"); else r.removeAttribute("data-look");
+  let t = o.theme || "auto";
+  if (t === "auto") { if (IN_CLAUDE) { r.removeAttribute("data-theme"); return; } const h = new Date().getHours(); t = h >= 21 || h < 6 ? "dark" : "light"; }
+  r.setAttribute("data-theme", t);
+}
 applyTheme(); setInterval(applyTheme, 5 * 60 * 1000);
 $("#gear").onclick = () => {
   const o = S.opt;
   const seen = Object.keys(S.prog).length, sat = Object.values(S.prog).filter(r => r.b >= 4).length;
   $("#sheetIn").innerHTML = `<h2>Ayarlar</h2>
-    ${IN_CLAUDE ? "" : `<div class="lbl">Görünüm</div>
-    <div class="seg" id="th">${[["auto","Otomatik"],["light","Açık"],["dark","Koyu"]].map(([k, t]) => `<button data-v="${k}" class="${o.theme===k?"on":""}">${t}</button>`).join("")}</div>`}
-${IN_CLAUDE ? "" : `<p class="small muted" style="margin:4px 2px">Otomatik: gündüz açık, 21:00'den sonra koyu.</p>`}
+    <div class="lbl">Renk teması</div>
+    <div class="palg" id="pal">${PALS.map(([k, t, a, b]) => `<button data-v="${k}" class="${(o.pal||"mor")===k?"on":""}"><i style="background:linear-gradient(135deg,${a},${b})"></i>${t}</button>`).join("")}</div>
+    <div class="lbl">Tasarım</div>
+    <div class="seg" id="look">${[["glass","Cam"],["flat","Düz"]].map(([k, t]) => `<button data-v="${k}" class="${(o.look||"glass")===k?"on":""}">${t}</button>`).join("")}</div>
+    <div class="lbl">Görünüm</div>
+    <div class="seg" id="th">${[["auto","Otomatik"],["light","Açık"],["dark","Koyu"]].map(([k, t]) => `<button data-v="${k}" class="${(o.theme||"auto")===k?"on":""}">${t}</button>`).join("")}</div>
+    <p class="small muted" style="margin:4px 2px">${IN_CLAUDE ? "Otomatik: telefonun açık/koyu ayarını izler." : "Otomatik: gündüz açık, 21:00'den sonra koyu."}</p>
     <div class="lbl">Adın</div>
     <input id="myname" class="typed" autocomplete="off" maxlength="20" value="${esc(ME())}" style="margin-top:4px;width:100%">
     <div class="lbl">Ses ve titreşim</div>
@@ -7867,6 +7910,8 @@ ${IN_CLAUDE ? "" : `<p class="small muted" style="margin:4px 2px">Otomatik: gün
     <button class="btn2" id="cls" style="width:100%;margin-top:14px">Kapat</button>`;
   $("#sheet").classList.add("show");
   $$("#th button").forEach(b => b.onclick = () => { o.theme = b.dataset.v; save(); applyTheme(); $("#gear").onclick(); });
+  $$("#pal button").forEach(b => b.onclick = () => { o.pal = b.dataset.v; save(); applyTheme(); sfx("tap"); $$("#pal button").forEach(x => x.classList.toggle("on", x === b)); });
+  $$("#look button").forEach(b => b.onclick = () => { o.look = b.dataset.v; save(); applyTheme(); sfx("tap"); $$("#look button").forEach(x => x.classList.toggle("on", x === b)); });
   $$("#snd button").forEach(b => b.onclick = () => { o.sound = o.vib = !!+b.dataset.v; save(); sfx("ok"); $("#gear").onclick(); });
   $("#myname").onchange = e => { const v = e.target.value.trim(); if (v) { o.name = v; save(); toast("Merhaba " + v + "!"); } };
   $$("#gmd button").forEach(b => b.onclick = () => { o.gmode = b.dataset.v; save(); gmodeApply(); $("#gear").onclick(); });
@@ -7913,7 +7958,7 @@ if (IN_CLAUDE) (async () => {
       else if ((S.ts || 0) > (remote.ts || 0)) save();
     } else if (S.ts) save();
   } catch(e) {}
-  rerender(); onboarding();
+  applyTheme(); rerender(); onboarding();
 })();
 else if ("serviceWorker" in navigator && location.protocol !== "file:") navigator.serviceWorker.register("sw.js").catch(() => {});
 </script>
