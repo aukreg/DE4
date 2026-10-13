@@ -2941,6 +2941,1306 @@ window.DATA = {
       "geliyorum, yoldayım"
      ]
     ]
+   },
+   {
+    "n": 21,
+    "de": "Beim Kinderarzt",
+    "tr": "Çocuk doktorunda",
+    "lines": [
+     [
+      "A",
+      "Wann ist nochmal der Termin beim Kinderarzt?",
+      "Çocuk doktoru randevusu ne zamandı?"
+     ],
+     [
+      "N",
+      "Morgen um Viertel nach neun. Die U-Untersuchung.",
+      "Yarın dokuzu çeyrek geçe. Rutin kontrol."
+     ],
+     [
+      "A",
+      "Ach ja. Bekommt sie da auch eine Impfung?",
+      "Ha evet. Orada aşı da olacak mı?"
+     ],
+     [
+      "N",
+      "Ich glaube schon. Wo ist eigentlich das gelbe Heft?",
+      "Sanırım evet. Bu arada sarı kontrol defteri nerede?"
+     ],
+     [
+      "A",
+      "Im Schrank bei den Papieren, zusammen mit dem Impfpass.",
+      "Dolapta, evrakların yanında. Aşı kartıyla birlikte."
+     ],
+     [
+      "N",
+      "Gut. Kannst du mitkommen? Allein ist das immer so stressig.",
+      "İyi. Sen de gelebilir misin? Tek başına hep çok stresli oluyor."
+     ],
+     [
+      "A",
+      "Ja, ich hab mir den Vormittag freigenommen.",
+      "Evet, öğlene kadar izin aldım."
+     ],
+     [
+      "N",
+      "… So, wir sind da. Hast du die Versichertenkarte?",
+      "… Evet, geldik. Sigorta kartı sende mi?"
+     ],
+     [
+      "A",
+      "Ja, hier. Ich geb sie an der Anmeldung ab.",
+      "Evet, burada. Resepsiyona veririm."
+     ],
+     [
+      "N",
+      "Das Wartezimmer ist total voll.",
+      "Bekleme salonu tıklım tıklım."
+     ],
+     [
+      "A",
+      "Die Frau hat gesagt, es dauert ungefähr zwanzig Minuten.",
+      "Kadın yaklaşık yirmi dakika sürer dedi."
+     ],
+     [
+      "N",
+      "Okay. Gece, schau mal, hier gibt's Bücher.",
+      "Tamam. Gece, bak, burada kitaplar var."
+     ],
+     [
+      "A",
+      "Sie hat ein bisschen Angst, glaube ich.",
+      "Biraz korkuyor galiba."
+     ],
+     [
+      "N",
+      "Ist doch klar. Beim letzten Mal hat sie eine Spritze bekommen.",
+      "Çok normal. Geçen sefer iğne olmuştu."
+     ],
+     [
+      "A",
+      "Wir sagen ihr einfach, dass es nur ganz kurz pikst.",
+      "Ona sadece bir an batacağını söyleriz."
+     ],
+     [
+      "N",
+      "Und danach gibt's ein Eis. Das hilft immer.",
+      "Sonra da dondurma var. O hep işe yarar."
+     ],
+     [
+      "A",
+      "Hörst du? Sie rufen uns. Wir sind dran.",
+      "Duydun mu? Bizi çağırıyorlar. Sıra bizde."
+     ],
+     [
+      "N",
+      "Na dann. Komm, Maus, wir gehen rein.",
+      "Hadi bakalım. Gel kuzum, içeri giriyoruz."
+     ]
+    ],
+    "k": [
+     [
+      "der Termin beim Kinderarzt",
+      "çocuk doktoru randevusu"
+     ],
+     [
+      "eine Impfung bekommen",
+      "aşı olmak"
+     ],
+     [
+      "sich freinehmen",
+      "izin almak"
+     ],
+     [
+      "die Versichertenkarte",
+      "sigorta kartı"
+     ],
+     [
+      "an der Anmeldung",
+      "resepsiyonda, kayıtta"
+     ],
+     [
+      "Es dauert ungefähr …",
+      "yaklaşık … sürer"
+     ],
+     [
+      "Wir sind dran",
+      "sıra bizde"
+     ]
+    ]
+   },
+   {
+    "n": 22,
+    "de": "Ein Brief vom Amt",
+    "tr": "Resmi daireden mektup",
+    "lines": [
+     [
+      "N",
+      "Hier ist Post für dich. Von der Familienkasse.",
+      "Sana posta var. Familienkasse'den, çocuk parası dairesinden."
+     ],
+     [
+      "A",
+      "Oh je. Was wollen die denn?",
+      "Eyvah. Ne istiyorlar ki?"
+     ],
+     [
+      "N",
+      "Mach ihn doch auf. Vielleicht ist es nichts Schlimmes.",
+      "Açsana. Belki kötü bir şey değildir."
+     ],
+     [
+      "A",
+      "… Es geht um das Kindergeld für Gece.",
+      "… Gece'nin çocuk parasıyla ilgili."
+     ],
+     [
+      "N",
+      "Und? Gibt es ein Problem?",
+      "Ee? Bir sorun mu var?"
+     ],
+     [
+      "A",
+      "Nein, sie brauchen nur noch ein paar Unterlagen von uns.",
+      "Hayır, sadece bizden birkaç belge daha lazımmış."
+     ],
+     [
+      "N",
+      "Welche denn?",
+      "Hangileri?"
+     ],
+     [
+      "A",
+      "Ein Formular und eine Kopie von der Geburtsurkunde.",
+      "Bir form ve doğum belgesinin fotokopisi."
+     ],
+     [
+      "N",
+      "Die Geburtsurkunde haben wir. Bis wann müssen wir das schicken?",
+      "Doğum belgesi bizde var. Ne zamana kadar göndermemiz lazım?"
+     ],
+     [
+      "A",
+      "Bis zum Fünfzehnten. Also in zwei Wochen.",
+      "Ayın on beşine kadar. Yani iki hafta içinde."
+     ],
+     [
+      "N",
+      "Okay. Verstehst du das Formular?",
+      "Tamam. Formu anlıyor musun?"
+     ],
+     [
+      "A",
+      "Ehrlich gesagt nicht ganz. Das Deutsch ist echt kompliziert.",
+      "Açıkçası pek değil. Almancası gerçekten karışık."
+     ],
+     [
+      "N",
+      "Amtsdeutsch eben. Das versteht keiner.",
+      "Resmi dil işte. Onu kimse anlamaz."
+     ],
+     [
+      "A",
+      "Ich frag morgen meinen Kollegen. Der hilft mir bestimmt beim Ausfüllen.",
+      "Yarın iş arkadaşıma sorarım. Doldururken bana kesin yardım eder."
+     ],
+     [
+      "N",
+      "Gute Idee. Und vergiss nicht, unten zu unterschreiben.",
+      "İyi fikir. Bir de en alta imza atmayı unutma."
+     ],
+     [
+      "A",
+      "Wir beide, oder? Hier steht: Unterschrift von beiden Eltern.",
+      "İkimiz de, değil mi? Burada yazıyor: iki ebeveynin de imzası."
+     ],
+     [
+      "N",
+      "Na gut. Leg es auf den Tisch, dann vergessen wir es nicht.",
+      "Peki. Masaya koy, öyle unutmayız."
+     ]
+    ],
+    "k": [
+     [
+      "Oh je",
+      "eyvah"
+     ],
+     [
+      "Es geht um …",
+      "… ile ilgili"
+     ],
+     [
+      "die Unterlagen",
+      "belgeler, evrak"
+     ],
+     [
+      "Bis wann …?",
+      "ne zamana kadar …?"
+     ],
+     [
+      "Ehrlich gesagt",
+      "açıkçası"
+     ],
+     [
+      "beim Ausfüllen helfen",
+      "doldurmaya yardım etmek"
+     ],
+     [
+      "unterschreiben",
+      "imzalamak"
+     ]
+    ]
+   },
+   {
+    "n": 23,
+    "de": "Das Paket beim Nachbarn",
+    "tr": "Komşudaki paket",
+    "lines": [
+     [
+      "A",
+      "Ist heute ein Paket gekommen? Meine Bestellung sollte heute da sein.",
+      "Bugün paket geldi mi? Siparişim bugün gelecekti."
+     ],
+     [
+      "N",
+      "Nein, hier war niemand. Ich war den ganzen Tag zu Hause.",
+      "Hayır, kimse gelmedi. Bütün gün evdeydim."
+     ],
+     [
+      "A",
+      "Komisch. In der App steht „zugestellt“.",
+      "Garip. Uygulamada „teslim edildi“ yazıyor."
+     ],
+     [
+      "N",
+      "Schau mal in den Briefkasten. Vielleicht ist da ein Zettel.",
+      "Posta kutusuna bir bak. Belki not vardır."
+     ],
+     [
+      "A",
+      "… Ja, hier: „Ihr Paket ist bei Familie Schneider, zweiter Stock.“",
+      "… Evet, işte: „Paketiniz ikinci kattaki Schneider ailesinde.“"
+     ],
+     [
+      "N",
+      "Ach, die Nachbarn von oben. Die sind nett.",
+      "Haa, üst kattaki komşular. Onlar iyi insanlar."
+     ],
+     [
+      "A",
+      "Aber warum hat der Paketbote nicht bei uns geklingelt?",
+      "Ama kargocu neden bizim zili çalmadı?"
+     ],
+     [
+      "N",
+      "Vielleicht hab ich es nicht gehört. Gece hat so laut gesungen.",
+      "Belki ben duymadım. Kızımız çok yüksek sesle şarkı söylüyordu."
+     ],
+     [
+      "A",
+      "Na dann. Ich geh kurz hoch und hol es.",
+      "O zaman bir koşu yukarı çıkıp alayım."
+     ],
+     [
+      "N",
+      "Nimm doch die Schokolade mit. Als Dankeschön.",
+      "Çikolatayı da götürsene. Teşekkür olarak."
+     ],
+     [
+      "A",
+      "Gute Idee. Bin gleich wieder da.",
+      "İyi fikir. Hemen dönerim."
+     ],
+     [
+      "N",
+      "… Und? Hast du es?",
+      "… Ee? Aldın mı?"
+     ],
+     [
+      "A",
+      "Ja. Frau Schneider hat sich total über die Schokolade gefreut.",
+      "Evet. Schneider Hanım çikolataya çok sevindi."
+     ],
+     [
+      "N",
+      "Schön. Was ist denn drin?",
+      "Güzel. İçinde ne var peki?"
+     ],
+     [
+      "A",
+      "Die Regenjacke für Gece. Und meine neuen Kopfhörer.",
+      "Gece'nin yağmurluğu. Bir de benim yeni kulaklığım."
+     ],
+     [
+      "N",
+      "Gece soll die Jacke gleich anprobieren. Hoffentlich passt sie.",
+      "Hemen Gece'ye bir giydirelim. Umarım olur."
+     ],
+     [
+      "A",
+      "Und wenn nicht, schicken wir sie zurück.",
+      "Olmazsa da geri göndeririz."
+     ],
+     [
+      "N",
+      "Nächstes Mal lassen wir das Paket an die Packstation schicken.",
+      "Bir dahaki sefere paketi paket otomatına gönderelim."
+     ],
+     [
+      "A",
+      "Oder Gece singt ein bisschen leiser.",
+      "Ya da Gece biraz daha alçak sesle şarkı söyler."
+     ]
+    ],
+    "k": [
+     [
+      "zugestellt",
+      "teslim edildi"
+     ],
+     [
+      "bei den Nachbarn",
+      "komşularda"
+     ],
+     [
+      "Ich geh kurz hoch",
+      "bir koşu yukarı çıkayım"
+     ],
+     [
+      "als Dankeschön",
+      "teşekkür olarak"
+     ],
+     [
+      "Bin gleich wieder da",
+      "hemen dönerim"
+     ],
+     [
+      "sich über … freuen",
+      "… -e sevinmek"
+     ],
+     [
+      "zurückschicken",
+      "geri göndermek"
+     ]
+    ]
+   },
+   {
+    "n": 24,
+    "de": "Die Heizung ist kaputt",
+    "tr": "Kalorifer bozuk",
+    "lines": [
+     [
+      "N",
+      "Ist dir nicht kalt? Hier drin ist es eiskalt.",
+      "Üşümüyor musun? İçerisi buz gibi."
+     ],
+     [
+      "A",
+      "Doch. Ich hab schon zwei Pullis an.",
+      "Üşüyorum tabii. Üstümde iki kazak var."
+     ],
+     [
+      "N",
+      "Die Heizung im Wohnzimmer ist ganz kalt. Fass mal an.",
+      "Salondaki kalorifer buz gibi. Bir dokun."
+     ],
+     [
+      "A",
+      "Stimmt. Und im Bad?",
+      "Doğru. Ya banyoda?"
+     ],
+     [
+      "N",
+      "Da auch. Und warmes Wasser gibt es auch nicht.",
+      "Orada da. Sıcak su da yok."
+     ],
+     [
+      "A",
+      "Na super. Und das im November.",
+      "Harika ya. Hem de kasımda."
+     ],
+     [
+      "N",
+      "Ruf bitte den Vermieter an. Gece darf nicht krank werden.",
+      "Lütfen ev sahibini ara. Gece'nin hasta olmasını istemiyorum."
+     ],
+     [
+      "A",
+      "Ich ruf erst den Hausmeister an. Der ist schneller.",
+      "Önce kapıcıyı arayayım. O daha hızlı."
+     ],
+     [
+      "N",
+      "Okay. Versuch's.",
+      "Tamam. Bir dene."
+     ],
+     [
+      "A",
+      "… Er geht nicht ran. Ich sprech ihm auf die Mailbox.",
+      "… Açmıyor. Sesli mesaj bırakıyorum."
+     ],
+     [
+      "N",
+      "Und schreib dem Vermieter eine E-Mail. Dann haben wir es schriftlich.",
+      "Bir de ev sahibine e-posta yaz. Böylece yazılı olur."
+     ],
+     [
+      "A",
+      "Gute Idee. Was soll ich schreiben?",
+      "İyi fikir. Ne yazayım?"
+     ],
+     [
+      "N",
+      "„Sehr geehrter Herr Wagner, seit heute Morgen funktioniert unsere Heizung nicht.“",
+      "„Sayın Bay Wagner, bu sabahtan beri kaloriferimiz çalışmıyor.“"
+     ],
+     [
+      "A",
+      "„Bitte schicken Sie so schnell wie möglich jemanden.“ Ist das gut so?",
+      "„Lütfen en kısa sürede birini gönderin.“ Böyle iyi mi?"
+     ],
+     [
+      "N",
+      "Perfekt. Und schreib noch: „Wir haben ein kleines Kind.“",
+      "Harika. Bir de şunu yaz: „Küçük bir çocuğumuz var.“"
+     ],
+     [
+      "A",
+      "Gesendet. … Oh, der Hausmeister ruft zurück!",
+      "Gönderildi. … Aa, kapıcı geri arıyor!"
+     ],
+     [
+      "N",
+      "Na endlich. Was sagt er?",
+      "Nihayet. Ne diyor?"
+     ],
+     [
+      "A",
+      "Er kommt morgen früh um acht. Heute geht es nicht mehr.",
+      "Yarın sabah sekizde geliyormuş. Bugün artık olmuyormuş."
+     ],
+     [
+      "N",
+      "Dann holen wir heute Abend alle Decken raus.",
+      "O zaman bu akşam bütün battaniyeleri çıkarıyoruz."
+     ]
+    ],
+    "k": [
+     [
+      "Ist dir nicht kalt?",
+      "üşümüyor musun?"
+     ],
+     [
+      "Und das im November",
+      "hem de kasımda"
+     ],
+     [
+      "den Vermieter anrufen",
+      "ev sahibini aramak"
+     ],
+     [
+      "Er geht nicht ran",
+      "telefonu açmıyor"
+     ],
+     [
+      "schriftlich",
+      "yazılı olarak"
+     ],
+     [
+      "so schnell wie möglich",
+      "mümkün olduğunca çabuk"
+     ],
+     [
+      "zurückrufen",
+      "geri aramak"
+     ]
+    ]
+   },
+   {
+    "n": 25,
+    "de": "Der Zug hat Verspätung",
+    "tr": "Trenin rötarı var",
+    "lines": [
+     [
+      "A",
+      "Komm, wir müssen los. Der Zug fährt um zehn nach zehn.",
+      "Hadi, çıkmamız lazım. Tren onu on geçe kalkıyor."
+     ],
+     [
+      "N",
+      "Ich weiß. Hast du die Fahrkarten?",
+      "Biliyorum. Biletler sende mi?"
+     ],
+     [
+      "A",
+      "Ja, auf dem Handy. Gleis vier.",
+      "Evet, telefonda. Dört numaralı peron."
+     ],
+     [
+      "N",
+      "… Schau mal auf die Anzeige. Da steht „circa 25 Minuten später“.",
+      "… Ekrana bir bak. „Yaklaşık 25 dakika gecikmeli“ yazıyor."
+     ],
+     [
+      "A",
+      "Typisch Bahn. Immer das Gleiche.",
+      "Tipik Deutsche Bahn. Hep aynı hikâye."
+     ],
+     [
+      "N",
+      "Und wir sind extra früh losgegangen.",
+      "Bir de özellikle erken çıktık."
+     ],
+     [
+      "A",
+      "Schaffen wir dann noch den Anschluss in Köln?",
+      "O zaman Köln'deki aktarmaya yetişir miyiz?"
+     ],
+     [
+      "N",
+      "Ich glaube nicht. Wir haben nur zehn Minuten zum Umsteigen.",
+      "Sanmıyorum. Aktarma için sadece on dakikamız var."
+     ],
+     [
+      "A",
+      "Ich schreib Emre, dass wir später kommen.",
+      "Emre'ye geç geleceğimizi yazayım."
+     ],
+     [
+      "N",
+      "Ja, mach. Und Gece? Hat sie Hunger?",
+      "Evet, yaz. Ya Gece? Acıkmış mı?"
+     ],
+     [
+      "A",
+      "Sie will eine Brezel. Da drüben ist ein Bäcker.",
+      "Bretzel istiyor. Şurada bir fırın var."
+     ],
+     [
+      "N",
+      "Okay, ich hol schnell eine. Pass auf die Koffer auf.",
+      "Tamam, hemen bir tane alayım. Bavullara göz kulak ol."
+     ],
+     [
+      "A",
+      "Mach ich. … Oh nein, jetzt steht da „40 Minuten“.",
+      "Olur. … Eyvah, şimdi „40 dakika“ yazıyor."
+     ],
+     [
+      "N",
+      "Echt jetzt? Das kann doch nicht wahr sein!",
+      "Cidden mi? Olamaz ya!"
+     ],
+     [
+      "A",
+      "Emre sagt, kein Problem. Er holt uns in Köln mit dem Auto ab.",
+      "Emre sorun değil diyor. Bizi Köln'den arabayla alacakmış."
+     ],
+     [
+      "N",
+      "Wie lieb von ihm. Dann müssen wir gar nicht umsteigen.",
+      "Ne kadar düşünceli. O zaman hiç aktarma yapmamıza gerek yok."
+     ],
+     [
+      "A",
+      "Genau. Hörst du die Durchsage? Unser Zug kommt!",
+      "Aynen. Anonsu duyuyor musun? Trenimiz geliyor!"
+     ],
+     [
+      "N",
+      "Endlich! Komm, Gece, wir steigen ein.",
+      "Nihayet! Gel Gece, biniyoruz."
+     ]
+    ],
+    "k": [
+     [
+      "Der Zug hat Verspätung",
+      "trenin rötarı var"
+     ],
+     [
+      "den Anschluss schaffen",
+      "aktarmaya yetişmek"
+     ],
+     [
+      "umsteigen",
+      "aktarma yapmak"
+     ],
+     [
+      "Pass auf … auf",
+      "… -e göz kulak ol"
+     ],
+     [
+      "Das kann doch nicht wahr sein!",
+      "olamaz ya!"
+     ],
+     [
+      "jemanden abholen",
+      "birini almak (karşılamak)"
+     ],
+     [
+      "einsteigen",
+      "binmek"
+     ]
+    ]
+   },
+   {
+    "n": 26,
+    "de": "Die Hose umtauschen",
+    "tr": "Pantolonu değiştirmek",
+    "lines": [
+     [
+      "N",
+      "Die Jeans ist mir zu eng. Ich muss sie umtauschen.",
+      "Bu kot bana çok dar. Değiştirmem lazım."
+     ],
+     [
+      "A",
+      "Schade. Welche Größe hast du genommen?",
+      "Yazık. Hangi bedeni almıştın?"
+     ],
+     [
+      "N",
+      "38. Ich brauche wohl 40.",
+      "38. Galiba 40 lazım."
+     ],
+     [
+      "A",
+      "Hast du noch den Kassenbon?",
+      "Fiş hâlâ sende mi?"
+     ],
+     [
+      "N",
+      "Ich glaube schon. Er müsste in der Tüte sein.",
+      "Sanırım evet. Poşette olması lazım."
+     ],
+     [
+      "A",
+      "Wie lange kann man da umtauschen?",
+      "Orada kaç gün içinde değiştirebiliyorsun?"
+     ],
+     [
+      "N",
+      "Vierzehn Tage, glaube ich. Ich hab sie letzte Woche gekauft.",
+      "On dört gün sanırım. Geçen hafta almıştım."
+     ],
+     [
+      "A",
+      "Dann passt das noch. Wir können heute Nachmittag zusammen hingehen.",
+      "O zaman daha süre var. Bugün öğleden sonra birlikte gidebiliriz."
+     ],
+     [
+      "N",
+      "Gern. Gece braucht sowieso neue Schuhe.",
+      "Olur. Gece'nin zaten yeni ayakkabıya ihtiyacı var."
+     ],
+     [
+      "A",
+      "… So, da sind die Jeans. Gibt's die auch in 40?",
+      "… Evet, kotlar burada. 40 bedeni de var mı?"
+     ],
+     [
+      "N",
+      "Ja, hier. Ich probier sie schnell an. Wo sind die Umkleiden?",
+      "Evet, işte. Hemen bir deneyeyim. Kabinler nerede?"
+     ],
+     [
+      "A",
+      "Da hinten, neben der Kasse.",
+      "Arkada, kasanın yanında."
+     ],
+     [
+      "N",
+      "… Und? Wie sieht sie aus?",
+      "… Ee? Nasıl duruyor?"
+     ],
+     [
+      "A",
+      "Gut! Die passt viel besser.",
+      "Güzel! Bu çok daha iyi oldu."
+     ],
+     [
+      "N",
+      "Finde ich auch. Dann tausche ich sie jetzt an der Kasse um.",
+      "Bence de. O zaman şimdi kasada değiştiriyorum."
+     ],
+     [
+      "A",
+      "Okay. Ich warte mit Gece draußen.",
+      "Tamam. Ben Gece'yle dışarıda bekliyorum."
+     ],
+     [
+      "N",
+      "… Erledigt. Und die ist jetzt sogar im Angebot. Ich hab fünf Euro zurückbekommen.",
+      "… Hallettim. Üstelik şimdi indirimdeymiş. Beş euro geri aldım."
+     ],
+     [
+      "A",
+      "Na, das ist ja super. Davon kaufen wir Gece ein Eis.",
+      "Bu harika işte. Onunla Gece'ye dondurma alırız."
+     ],
+     [
+      "N",
+      "Erst die Schuhe. Die Kinderabteilung ist im ersten Stock.",
+      "Önce ayakkabılar. Çocuk reyonu birinci katta."
+     ]
+    ],
+    "k": [
+     [
+      "Die Jeans ist mir zu eng",
+      "kot bana dar"
+     ],
+     [
+      "umtauschen",
+      "(mağazada) değiştirmek"
+     ],
+     [
+      "Welche Größe?",
+      "hangi beden?"
+     ],
+     [
+      "der Kassenbon",
+      "fiş"
+     ],
+     [
+      "anprobieren",
+      "(kıyafet) denemek"
+     ],
+     [
+      "die Umkleide",
+      "deneme kabini"
+     ],
+     [
+      "im Angebot",
+      "indirimde"
+     ]
+    ]
+   },
+   {
+    "n": 27,
+    "de": "Geces Geburtstag planen",
+    "tr": "Gece'nin doğum gününü planlamak",
+    "lines": [
+     [
+      "N",
+      "Du weißt, dass Gece in drei Wochen Geburtstag hat, oder?",
+      "Gece'nin üç hafta sonra doğum günü olduğunu biliyorsun, değil mi?"
+     ],
+     [
+      "A",
+      "Natürlich! Wie könnte ich das vergessen?",
+      "Tabii ki! Nasıl unutabilirim?"
+     ],
+     [
+      "N",
+      "Wollen wir eine kleine Feier machen?",
+      "Küçük bir kutlama yapalım mı?"
+     ],
+     [
+      "A",
+      "Ja, unbedingt. Hier zu Hause oder draußen?",
+      "Evet, kesinlikle. Evde mi, dışarıda mı?"
+     ],
+     [
+      "N",
+      "Zu Hause ist einfacher. Wir laden ein paar Kinder aus der Kita ein.",
+      "Evde daha kolay. Kreşten birkaç çocuğu davet ederiz."
+     ],
+     [
+      "A",
+      "Wie viele denn? Unsere Wohnung ist nicht so groß.",
+      "Kaç tane peki? Evimiz o kadar büyük değil."
+     ],
+     [
+      "N",
+      "Vier oder fünf. Plus die Eltern natürlich.",
+      "Dört beş tane. Artı aileleri tabii."
+     ],
+     [
+      "A",
+      "Oh Mann, das wird laut.",
+      "Of ya, ortalık gürültülü olacak."
+     ],
+     [
+      "N",
+      "Ja, aber sie wird sich so freuen.",
+      "Evet, ama çok sevinecek."
+     ],
+     [
+      "A",
+      "Stimmt. Und meine Eltern wollen bestimmt per Video dabei sein.",
+      "Doğru. Annemle babam da kesin görüntülü katılmak ister."
+     ],
+     [
+      "N",
+      "Klar. Wir rufen sie an, wenn sie die Kerzen auspustet.",
+      "Tabii. Mumları üflerken onları ararız."
+     ],
+     [
+      "A",
+      "Was für einen Kuchen machen wir?",
+      "Nasıl bir pasta yapalım?"
+     ],
+     [
+      "N",
+      "Sie will unbedingt einen Kuchen mit Einhorn.",
+      "Mutlaka tek boynuzlu atlı bir pasta istiyor."
+     ],
+     [
+      "A",
+      "Den bestellen wir lieber beim Bäcker. Du weißt ja, wie ich backe.",
+      "Onu iyisi mi pastaneden sipariş edelim. Nasıl pasta yaptığımı biliyorsun."
+     ],
+     [
+      "N",
+      "Oh ja, das weiß ich.",
+      "Ah evet, onu biliyorum."
+     ],
+     [
+      "A",
+      "Und was schenken wir ihr?",
+      "Peki ona ne hediye edelim?"
+     ],
+     [
+      "N",
+      "Einen Roller? Sie fragt jeden Tag danach.",
+      "Scooter mı? Her gün onu soruyor."
+     ],
+     [
+      "A",
+      "Gute Idee. Dann schreib ich heute noch die Einladungen.",
+      "İyi fikir. O zaman davetiyeleri bugün yazarım."
+     ],
+     [
+      "N",
+      "Lass mal, das mach ich. Sonst steht da wieder das falsche Datum.",
+      "Bırak, onu ben yaparım. Yoksa yine yanlış tarih yazarsın."
+     ]
+    ],
+    "k": [
+     [
+      "Geburtstag haben",
+      "doğum günü olmak"
+     ],
+     [
+      "eine Feier machen",
+      "kutlama yapmak"
+     ],
+     [
+      "einladen",
+      "davet etmek"
+     ],
+     [
+      "dabei sein",
+      "katılmak, orada olmak"
+     ],
+     [
+      "die Kerzen auspusten",
+      "mumları üflemek"
+     ],
+     [
+      "schenken",
+      "hediye etmek"
+     ],
+     [
+      "Lass mal",
+      "bırak, gerek yok"
+     ]
+    ]
+   },
+   {
+    "n": 28,
+    "de": "Das Wetter und der Ausflug",
+    "tr": "Hava ve gezi",
+    "lines": [
+     [
+      "A",
+      "Wie wird das Wetter am Sonntag?",
+      "Pazar günü hava nasıl olacak?"
+     ],
+     [
+      "N",
+      "Moment, ich schau mal in der App. … Sonnig, zwanzig Grad.",
+      "Dur, uygulamaya bakayım. … Güneşli, yirmi derece."
+     ],
+     [
+      "A",
+      "Super! Dann machen wir einen Ausflug.",
+      "Süper! O zaman bir geziye çıkalım."
+     ],
+     [
+      "N",
+      "Wohin denn? Nicht zu weit, wegen Gece.",
+      "Nereye peki? Gece'yi düşünürsek çok uzak olmasın."
+     ],
+     [
+      "A",
+      "Zum See vielleicht? Da gibt es einen Spielplatz und ein Café.",
+      "Göle mi gitsek? Orada oyun parkı ve bir kafe var."
+     ],
+     [
+      "N",
+      "Klingt gut. Wir können ein Picknick machen.",
+      "Kulağa iyi geliyor. Piknik yapabiliriz."
+     ],
+     [
+      "A",
+      "Ja! Ich mach Sandwiches und du deinen Nudelsalat.",
+      "Evet! Ben sandviç yaparım, sen de makarna salatanı."
+     ],
+     [
+      "N",
+      "Okay. Und wir brauchen Sonnencreme. Und einen Sonnenhut für Gece.",
+      "Tamam. Bir de güneş kremi lazım. Gece'ye de bir güneş şapkası."
+     ],
+     [
+      "A",
+      "… Oh nein. Schau mal raus.",
+      "… Eyvah. Dışarı bir bak."
+     ],
+     [
+      "N",
+      "Es regnet! Die App hat doch Sonne gesagt.",
+      "Yağmur yağıyor! Ama uygulama güneşli demişti."
+     ],
+     [
+      "A",
+      "Das gibt's doch nicht.",
+      "Olur mu böyle ya."
+     ],
+     [
+      "N",
+      "Und jetzt? Gece hat sich so gefreut.",
+      "Ee, şimdi ne olacak? Gece o kadar sevinmişti ki."
+     ],
+     [
+      "A",
+      "Vielleicht hört es bald auf. Es ist nur ein Schauer.",
+      "Belki birazdan diner. Sadece bir sağanak."
+     ],
+     [
+      "N",
+      "Hoffentlich. Sonst gehen wir ins Schwimmbad.",
+      "Umarım. Yoksa yüzme havuzuna gideriz."
+     ],
+     [
+      "A",
+      "Warte … es wird schon heller. Da hinten ist blauer Himmel.",
+      "Bekle… hava açılıyor bile. Şurada mavi gökyüzü var."
+     ],
+     [
+      "N",
+      "Stimmt! Dann fahren wir einfach eine Stunde später los.",
+      "Doğru! O zaman bir saat sonra yola çıkarız, o kadar."
+     ],
+     [
+      "A",
+      "Und wir nehmen den Regenschirm mit. Sicher ist sicher.",
+      "Şemsiyeyi de alalım. Garanti olsun."
+     ],
+     [
+      "N",
+      "Und Gummistiefel für Gece. Sie springt bestimmt in jede Pfütze.",
+      "Bir de Gece'ye yağmur çizmesi. Kesin her su birikintisine atlar."
+     ],
+     [
+      "A",
+      "Das ist für sie das Beste am Regen.",
+      "Onun için yağmurun en güzel yanı bu."
+     ]
+    ],
+    "k": [
+     [
+      "Wie wird das Wetter?",
+      "hava nasıl olacak?"
+     ],
+     [
+      "einen Ausflug machen",
+      "geziye çıkmak"
+     ],
+     [
+      "Es regnet",
+      "yağmur yağıyor"
+     ],
+     [
+      "Das gibt's doch nicht",
+      "olur mu böyle, inanılır gibi değil"
+     ],
+     [
+      "Es hört auf",
+      "diniyor"
+     ],
+     [
+      "Es wird heller",
+      "hava açılıyor"
+     ],
+     [
+      "Hoffentlich",
+      "umarım"
+     ]
+    ]
+   },
+   {
+    "n": 29,
+    "de": "Eine Nachricht von der Kita",
+    "tr": "Kreşten bir mesaj",
+    "lines": [
+     [
+      "N",
+      "Hast du die Nachricht von der Kita gelesen?",
+      "Kreşten gelen mesajı okudun mu?"
+     ],
+     [
+      "A",
+      "Nein, noch nicht. Was steht drin?",
+      "Hayır, daha değil. Ne yazıyor?"
+     ],
+     [
+      "N",
+      "Nächsten Dienstag ist Elternabend. Um sieben.",
+      "Önümüzdeki salı veli toplantısı var. Saat yedide."
+     ],
+     [
+      "A",
+      "Dienstag? Da hab ich Fußball.",
+      "Salı mı? O gün futbolum var."
+     ],
+     [
+      "N",
+      "Dann spielst du halt einmal nicht. Oder ich geh allein.",
+      "O zaman bir kerelik oynamazsın. Ya da ben yalnız giderim."
+     ],
+     [
+      "A",
+      "Nein, ich komm mit. Worum geht es denn?",
+      "Yok, ben de gelirim. Konu ne peki?"
+     ],
+     [
+      "N",
+      "Um das Sommerfest und um die neue Erzieherin.",
+      "Yaz şenliği ve yeni öğretmenle ilgili."
+     ],
+     [
+      "A",
+      "Ah, die neue Erzieherin. Gece redet die ganze Zeit von ihr.",
+      "Ah, yeni öğretmen. Gece'nin dilinden düşmüyor."
+     ],
+     [
+      "N",
+      "Ja, sie mag sie sehr. Und da steht noch was: Die Kita ist am Freitag geschlossen.",
+      "Evet, onu çok seviyor. Bir şey daha yazıyor: Kreş cuma günü kapalı."
+     ],
+     [
+      "A",
+      "Am Freitag? Warum das denn?",
+      "Cuma mı? O niye ki?"
+     ],
+     [
+      "N",
+      "Teamtag. Die Erzieherinnen haben eine Fortbildung.",
+      "Personel günü. Öğretmenlerin eğitimi var."
+     ],
+     [
+      "A",
+      "Oh je. Wer passt dann auf Gece auf?",
+      "Eyvah. O zaman Gece'ye kim bakacak?"
+     ],
+     [
+      "N",
+      "Ich arbeite am Freitag bis zwei. Kannst du Homeoffice machen?",
+      "Cuma ikiye kadar çalışıyorum. Evden çalışabilir misin?"
+     ],
+     [
+      "A",
+      "Ich frag morgen meinen Chef. Das klappt bestimmt.",
+      "Yarın şefime sorarım. Kesin olur."
+     ],
+     [
+      "N",
+      "Gut. Und wir sollen bis Mittwoch antworten, ob wir zum Elternabend kommen.",
+      "İyi. Bir de veli toplantısına gelip gelmeyeceğimizi çarşambaya kadar bildirmemiz lazım."
+     ],
+     [
+      "A",
+      "Schreib einfach: Wir kommen beide.",
+      "Sadece şunu yaz: İkimiz de geliyoruz."
+     ],
+     [
+      "N",
+      "Mach ich. … Oh, und sie fragen, wer fürs Sommerfest einen Kuchen backt.",
+      "Yazıyorum. … Aa, bir de yaz şenliği için kim kek yapar diye soruyorlar."
+     ],
+     [
+      "A",
+      "Diesmal back ich wirklich. Versprochen.",
+      "Bu sefer gerçekten ben yapacağım. Söz."
+     ],
+     [
+      "N",
+      "Na, mal sehen.",
+      "Eh, bakalım."
+     ]
+    ],
+    "k": [
+     [
+      "Was steht drin?",
+      "ne yazıyor?"
+     ],
+     [
+      "der Elternabend",
+      "veli toplantısı"
+     ],
+     [
+      "Worum geht es?",
+      "konu ne?"
+     ],
+     [
+      "geschlossen",
+      "kapalı"
+     ],
+     [
+      "auf … aufpassen",
+      "… -e bakmak"
+     ],
+     [
+      "Das klappt bestimmt",
+      "kesin olur"
+     ],
+     [
+      "Mal sehen",
+      "bakalım"
+     ]
+    ]
+   },
+   {
+    "n": 30,
+    "de": "Bayram mit der Familie",
+    "tr": "Ailece bayram",
+    "lines": [
+     [
+      "N",
+      "Am Donnerstag ist schon Bayram. Hast du frei bekommen?",
+      "Perşembe bayram. İzin alabildin mi?"
+     ],
+     [
+      "A",
+      "Ja, zum Glück. Mein Chef war ganz entspannt.",
+      "Evet, neyse ki. Şefim hiç sorun çıkarmadı."
+     ],
+     [
+      "N",
+      "Schön. In Deutschland ist das ja leider kein Feiertag.",
+      "Güzel. Almanya'da maalesef resmi tatil değil tabii."
+     ],
+     [
+      "A",
+      "Leider. In der Türkei hätten wir jetzt mehrere Tage frei.",
+      "Maalesef. Türkiye'de olsak birkaç gün tatilimiz olurdu."
+     ],
+     [
+      "N",
+      "Was machen wir am Donnerstag?",
+      "Perşembe ne yapıyoruz?"
+     ],
+     [
+      "A",
+      "Morgens rufen wir meine Eltern an. Per Video, damit sie Gece sehen.",
+      "Sabah annemle babamı ararız. Görüntülü, Gece'yi görsünler diye."
+     ],
+     [
+      "N",
+      "Und danach fahren wir zu meinem Bruder, oder?",
+      "Sonra da abime gidiyoruz, değil mi?"
+     ],
+     [
+      "A",
+      "Genau. Deine Mutter kommt auch, hat er gesagt.",
+      "Aynen. Annen de gelecekmiş, öyle dedi."
+     ],
+     [
+      "N",
+      "Oh, dann muss ich Baklava mitbringen. Sonst ist sie beleidigt.",
+      "Aa, o zaman baklava götürmem lazım. Yoksa küser."
+     ],
+     [
+      "A",
+      "Kaufen wir die beim türkischen Bäcker? Der hat gute.",
+      "Türk fırınından mı alalım? Onunkiler güzel."
+     ],
+     [
+      "N",
+      "Ja, aber wir müssen morgen bestellen. Vor Bayram ist da immer viel los.",
+      "Evet, ama yarın sipariş vermemiz lazım. Bayramdan önce orası hep çok kalabalık oluyor."
+     ],
+     [
+      "A",
+      "Stimmt. Und Gece zieht ihr neues Kleid an.",
+      "Doğru. Bir de Gece yeni elbisesini giyer."
+     ],
+     [
+      "N",
+      "Das rote. Sie will es jeden Tag anziehen.",
+      "Kırmızı olanı. Her gün giymek istiyor."
+     ],
+     [
+      "A",
+      "Wir sollten ihr noch zeigen, wie man die Hand küsst.",
+      "Ona el öpmeyi de göstermeliyiz."
+     ],
+     [
+      "N",
+      "Hab ich schon mit ihr geübt. Sie küsst die Hand und legt sie an die Stirn.",
+      "Onu çalıştık bile. Eli öpüp alnına koyuyor."
+     ],
+     [
+      "A",
+      "Wirklich? Wie süß!",
+      "Gerçekten mi? Ne tatlı!"
+     ],
+     [
+      "N",
+      "Aber danach fragt sie sofort: „Wo ist mein Geld?“",
+      "Ama hemen ardından „Param nerede?“ diye soruyor."
+     ],
+     [
+      "A",
+      "Haha. Sie weiß schon genau, wie Bayram funktioniert.",
+      "Haha. Bayram işini şimdiden çözmüş."
+     ],
+     [
+      "N",
+      "Na dann: schöne Feiertage, Schatz. Ein bisschen zu früh, aber egal.",
+      "O zaman iyi bayramlar canım. Biraz erken ama olsun."
+     ]
+    ],
+    "k": [
+     [
+      "Hast du frei bekommen?",
+      "izin alabildin mi?"
+     ],
+     [
+      "der Feiertag",
+      "resmi tatil günü, bayram günü"
+     ],
+     [
+      "per Video",
+      "görüntülü"
+     ],
+     [
+      "Sonst ist sie beleidigt",
+      "yoksa küser"
+     ],
+     [
+      "Da ist viel los",
+      "orası çok kalabalık"
+     ],
+     [
+      "die Hand küssen",
+      "el öpmek"
+     ],
+     [
+      "Schöne Feiertage!",
+      "iyi bayramlar!, iyi tatiller!"
+     ]
+    ]
    }
   ]
  },
