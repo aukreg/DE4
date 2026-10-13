@@ -1191,6 +1191,26 @@ body.full:not(.game) #view > .foot:has(.chatin){margin-top:auto}
 /* açık temada alt paneldeki seçim çipleri görünür olsun */
 .sheet .chip:not(.on){background:var(--bg3);border-color:var(--line)!important}
 .sheet .btn2{border-color:var(--line)!important}
+
+/* ===== İçerik listesi ===== */
+.clg{display:flex;overflow-x:auto;scrollbar-width:none}
+.clg button{flex:1 0 auto;padding:0 12px}
+.clf{display:flex;gap:6px;flex-wrap:wrap;margin-top:10px}
+.clf .chip.on{background:var(--acc);color:#fff;border-color:transparent!important}
+.card.cl{margin-top:10px;padding:2px 12px}
+.clr{display:flex;align-items:center;gap:10px;padding:11px 0;border-bottom:1px solid var(--line)}
+.clr:last-child{border-bottom:0}
+.clt{flex:1;min-width:0;display:grid;gap:2px}
+.clt b{font-weight:700;font-size:15px;overflow-wrap:anywhere}
+.clt small{color:var(--tx2);font-size:13px}
+.clt em{font-style:normal;font-size:11.5px;font-weight:700;color:var(--tx3)}
+.clr.seen em{color:var(--ok)} .clr.pin em{color:var(--acc)} .clr.off em{color:var(--bad)}
+.clr.off .clt{opacity:.55}
+.cla{display:flex;gap:6px;flex:none}
+.cla button{min-height:34px;padding:0 11px;border-radius:11px;font-size:12.5px;font-weight:700;background:var(--bg3);color:var(--tx2);border:1px solid var(--glass-b)}
+.cla .add{background:var(--acc);color:#fff;border-color:transparent}
+.cla .pinned{background:color-mix(in srgb,var(--ok) 18%,transparent);color:var(--ok)}
+.cla .rm{color:var(--bad)}
 </style>
 </head>
 <body>
@@ -1767,7 +1787,7 @@ function load(from){
   if (!s) try { s = JSON.parse(localStorage.getItem(KEY)); } catch(e) {}
   s = s || {};
   s.prog = s.prog || {}; s.days = s.days || {}; s.book = s.book || {}; s.scen = s.scen || {};
-  s.drafts = s.drafts || {}; s.games = s.games || {}; s.gram = s.gram || {}; s.mine = s.mine || []; s.weeks = s.weeks || {}; s.ask = s.ask || []; s.askDone = s.askDone || []; s.qa = s.qa || [];
+  s.drafts = s.drafts || {}; s.games = s.games || {}; s.gram = s.gram || {}; s.mine = s.mine || []; s.weeks = s.weeks || {}; s.ask = s.ask || []; s.askDone = s.askDone || []; s.qa = s.qa || []; s.skip = s.skip || {}; s.pin = s.pin || {};
   s.opt = Object.assign({theme:"auto", rate:0.9, pace:10, wpace:5, n:10}, s.opt || {});
   // eski kayıt: puan (s) → kutu (b) ve tekrar tarihi
   Object.values(s.prog).forEach(r => { if (r.b === undefined) { r.b = r.s >= 4 ? 4 : r.s ? 1 : 0; r.due = r.due || ymd(new Date()); } });
@@ -1793,7 +1813,9 @@ const SRC = {
   wd: {t:"Kelimeler", ic:"🔤"},
   my: {t:"Benim cümlelerim", ic:"🙋"},
 };
-let ITEMS = [], BYID = {};
+let ITEMS = [], BYID = {}, ITEMS_ALL = [];
+// içerik listesinden çıkarılanlar (S.skip: kimlik → zaman; eksi = geri alındı) desteye, pratiğe ve oyunlara girmez
+const isSkipped = id => (S.skip[id] || 0) > 0, isPinned = id => (S.pin[id] || 0) > 0;
 function buildItems(){
   ITEMS = []; BYID = {};
   const add = it => { if (!BYID[it.id]) {
@@ -1822,6 +1844,7 @@ function buildItems(){
   // en sık günlük kalıplar: sadece oyun havuzu için (günlük desteye girmez); Claude'dan gelen aynı kimlikli kalıp önce eklenir
   // en sık 167 kalıp: 12 Ekim'den itibaren her gün 10 tanesi günün kalıbı olur (Claude'daki sabah rutiniyle aynı sıra)
   (typeof L1PH !== "undefined" ? L1PH : []).forEach((p, i) => { const d = new Date(2026, 9, 12 + Math.floor(i / 10)); add({id:p.id, src:"ph", l1:1, de:p.de, tr:p.tr, ex:p.ex, note:p.note, cat:p.cat, d:ymd(d), o:i}); });
+  ITEMS_ALL = ITEMS; ITEMS = ITEMS_ALL.filter(i => !isSkipped(i.id));
 }
 const WORDS = () => ITEMS.filter(i => i.src === "wd");
 buildItems();
@@ -1850,7 +1873,7 @@ function todaysPhrases(){
 // okunan kitap bölümleri (yoksa ilk bölüm): kitap alıştırmaları buradan
 const readChapters = () => { const r = Object.keys(S.book.read || {}).map(Number); return r.length ? r : [1]; };
 function poolFor(src){
-  if (src === "ph") return ITEMS.filter(i => i.src === "ph" && i.d <= TODAY);
+  if (src === "ph") return ITEMS.filter(i => i.src === "ph" && (i.d <= TODAY || isPinned(i.id)));
   if (src === "bk" || src === "bl") { const rc = readChapters(); return ITEMS.filter(i => i.src === src && rc.includes(i.ch)); }
   if (src === "sc") { const done = Object.keys(S.scen.done || {}); const sc = done.length ? done : [todaysScenario() && todaysScenario().id]; return ITEMS.filter(i => i.src === "sc" && sc.includes(i.sc)); }
   if (src === "due") return dueItems();
@@ -1862,12 +1885,14 @@ function poolFor(src){
 const dueItems = () => ITEMS.filter(isDue).sort((a, b) => S.prog[a.id].due.localeCompare(S.prog[b.id].due) || S.prog[a.id].b - S.prog[b.id].b);
 // günün destesi: vadesi gelenler + yeni kartlar (önce günün kalıpları, sonra okunan bölümün kalıpları)
 function newItems(){
-  const out = ITEMS.filter(i => i.src === "my" && !S.prog[i.id]).concat(todaysPhrases().filter(p => !S.prog[p.id]));
+  // içerik listesinden elle eklenenler en önde
+  const pinned = ITEMS.filter(i => isPinned(i.id) && !S.prog[i.id]);
+  const out = pinned.concat(ITEMS.filter(i => i.src === "my" && !S.prog[i.id] && !isPinned(i.id)), todaysPhrases().filter(p => !S.prog[p.id] && !isPinned(p.id)));
   const rc = readChapters();
-  const extra = ITEMS.filter(i => i.src === "bk" && rc.includes(i.ch) && !S.prog[i.id]);
+  const extra = ITEMS.filter(i => i.src === "bk" && rc.includes(i.ch) && !S.prog[i.id] && !isPinned(i.id));
   const room = Math.max(0, S.opt.pace - (dayRec().newSeen || 0));
   const wroom = Math.max(0, S.opt.wpace - (dayRec().newW || 0));
-  const ws = WORDS().filter(w => !S.prog[w.id]).sort((a, b) => a.o - b.o).slice(0, wroom);
+  const ws = WORDS().filter(w => !S.prog[w.id] && !isPinned(w.id)).sort((a, b) => a.o - b.o).slice(0, wroom);
   return out.concat(extra.slice(0, Math.max(0, room - out.length)), ws);
 }
 function deck(){ return {due: dueItems().slice(0, 40), fresh: newItems()}; }
@@ -6343,6 +6368,51 @@ function gmodeApply(){
   if (!inGame && tab === "games" && !screen) renderGames();
 }
 
+/* ===== İçerik listesi (Ayarlar → İçerik listesi): her şeyi gör, desteye ekle ya da çıkar ===== */
+const CL = {g: "ph", f: "all", q: "", lim: 60};
+function renderContentList(){
+  setTop("İçerik listesi", true);
+  const G = [["ph", "Kalıplar"], ["wd", "Kelimeler"], ["bk", "Kitap"], ["sc", "Senaryo"], ["my", "Benim"]];
+  const F = [["all", "Tümü"], ["new", "Henüz gelmedi"], ["seen", "Çalışılan"], ["off", "Çıkarılan"]];
+  const inG = i => CL.g === "bk" ? (i.src === "bk" || i.src === "bl") : i.src === CL.g;
+  const fmtD = d => { const [y, m, dd] = d.split("-"); return `${+dd} ${["Oca","Şub","Mar","Nis","May","Haz","Tem","Ağu","Eyl","Eki","Kas","Ara"][+m - 1]}`; };
+  const state = i => isSkipped(i.id) ? ["off", "Çıkarıldı"] : S.prog[i.id] ? ["seen", LVL_TXT[lvl(i)]] : isPinned(i.id) ? ["pin", "Desteye eklendi"]
+    : i.src === "ph" && i.d > TODAY ? ["new", "Gelecek: " + fmtD(i.d)] : ["new", "Henüz gelmedi"];
+  const all = ITEMS_ALL.filter(inG).sort((a, b) => (a.o ?? 1e9) - (b.o ?? 1e9) || (a.d || "").localeCompare(b.d || ""));
+  $("#view").innerHTML = `
+    <p class="small muted" style="margin:6px 2px 10px">Henüz gelmeyenleri <b>Ekle</b> ile bugünkü desteye alabilir, istemediklerini <b>Çıkar</b> ile pratikten ve oyunlardan kaldırabilirsin.</p>
+    <div class="seg clg">${G.map(([k, t]) => `<button data-g="${k}" class="${CL.g === k ? "on" : ""}">${t}</button>`).join("")}</div>
+    <input id="clq" class="typed" type="search" autocomplete="off" placeholder="Ara: Almanca ya da Türkçe" value="${esc(CL.q)}" style="margin-top:10px;width:100%">
+    <div class="clf">${F.map(([k, t]) => `<button class="chip ${CL.f === k ? "on" : ""}" data-f="${k}">${t}</button>`).join("")}</div>
+    <div id="cll"></div>`;
+  const draw = () => {
+    const q = CL.q.trim().toLowerCase();
+    const xs = all.filter(i => (!q || (i.de + " " + i.tr).toLowerCase().includes(q)) && (CL.f === "all" || (CL.f === "new" ? ["new", "pin"].includes(state(i)[0]) : state(i)[0] === CL.f)));
+    const cnt = {n: all.filter(i => !S.prog[i.id] && !isSkipped(i.id)).length, s: all.filter(i => S.prog[i.id]).length, o: all.filter(i => isSkipped(i.id)).length};
+    $("#cll").innerHTML = `<p class="small muted" style="margin:8px 2px 0">${all.length} öğe · ${cnt.s} çalışılan · ${cnt.n} henüz gelmedi${cnt.o ? ` · ${cnt.o} çıkarıldı` : ""}</p>` +
+      (xs.length ? `<div class="card cl">${xs.slice(0, CL.lim).map(i => { const [st, tx] = state(i); return `
+        <div class="clr ${st}" data-id="${esc(i.id)}"><span class="clt"><b>${esc(i.de)}</b><small>${esc(i.tr)}</small><em>${tx}</em></span>
+          <span class="cla">${st === "off" ? `<button data-a="back">Geri al</button>` : `${st === "new" ? `<button class="add" data-a="add">＋ Ekle</button>` : st === "pin" ? `<button class="pinned" data-a="unpin">✓ Eklendi</button>` : ""}<button class="rm" data-a="rm" aria-label="Çıkar">Çıkar</button>`}</span></div>`; }).join("")}</div>`
+      : `<div class="card empty" style="margin-top:12px">Bu filtrede bir şey yok.</div>`) +
+      (xs.length > CL.lim ? `<button class="btn2" id="clm" style="width:100%;margin-top:10px">Daha fazla (${xs.length - CL.lim})</button>` : "");
+    $$("#cll .clr button").forEach(b => b.onclick = () => {
+      const id = b.closest(".clr").dataset.id, a = b.dataset.a, t = Date.now();
+      if (a === "add") { S.pin[id] = t; toast("Bugünkü desteye eklendi"); }
+      else if (a === "unpin") S.pin[id] = -t;
+      else if (a === "rm") { S.skip[id] = t; S.pin[id] = S.pin[id] > 0 ? -t : S.pin[id]; toast("Çıkarıldı · pratikte ve oyunlarda çıkmayacak"); }
+      else if (a === "back") S.skip[id] = -t;
+      Object.keys(S.pin).concat(Object.keys(S.skip)).forEach(k => { if (S.pin[k] === undefined) delete S.pin[k]; if (S.skip[k] === undefined) delete S.skip[k]; });
+      save(); buildItems(); sfx("tap");
+      const y = scrollY; draw(); scrollTo(0, y);
+    });
+    if ($("#clm")) $("#clm").onclick = () => { CL.lim += 100; draw(); };
+  };
+  $$(".clg button").forEach(b => b.onclick = () => { CL.g = b.dataset.g; CL.lim = 60; renderContentList(); });
+  $$(".clf button").forEach(b => b.onclick = () => { CL.f = b.dataset.f; CL.lim = 60; renderContentList(); });
+  $("#clq").oninput = e => { CL.q = e.target.value; CL.lim = 60; draw(); };
+  draw();
+}
+
 /* ================= EŞİTLEME: iki sürüm arasında kodla taşı, birleştir ================= */
 const SYNC_TAG = "ALMANCA1:";
 async function syncCode(){
@@ -6384,6 +6454,7 @@ function mergeState(a, b){
   const mm = m.miss = m.miss || {}; Object.entries(b.miss || {}).forEach(([k, r]) => { const x = mm[k]; if (!x || (r.last || "") > (x.last || "") || ((r.last || "") === (x.last || "") && (r.n || 0) > (x.n || 0))) mm[k] = r; });
   const fc = m.fchat = m.fchat || []; (b.fchat || []).forEach(x => { const i = fc.findIndex(y => y.id === x.id); if (i < 0) fc.push(x); else if (fc[i].p && !x.p) fc[i] = x; });
   fc.sort((a, b) => a.id.localeCompare(b.id)); m.fmig = m.fmig || b.fmig;
+  ["skip", "pin"].forEach(k => Object.entries(b[k] || {}).forEach(([id, t]) => { if (Math.abs(t) > Math.abs(m[k][id] || 0)) m[k][id] = t; }));
   m.xp = Math.max(m.xp || 0, b.xp || 0); m.badges = Object.assign({}, b.badges || {}, m.badges || {});
   Object.keys(b.games).forEach(k => { const x = m.games[k], y = b.games[k], low = GAMES[k] && GAMES[k].low; m.games[k] = x === undefined ? y : low ? Math.min(x, y) : Math.max(x, y); });
   return m;
@@ -6432,6 +6503,7 @@ ${IN_CLAUDE ? "" : `<p class="small muted" style="margin:4px 2px">Otomatik: gün
     <p class="small muted" style="margin:4px 2px">${SR ? "Açık: Konuş modu ve Turbo söylediğini dinleyip düzeltir. İlk kullanımda izin isterse İzin ver de." : SR_CTOR ? (IN_CLAUDE ? "Bu ekran mikrofona izin vermiyor. Mikrofonlu sürüm: aukreg.github.io/DE4 (Safari/Chrome)." : "Kapalı: bu ekranda mikrofon açılmadı.") : "Bu tarayıcı konuşma tanımayı desteklemiyor."}</p>
     ${!SR && SR_CTOR ? `<button class="btn2" id="mic" style="width:100%">Mikrofonu tekrar dene</button>` : ""}
     <button class="btn2" id="onbx" style="width:100%;margin-top:14px">Tanıtımı tekrar göster</button>
+    <button class="btn2" id="cman" style="width:100%;margin-top:10px">📋 İçerik listesi</button>
     <div class="lbl">İçerik</div>
     <p class="small muted" style="margin:4px 2px">${D.phrases.length} kalıp · ${D.book.chapters.length} kitap bölümü · ${D.scenarios.length} senaryo · ${ITEMS.length} çalışılabilir cümle · ${allWritings().length} düzeltilmiş yazı</p>
     <button class="btn2" id="cls" style="width:100%;margin-top:14px">Kapat</button>`;
@@ -6451,6 +6523,7 @@ ${IN_CLAUDE ? "" : `<p class="small muted" style="margin:4px 2px">Otomatik: gün
   if ($("#mic")) $("#mic").onclick = () => { toast(micRetry() ? "Mikrofon açık. Konuş modunda dene." : "Bu ekran mikrofona izin vermiyor."); $("#gear").onclick(); };
   $("#cls").onclick = () => $("#sheet").classList.remove("show");
   $$("#gl button").forEach(b => b.onclick = () => { o.goal = +b.dataset.v; o.pace = {10:5, 20:10, 30:15}[o.goal]; save(); $("#gear").onclick(); });
+  $("#cman").onclick = () => { $("#sheet").classList.remove("show"); open(renderContentList); };
   $("#onbx").onclick = () => { $("#sheet").classList.remove("show"); onboarding(true); };
 };
 $("#streak").onclick = () => open(renderStats);
