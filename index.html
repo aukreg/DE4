@@ -2912,6 +2912,12 @@ const trDate = s => { const [y,m,d] = s.split("-").map(Number); return d + " " +
 const dayNo = () => Math.max(0, Math.round((new Date(TODAY) - new Date(D.start || TODAY)) / 864e5));
 function dayRec(){ return S.days[TODAY] = S.days[TODAY] || {}; }
 function mark(step){ dayRec()[step] = 1; save(); }
+// kullanıcı: uygulama kimin? (eski kayıtlar Atakan'ındır)
+const ME = () => String(S.opt.name || "Atakan").trim() || "Atakan";
+const PARTNER = () => /^nisa$/i.test(ME()) ? "Atakan" : "Nisa";
+// Türkçe iyelik eki: Atakan'ın, Nisa'nın, Ömer'in…
+function gen(n){ const v = (n.match(/[aeıioöuü]/gi) || ["a"]).pop().toLowerCase(), end = /[aeıioöuü]$/i.test(n) ? "n" : ""; return n + "'" + end + ({a:"ın", ı:"ın", e:"in", i:"in", o:"un", u:"un", ö:"ün", ü:"ün"})[v]; }
+const ABOUT = () => `${ME()} Türk, Almanya'da yaşıyor, seviyesi A2 civarı. Eşi ${PARTNER()}, 3 yaşında kızı Gece.`;
 function streak(){
   let n = 0, d = new Date();
   if (!Object.keys(S.days[ymd(d)] || {}).length) d.setDate(d.getDate()-1);
@@ -4393,9 +4399,9 @@ function renderToday(){
   const lv = cefr(), lg = league(), wd = wordOfDay(), ch = chestState();
   const last7 = Array.from({length: 7}, (_, k) => { const d = new Date(); d.setDate(d.getDate() - 6 + k); return Object.keys(S.days[ymd(d)] || {}).length > 0; });
   const say = !nx ? ["cheer", "Bugün tamam!", ch === "ready" ? "Bütün adımları bitirdin. Sandığını açmayı unutma!" : "Harikasın. Canın isterse oyna ya da dinle."]
-    : eve ? [h >= 23 || h < 5 ? "sleep" : "happy", greet + ", Atakan", `Akşam modu: kitap, senaryo ve yazı için en iyi zaman. ${st.length - done} adım kaldı.`]
-    : done ? ["happy", "Devam, Atakan!", `Güzel gidiyorsun. Sıradaki: ${nx.t}.`]
-    : ["wave", greet + ", Atakan!", `${GUNLER[now.getDay()]}, ${trDate(TODAY)}. Bugün ${st.length} adım var, ilk olarak destenle başlayalım.`];
+    : eve ? [h >= 23 || h < 5 ? "sleep" : "happy", greet + ", " + ME(), `Akşam modu: kitap, senaryo ve yazı için en iyi zaman. ${st.length - done} adım kaldı.`]
+    : done ? ["happy", "Devam, " + ME() + "!", `Güzel gidiyorsun. Sıradaki: ${nx.t}.`]
+    : ["wave", greet + ", " + ME() + "!", `${GUNLER[now.getDay()]}, ${trDate(TODAY)}. Bugün ${st.length} adım var, ilk olarak destenle başlayalım.`];
   $("#view").innerHTML = `
     <div class="batrow"><span id="tdbat">${bat(say[0], 92, todayCos(say[0], !nx))}</span><div class="batsay"><b>${esc(say[1])}</b>${esc(say[2])}</div></div>
     <div class="bento">
@@ -6222,12 +6228,12 @@ const ERR = {
 const errText = e => ERR[e && e.code] || "Claude'a ulaşılamadı. Biraz sonra tekrar dene.";
 
 function correctionPrompt(topic, text){
-  return `Sen Atakan'ın Almanca öğretmenisin. Atakan Türk, Almanya'da yaşıyor, seviyesi A2 civarı. Hedefi sınav Almancası değil, günlük hayatta doğal konuşmak ve yazmak.
+  return `Sen ${gen(ME())} Almanca öğretmenisin. ${ABOUT()} Hedefi sınav Almancası değil, günlük hayatta doğal konuşmak ve yazmak.
 Aşağıdaki günlük yazısını düzelt.
 
 Kurallar:
 - "natural": metnin bir Almanın günlük hayatta yazacağı doğal hâli. Anlamı ve kişisel içeriği koru, gereksiz süsleme yapma, A2-B1 seviyesinde tut.
-- "mistakes": gerçek hatalar (dilbilgisi, kelime seçimi, doğal olmayan ifade). Her biri için "wrong" (Atakan'ın yazdığı kısa parça), "right" (doğrusu), "rule" (Türkçe, tek kısa cümle, ezber kural değil pratik ipucu). En fazla 8 tane, en önemlileri.
+- "mistakes": gerçek hatalar (dilbilgisi, kelime seçimi, doğal olmayan ifade). Her biri için "wrong" (${gen(ME())} yazdığı kısa parça), "right" (doğrusu), "rule" (Türkçe, tek kısa cümle, ezber kural değil pratik ipucu). En fazla 8 tane, en önemlileri.
 - "note": Türkçe, tek cümle, samimi bir geri bildirim (neyi iyi yaptı ya da bir sonraki adım).
 Sadece şu biçimde JSON döndür: {"natural":"...","mistakes":[{"wrong":"...","right":"...","rule":"..."}],"note":"..."}
 
@@ -6292,7 +6298,7 @@ function fixHtml(w){
 let C = null;
 function chatRules(src){
   const other = Object.entries(src.roles).find(([k]) => k !== "U")[1];
-  return `Rol yapma pratiği. Sen "${other}" rolündesin, karşındaki Atakan (Türk, Almanya'da yaşıyor, A2 seviyesi).
+  return `Rol yapma pratiği. Sen "${other}" rolündesin, karşındaki ${ME()} (Türk, Almanya'da yaşıyor, A2 seviyesi).
 Durum: ${src.desc}
 Örnek diyalog (aynen tekrar etme, doğal ve biraz farklı ilerlet):
 ${src.lines.map(l => (src.roles[l[0]] || l[0]) + ": " + l[1]).join("\n")}
@@ -6300,7 +6306,7 @@ ${src.lines.map(l => (src.roles[l[0]] || l[0]) + ": " + l[1]).join("\n")}
 Kurallar:
 - Sadece rolündeki kişi olarak, kısa (1-2 cümle), günlük, doğal Almanca konuş. A2 seviyesinde kal.
 - Her cevabında sohbeti ilerletecek basit bir soru ya da tepki ver.
-- Atakan'ın son mesajında hata varsa "fix" alanına Türkçe tek satırla doğru hâlini yaz (örn. "Ich hätte gern einen Kaffee" daha doğal). Hata yoksa "fix" boş olsun.
+- ${gen(ME())} son mesajında hata varsa "fix" alanına Türkçe tek satırla doğru hâlini yaz (örn. "Ich hätte gern einen Kaffee" daha doğal). Hata yoksa "fix" boş olsun.
 - Her cevapta JSON döndür: {"de":"senin Almanca replikin","tr":"Türkçe çevirisi","fix":""}`;
 }
 function openChat(src){
@@ -6731,13 +6737,13 @@ function renderChatPlay(){
 
 /* ================= NASIL DERİM? kendi cümlelerin ================= */
 function sayPrompt(lines){
-  return `Sen Atakan'ın Almanca öğretmenisin. Atakan Türk, Almanya'da yaşıyor, seviyesi A2 civarı. Eşi Nisa, 2 yaşında kızı Gece. Hedefi günlük hayatta doğal konuşmak.
-Atakan sana ${lines.length} cümle verecek. Her biri ya Türkçe (Almancada nasıl söyleneceğini soruyor) ya da kendi Almanca denemesi. Sesle girilmiş olabilir; küçük yazım hatalarını anlamına göre düzelt.
+  return `Sen ${gen(ME())} Almanca öğretmenisin. ${ABOUT()} Hedefi günlük hayatta doğal konuşmak.
+${ME()} sana ${lines.length} cümle verecek. Her biri ya Türkçe (Almancada nasıl söyleneceğini soruyor) ya da kendi Almanca denemesi. Sesle girilmiş olabilir; küçük yazım hatalarını anlamına göre düzelt.
 Her cümle için bir Almanın günlük konuşmada gerçekten söyleyeceği doğal, kısa Almancayı ver. Ders kitabı dili değil, gereksiz resmi değil; aksi gerekmedikçe "du" kullan. A2-B1 seviyesinde tut.
 Sadece şu biçimde JSON döndür, cümlelerle aynı sırada ve aynı sayıda:
-{"items":[{"de":"en doğal tek cümle","tr":"cümlenin kısa Türkçe anlamı","alt":"aynı şeyi söylemenin başka yaygın yolu, yoksa boş","ex":"aynı kalıpla başka kısa bir Almanca örnek cümle","note":"Türkçe tek cümle pratik ipucu (kalıp, artikel, kelime sırası). Atakan Almanca yazdıysa hatasını kısaca söyle."}]}
+{"items":[{"de":"en doğal tek cümle","tr":"cümlenin kısa Türkçe anlamı","alt":"aynı şeyi söylemenin başka yaygın yolu, yoksa boş","ex":"aynı kalıpla başka kısa bir Almanca örnek cümle","note":"Türkçe tek cümle pratik ipucu (kalıp, artikel, kelime sırası). ${ME()} Almanca yazdıysa hatasını kısaca söyle."}]}
 
-Atakan'ın cümleleri:
+${gen(ME())} cümleleri:
 ${lines.map((l, i) => (i + 1) + ". " + l).join("\n")}`;
 }
 let mineSeq = 0;
@@ -7036,11 +7042,11 @@ function quietBar(m){
 
 /* ================= SORU SOR ================= */
 function qaPrompt(qs){
-  return `Sen Atakan'ın Almanca öğretmenisin. Atakan Türk, Almanya'da yaşıyor, seviyesi A2 civarı. Eşi Nisa, 2 yaşında kızı Gece. Hedefi günlük hayatta doğal konuşmak; sınav Almancası değil.
-Atakan sana ${qs.length} soru soruyor (sesle girilmiş olabilir; küçük yazım hatalarını anlamına göre düzelt).
+  return `Sen ${gen(ME())} Almanca öğretmenisin. ${ABOUT()} Hedefi günlük hayatta doğal konuşmak; sınav Almancası değil.
+${ME()} sana ${qs.length} soru soruyor (sesle girilmiş olabilir; küçük yazım hatalarını anlamına göre düzelt).
 Her soru için:
 - "a": Türkçe, kısa ve net cevap (2-6 cümle). Günlük konuşmada gerçekten nasıl kullanıldığını öne çıkar; gerekiyorsa 1-2 kısa Almanca örnek ver. Ders kitabı terimlerini az kullan, kullanırsan kısaca açıkla.
-- "de": sorunun konusunu en iyi gösteren, günlük hayatta kullanılan doğal tek bir Almanca örnek cümle (Atakan'ın hayatına uygunsa daha iyi).
+- "de": sorunun konusunu en iyi gösteren, günlük hayatta kullanılan doğal tek bir Almanca örnek cümle (${gen(ME())} hayatına uygunsa daha iyi).
 - "tr": bu örnek cümlenin Türkçesi.
 - "note": Türkçe tek cümle, bu kartın altında duracak pratik ipucu (en fazla 120 karakter).
 Sadece şu biçimde JSON döndür, sorularla aynı sırada: {"items":[{"a":"...","de":"...","tr":"...","note":"..."}]}
@@ -7207,7 +7213,7 @@ function fContext(){
   ].join("\n");
 }
 function fRules(){
-  return `Sen Gedsche'sin: Atakan'ın Almanca uygulamasındaki sevimli yarasa maskot ve kişisel asistan. Atakan Türk, Almanya'da yaşıyor, seviyesi A2 civarı; eşi Nisa, 2 yaşında kızı Gece. Hedefi sınav Almancası değil, günlük hayatta doğal konuşmak.
+  return `Sen Gedsche'sin: ${gen(ME())} Almanca uygulamasındaki sevimli yarasa maskot ve kişisel asistan. ${ABOUT()} Hedefi sınav Almancası değil, günlük hayatta doğal konuşmak.
 Türkçe konuş: sıcak, kısa, samimi (2-6 cümle; liste gerekiyorsa kısa madde). Ara sıra küçük bir yarasa esprisi olabilir ama abartma.
 Yapabildiklerin:
 1) Almanca sorularını cevapla: günlük konuşmada gerçekten nasıl kullanıldığını öne çıkar, 1-2 kısa Almanca örnek ver.
@@ -7217,7 +7223,7 @@ Yapabildiklerin:
 "act": konuşma şunlardan birine yönlendiriyorsa koy: "ms" (hata defterini çalış), "due" (tekrarı gelen kartlar), "deck" (günün destesi); yoksa boş bırak.
 Sadece şu JSON'u döndür: {"reply":"...","cards":[{"de":"...","tr":"...","note":"Türkçe kısa ipucu (en fazla 110 karakter)"}],"act":""}
 
-Atakan'ın şu anki durumu:
+${gen(ME())} şu anki durumu:
 ${fContext()}`;
 }
 
@@ -7225,7 +7231,7 @@ async function fAsk(){
   const L = fchat(), pend = L.filter(m => m.r === "u" && m.p);
   if (!pend.length || !SAMPLE || renderQA.busy) return;
   renderQA.busy = true; renderQA();
-  const input = [{role: "user", content: fRules() + "\n\n(Sohbet başlıyor.)"}, {role: "assistant", content: JSON.stringify({reply: "Merhaba Atakan!", cards: [], act: ""})}];
+  const input = [{role: "user", content: fRules() + "\n\n(Sohbet başlıyor.)"}, {role: "assistant", content: JSON.stringify({reply: "Merhaba " + ME() + "!", cards: [], act: ""})}];
   L.filter(m => !m.p).slice(-16).forEach(m => input.push(m.r === "u" ? {role: "user", content: m.t} : {role: "assistant", content: JSON.stringify({reply: m.t, cards: [], act: m.act || ""})}));
   input.push({role: "user", content: pend.map(m => m.t).join("\n")});
   // aynı rolden arka arkaya gelen mesajları birleştir
@@ -7438,11 +7444,14 @@ function onboarding(force){
   const draw = () => {
     const [m, h, p] = P3[i], g = S.opt.goal || 20;
     el.innerHTML = `${bat(m, 170, ["flag", "glasses", "crown"][i] || "")}<h2>${h}</h2><p>${p}</p>
+      ${i === 0 ? `<input id="onname" class="typed" autocomplete="off" maxlength="20" placeholder="Adın ne?" value="${esc(S.opt.name || "")}" style="max-width:280px;text-align:center;margin:6px auto 0;display:block">` : ""}
       ${i === 2 ? `<div class="goalpick">${[[10, "Hafif"], [20, "Normal"], [30, "Yoğun"]].map(([v, t]) => `<button data-v="${v}" class="${g === v ? "on" : ""}">${v} dk<small>${t}</small></button>`).join("")}</div>` : ""}
       <div class="dots">${P3.map((_, k) => `<i class="${k === i ? "on" : ""}"></i>`).join("")}</div>
       <button class="cta" id="onx">${i < 2 ? "Devam" : "Başlayalım"}</button>`;
     el.querySelectorAll(".goalpick button").forEach(b => b.onclick = () => { S.opt.goal = +b.dataset.v; draw(); });
-    $("#onx").onclick = () => { sfx("tap"); if (i < 2) { i++; draw(); return; } S.onb = 1; S.opt.goal = S.opt.goal || 20; S.opt.pace = {10:5, 20:10, 30:15}[S.opt.goal]; save(); el.remove(); go("today"); };
+    $("#onx").onclick = () => { sfx("tap");
+      if (i === 0) { const v = ($("#onname").value || "").trim(); if (!v) { $("#onname").focus(); return toast("Önce adını yaz"); } S.opt.name = v; save(); }
+      if (i < 2) { i++; draw(); return; } S.onb = 1; S.opt.goal = S.opt.goal || 20; S.opt.pace = {10:5, 20:10, 30:15}[S.opt.goal]; save(); el.remove(); go("today"); };
   };
   draw();
 }
@@ -7805,6 +7814,8 @@ $("#gear").onclick = () => {
     ${IN_CLAUDE ? "" : `<div class="lbl">Görünüm</div>
     <div class="seg" id="th">${[["auto","Otomatik"],["light","Açık"],["dark","Koyu"]].map(([k, t]) => `<button data-v="${k}" class="${o.theme===k?"on":""}">${t}</button>`).join("")}</div>`}
 ${IN_CLAUDE ? "" : `<p class="small muted" style="margin:4px 2px">Otomatik: gündüz açık, 21:00'den sonra koyu.</p>`}
+    <div class="lbl">Adın</div>
+    <input id="myname" class="typed" autocomplete="off" maxlength="20" value="${esc(ME())}" style="margin-top:4px;width:100%">
     <div class="lbl">Ses ve titreşim</div>
     <div class="seg" id="snd">${[[1,"Açık"],[0,"Kapalı"]].map(([k, t]) => `<button data-v="${k}" class="${(o.sound !== false) == !!k ? "on" : ""}">${t}</button>`).join("")}</div>
     <div class="lbl">Oyun modu</div>
@@ -7840,6 +7851,7 @@ ${IN_CLAUDE ? "" : `<p class="small muted" style="margin:4px 2px">Otomatik: gün
   $("#sheet").classList.add("show");
   $$("#th button").forEach(b => b.onclick = () => { o.theme = b.dataset.v; save(); applyTheme(); $("#gear").onclick(); });
   $$("#snd button").forEach(b => b.onclick = () => { o.sound = o.vib = !!+b.dataset.v; save(); sfx("ok"); $("#gear").onclick(); });
+  $("#myname").onchange = e => { const v = e.target.value.trim(); if (v) { o.name = v; save(); toast("Merhaba " + v + "!"); } };
   $$("#gmd button").forEach(b => b.onclick = () => { o.gmode = b.dataset.v; save(); gmodeApply(); $("#gear").onclick(); });
   $$("#rt button").forEach(b => b.onclick = () => { o.rate = +b.dataset.v; save(); speak("Das ist die neue Geschwindigkeit."); $("#gear").onclick(); });
   $$("#pc button").forEach(b => b.onclick = () => { o.pace = +b.dataset.v; save(); $("#gear").onclick(); });
