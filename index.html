@@ -3101,7 +3101,7 @@ function loadVoices(){
   TRV = all.find(v => /^tr(-|_|$)/i.test(v.lang)) || null;
 }
 if (!!window.speechSynthesis) { loadVoices(); speechSynthesis.onvoiceschanged = loadVoices; }
-const cleanSpeech = t => String(t).replace(/…/g, "").replace(/ \/ /g, ". ").replace(/[\u{1F300}-\u{1FAFF}]/gu, "");
+const cleanSpeech = t => String(t).replace(/\s*[→←↔⇒⇔➜➔⟶]\s*/g, ", ").replace(/\s+·\s+/g, ", ").replace(/…/g, "").replace(/ \/ /g, ". ").replace(/[\u{1F300}-\u{1FAFF}]/gu, "");
 // Telefonlarda ses: iOS ilk dokunuştan önce sesi kilitler, bazı Android'lerde "bitti" haberi gelmez.
 const HAS_TTS = !!window.speechSynthesis && typeof window.SpeechSynthesisUtterance === "function";
 let TTS_OK = null, ttsWarned = false;
@@ -3815,6 +3815,9 @@ function startSession(o){
   } else if (o.mode === "match") {
     const L = shuffle(items);
     for (let i = 0; i < L.length; i += 5) { const g = L.slice(i, i + 5); if (g.length >= 3 || !q.length) q.push({m:"match", its:g}); }
+  } else if (o.mode === "pick") {
+    // seçilen birkaç tür karışık: her kart kendine uyan türlerden birini alır
+    shuffle(items).forEach(it => { const ms = o.modes.filter(m => m !== "match" && can(m, it)); q.push({m: ms.length ? pick(ms) : "write", it}); });
   } else {
     items.forEach(it => q.push({m: can(o.mode, it) ? o.mode : "write", it}));
   }
@@ -4530,8 +4533,7 @@ function renderPracticeTab(){
   const o = S.opt; o.psrc = o.psrc || "ph"; o.pmode = o.pmode || "mix";
   if (!srcCount(o.psrc)) o.psrc = "ph";
   const isM = o.psrc === "mist";
-  if (o.pmode !== "mix" && !pOkMode(o.pmode)) o.pmode = "mix";
-  const mt = o.pmode === "mix" ? "Karışık" : MODES[o.pmode].t;
+  const sel = pSel(), mt = pModeTitle(sel);
   const row = (id, ic, t, d) => `<button class="prow" id="${id}"><span class="pic">${ic}</span><span class="ptx"><b>${t}</b><small>${d}</small></span>${I("chev", "ln pch")}</button>`;
   $("#view").innerHTML = `
     <div class="phero">
@@ -4565,29 +4567,38 @@ function renderPracticeTab(){
   $("#go").onclick = () => {
     if (isM) return startMistakes();
     let its = srcItems(o.psrc);
-    if (o.pmode !== "mix") { const f = its.filter(it => can(o.pmode, it)); if (f.length) its = f; }
+    if (sel.length) { const f = its.filter(it => sel.some(m => can(m, it))); if (f.length) its = f; }
     its = o.n ? its.slice(0, o.n) : its;
-    startSession({items: its, mode: o.pmode, title: mt + " · " + PSRC[o.psrc].t});
+    startSession({items: its, mode: !sel.length ? "mix" : sel.length === 1 ? sel[0] : "pick", modes: sel, title: mt + " · " + PSRC[o.psrc].t});
   };
 }
 function pOkMode(k){
   const m = MODES[k], isW = S.opt.psrc === "wd";
   return !!m && (!["hear","dictate","speak"].includes(k) || m.need()) && (isW ? m.k !== "s" : m.k !== "w");
 }
+// seçili çalışma türleri (birden fazla olabilir; boş = Karışık önerilen)
+function pSel(){
+  const o = S.opt;
+  if (!Array.isArray(o.pmodes)) o.pmodes = o.pmode && o.pmode !== "mix" ? [o.pmode] : [];
+  return o.pmodes.filter(pOkMode);
+}
+function pModeTitle(sel){
+  return !sel.length ? "Karışık" : sel.length <= 2 ? sel.map(k => MODES[k].t).join(" + ") : sel.length + " tür karışık";
+}
 // ayarlar alttan açılan sayfada: ana ekran sade kalsın
 function pSheet(){
-  const o = S.opt, isM = o.psrc === "mist";
-  if (o.pmode !== "mix" && !pOkMode(o.pmode)) o.pmode = "mix";
+  const o = S.opt, isM = o.psrc === "mist", sel = pSel();
   sheetOpen(`<div class="psheet"><h2>Alıştırmayı ayarla</h2>
     <div class="grp">NEYİ?</div>
     <div class="chips" id="srcs">${Object.entries(PSRC).map(([k, v]) => { const c = srcCount(k); return c ? `<button class="chip ${o.psrc === k ? "on" : ""}" data-k="${k}">${v.t}<small>${c}</small></button>` : ""; }).join("")}</div>
     ${isM ? "" : `<div class="grp">NASIL?</div>
-    <div class="chips"><button class="chip ${o.pmode === "mix" ? "on" : ""}" data-m="mix">${I("shuffle")} Karışık · önerilen</button>${Object.keys(MODES).filter(pOkMode).map(k => `<button class="chip ${o.pmode === k ? "on" : ""}" data-m="${k}">${MODES[k].t}</button>`).join("")}</div>
+    <p class="small muted" style="margin:-2px 2px 8px">İstediğin kadar tür seç, karışık sorulur.</p>
+    <div class="chips"><button class="chip ${!sel.length ? "on" : ""}" data-m="mix">${I("shuffle")} Karışık · önerilen</button>${Object.keys(MODES).filter(pOkMode).map(k => `<button class="chip ${sel.includes(k) ? "on" : ""}" data-m="${k}">${sel.includes(k) ? "✓ " : ""}${MODES[k].t}</button>`).join("")}</div>
     <div class="grp">KAÇ KART?</div>
     <div class="seg" id="cnt">${[10, 20, 0].map(n => `<button data-n="${n}" class="${o.n === n ? "on" : ""}">${n || "Hepsi"}</button>`).join("")}</div>`}
     <button class="cta" id="pok" style="width:100%;margin-top:18px">Tamam</button></div>`);
   $$("#srcs .chip").forEach(b => b.onclick = () => { o.psrc = b.dataset.k; save(); pSheet(); });
-  $$(".psheet [data-m]").forEach(b => b.onclick = () => { o.pmode = b.dataset.m; save(); pSheet(); });
+  $$(".psheet [data-m]").forEach(b => b.onclick = () => { const k = b.dataset.m; o.pmodes = k === "mix" ? [] : sel.includes(k) ? sel.filter(x => x !== k) : sel.concat(k); o.pmode = o.pmodes.length === 1 ? o.pmodes[0] : "mix"; save(); pSheet(); });
   $$("#cnt button").forEach(b => b.onclick = () => { o.n = +b.dataset.n; save(); pSheet(); });
   $("#pok").onclick = () => { sheetClose(); if (tab === "practice") renderPracticeTab(); };
 }
