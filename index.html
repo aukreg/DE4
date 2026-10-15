@@ -1515,11 +1515,44 @@ body.game #view > .swz{flex:1 1 auto;height:auto;min-height:340px;max-height:560
 .phero{background:var(--hero,linear-gradient(140deg,#7C5CFF 0%,#5B6CFF 55%,#3D9BFF 100%));box-shadow:0 14px 34px -10px color-mix(in srgb,var(--acc) 55%,transparent)}
 .phero .cta{color:var(--acc-s)!important}
 .phtx b{overflow-wrap:anywhere}
-.pxask{margin-top:14px;background:color-mix(in srgb,var(--acc) 8%,var(--bg2))!important;border:1.5px solid color-mix(in srgb,var(--acc) 28%,transparent)!important}
-.pxask .prow:first-child{padding:12px 14px}
-.pxask .prow:first-child .pic{width:52px;height:52px}
-.pxask .prow:first-child .pic .bat{width:52px;height:52px}
-.pxask .prow:first-child .ptx b{font-size:17.5px}
+/* Gedsche'ye sor: en üstte ince satır */
+.pxask{margin:8px 0 12px;padding:0!important;display:flex;flex-direction:column;background:color-mix(in srgb,var(--acc) 8%,var(--bg2))!important;border:1.5px solid color-mix(in srgb,var(--acc) 28%,transparent)!important}
+.pxaskb{display:flex;align-items:center;gap:11px;width:100%;min-height:54px;padding:6px 12px 6px 10px;text-align:left;border-radius:inherit}
+.pxaskb + .pxaskb{border-top:1px solid var(--line);border-radius:0}
+.pxaskb:active{background:rgb(127 127 160/.08)}
+.pxaskb:focus-visible{outline:3px solid var(--acc);outline-offset:-3px}
+.pxab{flex:none;width:42px;height:42px;display:grid;place-items:center}
+.pxab .bat,.pxab svg{width:42px!important;height:42px!important}
+.pxaskb .ptx b{font-size:16px;line-height:1.2}
+.pxaskb .ptx small{display:block;font-size:12.5px;color:var(--tx2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.pxaskb .pch{flex:none}
+/* Hızlı alıştırma: biraz daha kısa */
+.pxhub .phero{gap:10px;margin-top:0;padding:15px 16px 8px}
+.pxhub .phill{top:13px;right:14px;width:56px;height:56px;border-radius:18px}
+.pxhub .phill svg.i{width:40px;height:40px}
+.pxhub .phtx{padding-right:68px}
+.pxhub .phtx b{font-size:22px}
+.pxhub .phero .cta{min-height:50px}
+.pxhub .phero .linkbtn{padding:10px}
+/* öneriler, aileler (görünüm s-games.css .ghhub'dan) */
+.pxgh{padding-bottom:0}
+.pxgh .sec.ghsec{margin-top:20px}
+.pxgh .ghrec{min-height:142px}
+.pxgh .ghrec .ghri{margin:6px 0 4px}
+.pxgh .ghfam{min-height:110px}
+.pxgh .ghfam b{margin-top:36px}
+.pxgh .ghfam.ghfeat{min-height:118px}
+.pxgh .ghfam.ghfeat b{margin-top:4px}
+/* tek kalan kutu: tam genişlik, alçak, ikon sağda */
+.ghfams > .ghfam.pxwide{grid-column:1/-1;min-height:86px;padding-right:96px;justify-content:center}
+.pxgh .ghfam.pxwide b{margin-top:0}
+.pxgh .ghfam.pxwide .ghfi{right:16px;top:50%;width:64px;height:64px;transform:translateY(-50%) rotate(8deg)}
+.pxgh.plain .ghfam.pxwide .ghfi{position:absolute;transform:translateY(-50%)}
+.pxgh.plain .ghfam:not(.ghfeat):not(.pxwide) b{margin-top:8px}
+.ghfam.pxquiet,.ghg.pxquiet{opacity:.55;filter:saturate(.5)}
+.pxgh .ghhid{display:block;margin:16px auto 0}
+.pxqn{display:flex;align-items:center;gap:10px;margin:-6px 2px 14px;font-size:13px;line-height:1.4;color:var(--tx2)}
+.pxqn svg.i{flex:none;width:30px;height:30px}
 .prow{min-height:60px}
 .prow .ptx b,.prow .ptx small{overflow-wrap:anywhere}
 .pxsech{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:24px 4px 10px}
@@ -6036,6 +6069,109 @@ if (typeof ILL !== "undefined") Object.assign(ILL, {
   tdMiss:'<rect x="9" y="7" width="30" height="36" rx="5" fill="#C2410C" transform="translate(0 3)"/><rect x="9" y="7" width="30" height="36" rx="5" fill="#F97316"/><rect x="14" y="7" width="25" height="36" rx="4" fill="#FFF7ED"/><rect x="9" y="7" width="7" height="36" rx="3" fill="#EA580C"/><path d="M20 17h13M20 23h13M20 29h8" stroke="#FDBA74" stroke-width="2.4" stroke-linecap="round"/><circle cx="34" cy="34" r="8.5" fill="#15803D" transform="translate(0 2)"/><circle cx="34" cy="34" r="8.5" fill="#22C55E"/><path d="M30.2 34.2l2.7 2.7 5-5.4" fill="none" stroke="#fff" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/>',
 });
 
+/* ================= ORTAK MERKEZ PARÇALARI (Oyun + Pratik) ================= */
+// Oyun merkezi (games.js gh*) ve Pratik (practab.js px*) aynı parçaları kullanır:
+// öneri kartı, filtre çipleri, aile kutusu, aile başlığı, etkinlik kartı, gizlenenler satırı ve listesi.
+// Görünüm s-games.css'teki .ghhub sınıflarından gelir (efektli "fx" / sade "plain", S.opt.gmode).
+// İkonlar (ic) hazır HTML olarak gelir: I(...) ya da başka bir svg.
+const hubHash = s => { let h = 7; for (const c of s) h = (h * 31 + c.charCodeAt(0)) >>> 0; return h; };
+const hubFx = () => (S.opt.gmode || "fx") === "fx";
+// "bugün", "dün", "3 gün önce"…
+function hubAgo(ts){
+  if (!ts) return "";
+  const d0 = new Date(); d0.setHours(0, 0, 0, 0);
+  const d = new Date(ts); d.setHours(0, 0, 0, 0);
+  const n = Math.round((d0 - d) / 864e5);
+  return n <= 0 ? "bugün" : n === 1 ? "dün" : n < 7 ? n + " gün önce" : n < 30 ? Math.round(n / 7) + " hafta önce" : "uzun zaman önce";
+}
+// favori/gizli işaretleri: zaman damgası (eksi = geri alındı); eşitlemede en yeni işaret kazanır
+const hubOn = (map, k) => ((map || {})[k] || 0) > 0;
+const hubSet = (map, k, on) => { map[k] = on ? Date.now() : -Date.now(); return on; };
+function hubMerge(m, b, marks, recent){
+  marks.forEach(k => { m[k] = m[k] || {}; Object.entries(b[k] || {}).forEach(([id, t]) => { if (Math.abs(t) > Math.abs(m[k][id] || 0)) m[k][id] = t; }); });
+  m[recent] = m[recent] || {}; Object.entries(b[recent] || {}).forEach(([id, t]) => { if (t > (m[recent][id] || 0)) m[recent][id] = t; });
+}
+const HUB_EYE = '<svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 3l18 18M10.6 5.1A10 10 0 0 1 12 5c5 0 9 4.5 10 7a13 13 0 0 1-3 4.1M6.6 6.6C4.3 8 2.7 10.2 2 12c1 2.5 5 7 10 7a9.7 9.7 0 0 0 5.4-1.6M9.9 9.9a3 3 0 0 0 4.2 4.2"/></svg>';
+
+// öneri kartı: {k, z, ic, tag, t, sub?, star?, dot?, cls?}
+const hubRec = r => `
+    <button class="ghrec z${r.z}${r.star ? " ghday" : ""}${r.cls ? " " + r.cls : ""}" data-k="${esc(r.k)}" style="--d:${(hubHash(r.k) % 40) / 10}s">
+      <span class="ghtag">${esc(r.tag)}</span>
+      <i class="ghri">${r.ic}${r.dot || ""}</i>
+      <b>${esc(r.t)}</b>${r.sub ? `<small>${esc(r.sub)}</small>` : ""}
+    </button>`;
+// filtre çipleri: views = [[anahtar, etiket html], …]
+const hubChips = (views, cur, label) => `<div class="ghchips" role="tablist" aria-label="${esc(label)}">
+      ${views.map(([k, t]) => `<button class="chip${cur === k ? " on" : ""}" role="tab" aria-selected="${cur === k}" data-view="${k}">${t}</button>`).join("")}
+    </div>`;
+function hubChipsBind(root, onPick){
+  const cs = root.querySelectorAll(".ghchips .chip");
+  cs.forEach(b => b.onclick = () => {
+    cs.forEach(c => { const on = c === b; c.classList.toggle("on", on); c.setAttribute("aria-selected", on); });
+    sfx("tap"); onPick(b.dataset.view);
+  });
+}
+// aile kutusu: {k, z, ic, t, d, hint, feat?, tag?, cls?}
+const hubFamTile = f => `<button class="ghfam z${f.z}${f.feat ? " ghfeat" : ""}${f.cls ? " " + f.cls : ""}" data-fam="${f.k}" style="--d:${(hubHash(f.k) % 50) / 10}s">
+    <i class="ghfi">${f.ic}</i>
+    ${f.feat && f.tag ? `<span class="ghtag">${f.tag}</span>` : ""}
+    <b>${f.t}</b><span class="ghfd">${f.d}</span>
+    <span class="ghfh">${f.hint}</span>
+  </button>`;
+// etkinlik kartı: {k, z, ic, t, sub?(html), d, ago?(metin), fav, hide?(aria etiketi), play?(aria etiketi), cls?}
+const hubCard = c => `<div class="ghg z${c.z}${c.cls ? " " + c.cls : ""}" data-g="${esc(c.k)}">
+    <button class="ghgo" data-play="${esc(c.k)}" aria-label="${esc(c.play || c.t)}">
+      <i class="ghgi">${c.ic}</i>
+      <span class="ghgt"><b>${esc(c.t)}</b>
+        <span class="ghsub">${c.sub || ""}</span>
+        <span class="ghd">${esc(c.d)}</span>
+        ${c.ago ? `<span class="ghago">${I("clock", "ln")} ${c.ago}</span>` : ""}
+      </span>
+    </button>
+    <span class="ghact">
+      <button class="ghstar${c.fav ? " on" : ""}" data-fav="${esc(c.k)}" aria-pressed="${!!c.fav}" aria-label="${c.fav ? "Favorilerden çıkar" : "Favorilere ekle"}">${c.fav ? "★" : "☆"}</button>
+      ${c.hide ? `<button class="ghhide" data-hide="${esc(c.k)}" aria-label="${esc(c.hide)}">${HUB_EYE}Gizle</button>` : ""}
+    </span>
+  </div>`;
+// gizlenen satırı: {k, z, ic, t, sub}
+const hubHidRow = h => `<div class="ghhrow z${h.z}"><i class="ghgi">${h.ic}</i><span><b>${esc(h.t)}</b><small>${esc(h.sub)}</small></span><button class="btn2" data-un="${esc(h.k)}">Geri getir</button></div>`;
+const hubEmpty = (mood, html) => `<div class="ghempty">${mood && typeof bat === "function" ? bat(mood, 64) : ""}<p>${html}</p></div>`;
+// aile ekranı: {hero:{z, ic, t, d, meta, feat?}, note?(html), cards:[html], hidden:[html], empty, cls?}
+const hubFamView = v => `<div class="ghhub ghfamv ${hubFx() ? "fx" : "plain"}${v.cls ? " " + v.cls : ""}">
+      <div class="ghhero z${v.hero.z}${v.hero.feat ? " ghfeat" : ""}"><i class="ghfi">${v.hero.ic}</i><span class="ghht"><b>${v.hero.t}</b><span>${v.hero.d}</span>
+        <em>${v.hero.meta}</em></span></div>${v.note || ""}
+      ${v.cards.length ? `<div class="ghlist">${v.cards.join("")}</div>` : `<div class="ghempty"><p>${v.empty}</p></div>`}
+      ${v.hidden.length ? `<div class="sec">Gizlenenler</div><div class="ghlist ghoff">${v.hidden.join("")}</div>` : ""}
+    </div>`;
+// kartlardaki Oyna/Başla, ★, Gizle ve Geri getir: h = {play(k), fav(k) → yeni durum, hide(k) → toast metni, un?(k), redraw()}
+function hubBind(root, h){
+  root.querySelectorAll("[data-play]").forEach(b => b.onclick = () => { sfx("tap"); h.play(b.dataset.play); });
+  root.querySelectorAll("[data-fav]").forEach(b => b.onclick = e => {
+    e.stopPropagation(); const on = h.fav(b.dataset.fav); save(); sfx("tap"); buzz(8);
+    toast(on ? "★ Favorilere eklendi" : "Favorilerden çıkarıldı");
+    h.redraw();
+  });
+  root.querySelectorAll("[data-hide]").forEach(b => b.onclick = e => {
+    e.stopPropagation(); const msg = h.hide(b.dataset.hide); save(); buzz(8);
+    if (msg) toast(msg);
+    h.redraw();
+  });
+  if (h.un) root.querySelectorAll("[data-un]").forEach(b => b.onclick = () => { h.un(b.dataset.un); save(); sfx("tap"); toast(h.unMsg || "Geri geldi"); h.redraw(); });
+}
+// gizlenenler: alttan açılan liste. o = {title, desc, rows: () => [html], un(k), unMsg, after()}
+function hubHiddenSheet(o){
+  const draw = () => {
+    const rows = o.rows();
+    if (!rows.length) { $("#sheet").classList.remove("show"); o.after && o.after(); return; }
+    $("#sheetIn").innerHTML = `<div class="ghsh"><h2>${o.title}</h2><p class="small muted">${o.desc}</p>
+      ${rows.join("")}
+      <button class="linkbtn" id="ghshx">Kapat</button></div>`;
+    $$("#sheetIn [data-un]").forEach(b => b.onclick = () => { o.un(b.dataset.un); save(); sfx("tap"); toast(o.unMsg || "Geri geldi"); draw(); o.after && o.after(); });
+    $("#ghshx").onclick = () => $("#sheet").classList.remove("show");
+  };
+  draw(); $("#sheet").classList.add("show");
+}
+
 /* ================= PRATİK ================= */
 // renkli çizim ikonlar (ILL ile aynı tarz: düz şekil + koyu gölge kopyası)
 if (typeof ILL !== "undefined") Object.assign(ILL, {
@@ -6092,22 +6228,150 @@ function pxHooks(sec){
 const pxVal = v => { try { return typeof v === "function" ? v() : v; } catch(e) { return ""; } };
 const pxIc = ic => { ic = pxVal(ic); return typeof ic === "string" && ic.trim()[0] === "<" ? ic : I(ic || "sparkle"); };
 
+/* ---------- Pratik merkezi: Oyun merkeziyle aynı parçalar (hub.js) ---------- */
+// aileler: Konuş en üstte tam genişlik; z = kart rengi (style3.css .z0–.z7); q = sessiz modda soluklaşır ve sona gider
+const PX_FAM = {
+  konus: {t:"Konuş",           ic:"mic",     z:4, d:"Duy, söyle, gölgele, sahnede konuş", tag:"Konuşarak öğren"},
+  dinle: {t:"Dinle",           ic:"head",    z:6, d:"Kulağını Almancaya alıştır"},
+  yaz:   {t:"Yaz",             ic:"pen",     z:1, d:"Yaz, Claude düzeltsin"},
+  paket: {t:"Kalıp paketleri", ic:"layers",  z:2, d:"Hazır günlük kalıplar"},
+  kelime:{t:"Kelime & gramer", ic:"blocks",  z:3, d:"Artikel, çoğul, çekim, Perfekt"},
+  tekrar:{t:"Tekrar",          ic:"history", z:5, d:"Hataların, favorilerin, tekrar kartları"},
+};
+// Kelime & gramer ve Dinle ailesindeki tek türlü alıştırmalar (Neyi, nasıl? sayfasındaki türler)
+const PX_MODES = {artikel:["kelime", "target"], plural:["kelime", "people"], conj:["kelime", "tool"], perfekt:["kelime", "rewind"], prat:["kelime", "clock"],
+  opp:["kelime", "wheel"], order:["kelime", "shuffle"], gap:["kelime", "puzzle"], hear:["dinle", "ear"], dictate:["dinle", "keyboard"]};
+const PX = {view: "all", ret: null};
+try { PX.view = localStorage.getItem("pxView") || "all"; } catch(e) {}
+// favori, gizli (zaman damgası, eksi = geri alındı) ve son yapılma
+const pxState = () => { S.pfav = S.pfav || {}; S.phide = S.phide || {}; S.precent = S.precent || {}; return S; };
+HOOKS.merge.push((m, b) => hubMerge(m, b, ["pfav", "phide"], "precent"));
+const pxPFav = id => hubOn(pxState().pfav, id);
+const pxHidden = id => hubOn(pxState().phide, id);
+// sessiz mod: "şu an konuşamam/dinleyemem" açıksa Konuş/Dinle soluk ve en sonda
+const pxQuiet = f => f === "konus" ? noSpeak() || noListen() : f === "dinle" ? noListen() : false;
+// bir alıştırma türü için kart kaynağı: kelime türleri kelimelerden, diğerleri seçili kaynaktan (yoksa kalıplar)
+function pxModeSrc(m){
+  if (MODES[m].k === "w") return "wd";
+  const s = S.opt.psrc;
+  return PSRC[s] && !["wd", "mist", "ms"].includes(s) && poolFor(s).some(it => can(m, it)) ? s : "ph";
+}
+// kartın türe uygunluğu; sessiz mod (dinleyemem/konuşamam) burada sayılmaz, etkinlik görünür kalır
+const pxCan = (m, it) => { const nd = MODES[m].need; return !nd || !nd.length || nd(it); };
+const pxModeMiss = m => missActive().filter(([, r]) => r.m === m).length;
+function pxModeRun(m){
+  const src = pxModeSrc(m), n = S.opt.n || 10;
+  // bu türde yanlış yaptığın kartlar önce
+  const ms = missItems().filter(it => (S.miss[it.id] || {}).m === m && can(m, it));
+  const its = uniq(ms.concat(srcItems(src).filter(it => can(m, it)))).slice(0, n);
+  if (!its.length) return toast(MODES[m].need && !MODES[m].need.length ? "Şu an dinleyemem açık. Bugün ekranından kapatabilirsin." : "Bu alıştırma için şu an uygun kart yok");
+  startSession({items: its, mode: m, modes: [m], title: MODES[m].t + " · " + PSRC[src].t});
+}
+const pxMsgOpen = () => { try { return typeof ftMsgList === "function" ? ftMsgList().filter(x => !ftMsgDone(x.id)).length : 0; } catch(e) { return 0; } };
+// Pratik'teki bütün etkinlikler: {id, fam, ic (html), t, d, fn, badge?}
+function pxEntries(){
+  const o = S.opt, src = o.psrc === "mist" ? "ph" : o.psrc, L = [];
+  const add = (fam, id, ic, t, d, fn, x) => L.push(Object.assign({fam, id, ic, t: String(t || ""), d: String(d || ""), fn}, x));
+  const hooks = sec => pxHooks(sec).forEach(h => add(sec, "h:" + h.id, pxIc(h.ic), pxVal(h.t), pxVal(h.d), h.fn));
+  const modes = fam => Object.entries(PX_MODES).forEach(([m, [f, ic]]) => {
+    if (f !== fam || !MODES[m]) return;
+    if (!poolFor(pxModeSrc(m)).some(it => pxCan(m, it))) return;
+    const nm = pxModeMiss(m);
+    add(fam, "m:" + m, I(ic), MODES[m].t, MODES[m].d + " · " + PSRC[pxModeSrc(m)].t, () => pxModeRun(m), nm ? {badge: nm + " hata"} : {});
+  });
+  add("konus", "turbo", I("bolt"), "Turbo", SR && !noSpeak() ? "Türkçeyi duy, Almancasını söyle" : "Türkçeyi duy, söyle, doğrusunu dinle", () => startTurbo(src));
+  add("konus", "shadow", I("wave"), "Gölgeleme", "Duy ve hemen aynı tonla tekrar et", () => startShadow(src));
+  add("konus", "live", I("chat"), "Canlı konuş", SAMPLE ? "Bir senaryoda Claude ile yazışarak konuş" : "Bir senaryo seç, Claude'la rol yap", () => open(renderScenPick));
+  hooks("konus");
+  add("dinle", "listen", I("head"), "Arka planda dinle", "Ekrana bakmadan dinle: yolda, bulaşıkta", () => open(renderListen));
+  hooks("dinle"); modes("dinle");
+  const wn = allWritings().length;
+  add("yaz", "write", I("pen"), "Yaz, düzeltsin", "Günlük yazı: birkaç cümle yaz, Claude düzeltsin", () => open(renderWrite));
+  add("yaz", "say", I("lang"), "Nasıl derim?", "Türkçesini yaz, Almancasını öğren", () => open(renderSay));
+  add("yaz", "writings", I("folder"), "Yazılarım", wn ? wn + " düzeltilmiş yazı · hata defteri" : "Düzeltilen yazıların ve hata defteri", () => open(renderWritings));
+  hooks("yaz");
+  // kalıp paketleri: eklenen satır yoksa paketlerin kendisi (Konuşma dili, Gece ile Almanca)
+  if (pxHooks("paket").length) hooks("paket");
+  else ["kd", "ev"].filter(k => poolFor(k).length).forEach(k => { const pk = (typeof C4 !== "undefined" && C4.packs && C4.packs[k]) || {};
+    add("paket", "pk:" + k, I(PSRC[k].ic), pk.t || PSRC[k].t, pk.d || poolFor(k).length + " kalıp", () => typeof ftOpenPack === "function" ? ftOpenPack(k) : startSession({items: srcItems(k, 10), mode: "mix", title: PSRC[k].t})); });
+  modes("kelime");
+  const mc = missCount(), wm = allMistakes().length, fv = poolFor("fav").length, du = dueItems().length;
+  add("tekrar", "miss", I("pxNote"), "Hata defteri", mc || wm ? [mc ? mc + " alıştırma hatası" : "", wm ? wm + " yazı hatası" : ""].filter(Boolean).join(" · ") : "Yanlışların burada toplanır", () => open(renderMissBook), mc ? {badge: mc + " hata"} : {});
+  if (du) add("tekrar", "due", I("cards"), "Tekrarı gelenler", du + " kart tekrar bekliyor", () => startSession({items: srcItems("due", 20), mode: "mix", title: "Tekrarı gelenler"}));
+  if (fv) add("tekrar", "fav", I("star"), "Favorilerim", fv + " kart · karışık çalış", () => startSession({items: srcItems("fav"), mode: "mix", title: "Favorilerim"}));
+  // renk: ailenin renginden başlayıp sırayla
+  const idx = {}; L.forEach(e => { idx[e.fam] = (idx[e.fam] || 0) + 1; e.z = (PX_FAM[e.fam].z + idx[e.fam] - 1) % 8; });
+  return L;
+}
+// etkinliği başlat: son yapılma + bu haftaki sayı; aile ekranından açıldıysa geri dönünce oraya dön
+function pxRun(e, fam){
+  sfx("tap"); PX.ret = fam || null;
+  pxState().precent[e.id] = Date.now(); pxActAdd(e.fam);
+  const before = screen;
+  try { e.fn(); } catch(err) { console.error(err); }
+  if (screen === before) PX.ret = null;   // yeni ekran açılmadıysa (uyarı, sayfa) aileye dönme hafızası kalmasın
+}
+function pxFamHint(f, E){
+  const n = E.filter(e => e.fam === f).length, w = pxActWeek(f), st = pxState();
+  const last = Math.max(0, ...E.filter(e => e.fam === f).map(e => st.precent[e.id] || 0));
+  return `${n} etkinlik${w ? ` · bu hafta ${w}` : last ? " · " + hubAgo(last) : ""}`;
+}
+// önerilen 3 etkinlik: veriden (hata türü, bekleyen kart, cevapsız mesaj, bugünkü günlük) + uzun süredir açılmayan biri
+function pxRecs(E){
+  const st = pxState(), day = dayNo(), ok = E.filter(e => !pxQuiet(e.fam));
+  const by = id => ok.find(e => e.id === id), D = [];
+  const cnt = {}; missActive().forEach(([, r]) => { if (r.m && PX_MODES[r.m]) cnt[r.m] = (cnt[r.m] || 0) + 1; });
+  const top = Object.keys(cnt).sort((a, b) => cnt[b] - cnt[a]).find(m => by("m:" + m));
+  if (top) D.push([by("m:" + top), `${cnt[top]} hata · ${MODES[top].t}`]);
+  else if (missCount() && by("miss")) D.push([by("miss"), missCount() + " hata bekliyor"]);
+  const du = dueItems().length; if (du && by("due")) D.push([by("due"), du + " kart bekliyor"]);
+  const nm = pxMsgOpen(); if (nm && by("h:ftmsgs")) D.push([by("h:ftmsgs"), nm + " mesaj bekliyor"]);
+  if (by("h:ftdiary") && !(S.diary || {})[TODAY]) D.push([by("h:ftdiary"), "Bugün daha yok"]);
+  // ilk öneri en önemlisi; ikincisi her gün sıradaki veri
+  const out = D.length ? [D[0]] : [];
+  if (D.length > 1) out.push(D[1 + day % (D.length - 1)]);
+  const has = e => out.some(([x]) => x.id === e.id), famIn = e => out.some(([x]) => x.fam === e.fam);
+  const old = ok.filter(e => e.fam !== "tekrar" && !has(e)).sort((a, b) => (st.precent[a.id] || 0) - (st.precent[b.id] || 0) || hubHash(a.id + day) % 997 - hubHash(b.id + day) % 997);
+  while (out.length < 3) {
+    const e = old.find(x => !has(x) && !famIn(x)) || old.find(x => !has(x));
+    if (!e) break;
+    out.push([e, st.precent[e.id] ? "Bir süredir yok" : "Hiç denemedin"]);
+  }
+  return out.map(([e, why], i) => i === 0 ? {e, tag: "Bugünün önerisi", sub: why, star: 1} : {e, tag: why, sub: PX_FAM[e.fam].t});
+}
+// etkinlik kartı (aile ekranı, favoriler, son yaptıkların)
+const pxCard = (e, o) => hubCard({k: e.id, z: e.z, ic: e.ic, t: e.t, d: e.d, play: e.t + ": başla", fav: pxPFav(e.id),
+  sub: [o && o.fam ? `<span>${PX_FAM[e.fam].t}</span>` : "", e.badge ? `<em class="ghrc">${esc(e.badge)}</em>` : ""].join(""),
+  hide: o && o.hide ? e.t + " etkinliğini gizle" : "", ago: pxState().precent[e.id] ? hubAgo(S.precent[e.id]) : "", cls: pxQuiet(e.fam) ? "pxquiet" : ""});
+const pxHidRow = e => hubHidRow({k: e.id, z: e.z, ic: e.ic, t: e.t, sub: PX_FAM[e.fam].t});
+function pxBind(root, E, redraw, fam){
+  const find = id => E.find(e => e.id === id);
+  hubBind(root, {redraw,
+    play: id => { const e = find(id); if (e) pxRun(e, fam); },
+    fav: id => hubSet(pxState().pfav, id, !pxPFav(id)),
+    hide: id => { pxState().phide[id] = Date.now(); const e = find(id); return `${e ? e.t : "Etkinlik"} gizlendi. Ailesinin en altından geri getirebilirsin.`; },
+    un: id => { pxState().phide[id] = -Date.now(); }, unMsg: "Geri geldi"});
+}
+const pxRedraw = () => { const y = scrollY; renderPracticeTab(); scrollTo(0, y); };
+
 function renderPracticeTab(){
+  // etkinlikten geri dönüldüyse ve onu bir aile ekranından açtıysan oraya dön
+  if (PX.ret && PX_FAM[PX.ret]) { const f = PX.ret; PX.ret = null; return pxOpenFamily(f); }
+  PX.ret = null;
   setTop("Pratik");
   const o = S.opt; o.psrc = PSRC[o.psrc] ? o.psrc : "ph"; o.pmode = o.pmode || "mix";
   if (!srcCount(o.psrc)) o.psrc = "ph";
   const isM = o.psrc === "mist";
   const sel = pSel(), mt = pModeTitle(sel), rs = typeof resumeInfo === "function" ? resumeInfo() : null;
-  const rows = [], row = (sec, ic, t, d, fn) => { rows.push({sec, fn}); return `<button class="prow" data-r="${rows.length - 1}"><span class="pic">${ic}</span><span class="ptx"><b>${esc(t)}</b>${d ? `<small>${esc(d)}</small>` : ""}</span>${I("chev", "ln pch")}</button>`; };
-  const hooks = sec => pxHooks(sec).map(h => row(sec, pxIc(h.ic), pxVal(h.t), pxVal(h.d), h.fn)).join("");
-  const head = (sec, t) => { const n = pxActWeek(sec); return `<div class="pxsech"><span>${t}</span>${n ? `<em title="Bu hafta bu bölümden açtıkların">bu hafta ${n}</em>` : ""}</div>`; };
-  const src = isM ? "ph" : o.psrc;
-  // kalıp paketleri: eklenen satır yoksa paketlerin kendisi (Konuşma dili, Gece ile Almanca)
-  let packs = hooks("paket");
-  if (!packs) packs = ["kd", "ev"].filter(k => poolFor(k).length).map(k => { const pk = (typeof C4 !== "undefined" && C4.packs && C4.packs[k]) || {};
-    return row("paket", I(PSRC[k].ic), pk.t || PSRC[k].t, pk.d || poolFor(k).length + " kalıp", () => typeof ftOpenPack === "function" ? ftOpenPack(k) : startSession({items: srcItems(k, 10), mode: "mix", title: PSRC[k].t})); }).join("");
-  const mc = missCount(), wm = allMistakes().length, fv = poolFor("fav").length;
-  $("#view").innerHTML = `
+  pxState();
+  const all = pxEntries(), E = all.filter(e => !pxHidden(e.id)), hid = all.filter(e => pxHidden(e.id));
+  const recs = pxRecs(E), favs = E.filter(e => pxPFav(e.id));
+  const v = PX.view === "fav" || PX.view === "recent" ? PX.view : "all";
+  // Gedsche'ye sor: en üstte ince satır (+ başka ekranların eklediği "gedsche" satırları)
+  const gh = pxHooks("gedsche");
+  $("#view").innerHTML = `<div class="pxhub">
+    <div class="card pxask"><button class="pxaskb" data-gq="ask" aria-label="Gedsche'ye sor"><span class="pxab">${bat("happy", 40)}</span><span class="ptx"><b>Gedsche'ye sor</b><small>Soru sor, durumunu konuş, kart iste</small></span>${I("chev", "ln pch")}</button>
+      ${gh.map((h, i) => `<button class="pxaskb" data-gq="${i}"><span class="pxab">${pxIc(h.ic)}</span><span class="ptx"><b>${esc(pxVal(h.t))}</b>${pxVal(h.d) ? `<small>${esc(pxVal(h.d))}</small>` : ""}</span>${I("chev", "ln pch")}</button>`).join("")}</div>
     ${rs ? `<div class="card pxres"><button class="pxresgo" id="pxres" aria-label="${esc(rs.t + ": " + rs.s)}"><span class="pxresi">${I(rs.ic || "history")}</span><span class="ptx"><b>${esc(rs.t)}</b><small>${esc(rs.s)}</small>${rs.total ? `<i class="pxresp" aria-hidden="true"><i style="width:${Math.round(rs.done / rs.total * 100)}%"></i></i>` : ""}</span>${I("chev", "ln pch")}</button><button class="ib pxresx" id="pxresx" aria-label="Kaldığın yeri unut">${I("x", "ln")}</button></div>` : ""}
     <div class="phero">
       <div class="phtx"><small>HIZLI ALIŞTIRMA</small><b>${esc(PSRC[o.psrc].t)}</b><span>${isM ? srcCount("mist") + " yazı hatası" : `${mt} · ${o.n ? o.n + " kart" : "hepsi"}`}</span></div>
@@ -6115,37 +6379,42 @@ function renderPracticeTab(){
       <button class="cta" id="go">${I("play", "ln")} Başla</button>
       <button class="linkbtn" id="pset">${I("gear", "ln")} Neyi, nasıl çalışacağını seç</button>
     </div>
-    <div class="card plist2 pxask">
-      ${row("gedsche", bat("happy", 52), "Gedsche'ye sor", "Soru sor, durumunu konuş, kart iste", () => open(renderQA))}
-      ${hooks("gedsche")}
+    <div class="ghhub pxgh ${hubFx() ? "fx" : "plain"}">
+      ${recs.length ? `<div class="sec ghsec">Sana önerilen</div><div class="ghrecs">${recs.map(r => hubRec({k: r.e.id, z: r.e.z, ic: r.e.ic, tag: r.tag, t: r.e.t, sub: r.sub, star: r.star})).join("")}</div>` : ""}
+      ${hubChips([["all", "Hepsi"], ["fav", "★ Favoriler" + (favs.length ? ` <small>${favs.length}</small>` : "")], ["recent", "Son yaptıkların"]], v, "Etkinlikleri süz")}
+      <div id="pxlist"></div>
+      ${hid.length ? `<button class="linkbtn ghhid" id="pxhid">Gizlenen etkinlikler (${hid.length})</button>` : ""}
     </div>
-    ${head("konus", "Konuş")}
-    <div class="card plist2">
-      ${row("konus", I("bolt"), "Turbo", SR && !noSpeak() ? "Türkçeyi duy, Almancasını söyle" : "Türkçeyi duy, söyle, doğrusunu dinle", () => startTurbo(src))}
-      ${row("konus", I("wave"), "Gölgeleme", "Duy ve hemen aynı tonla tekrar et", () => startShadow(src))}
-      ${row("konus", I("chat"), "Canlı konuş", SAMPLE ? "Bir senaryoda Claude ile yazışarak konuş" : "Bir senaryo seç, Claude'la rol yap", () => open(renderScenPick))}
-      ${hooks("konus")}
-    </div>
-    ${head("dinle", "Dinle")}
-    <div class="card plist2">
-      ${row("dinle", I("head"), "Arka planda dinle", "Ekrana bakmadan dinle: yolda, bulaşıkta", () => open(renderListen))}
-      ${hooks("dinle")}
-    </div>
-    ${head("yaz", "Yaz")}
-    <div class="card plist2">
-      ${row("yaz", I("pen"), "Yaz, düzeltsin", "Günlük yazı: birkaç cümle yaz, Claude düzeltsin", () => open(renderWrite))}
-      ${row("yaz", I("lang"), "Nasıl derim?", "Türkçesini yaz, Almancasını öğren", () => open(renderSay))}
-      ${row("yaz", I("folder"), "Yazılarım", allWritings().length ? allWritings().length + " düzeltilmiş yazı · hata defteri" : "Düzeltilen yazıların ve hata defteri", () => open(renderWritings))}
-      ${hooks("yaz")}
-    </div>
-    ${packs ? `${head("paket", "Kalıp paketleri")}<div class="card plist2">${packs}</div>` : ""}
-    <div class="pxsech"><span>Tekrar</span></div>
-    <div class="card plist2">
-      ${row("", I("pxNote"), "Hata defteri", mc || wm ? [mc ? mc + " alıştırma hatası" : "", wm ? wm + " yazı hatası" : ""].filter(Boolean).join(" · ") : "Yanlışların burada toplanır", () => open(renderMissBook))}
-      ${fv ? row("", I("star"), "Favorilerim", fv + " kart · karışık çalış", () => startSession({items: srcItems("fav"), mode: "mix", title: "Favorilerim"})) : ""}
-    </div>
-    <div style="height:16px"></div>`;
-  $$("#view .prow[data-r]").forEach(b => b.onclick = () => { const r = rows[+b.dataset.r]; if (!r) return; sfx("tap"); if (r.sec) pxActAdd(r.sec); try { r.fn(); } catch(e) { console.error(e); } });
+  </div>`;
+  const list = $("#pxlist");
+  const drawList = () => {
+    const vv = PX.view === "fav" || PX.view === "recent" ? PX.view : "all";
+    if (vv === "all") {
+      // Konuş öne çıkar; sessiz moddaki aileler soluk ve en sonda
+      const fams = Object.keys(PX_FAM).filter(f => E.some(e => e.fam === f));
+      const ord = fams.filter(f => !pxQuiet(f)).concat(fams.filter(pxQuiet));
+      const small = ord.filter(f => f !== "konus"), konus = fams.includes("konus"), kq = pxQuiet("konus");
+      const tile = (f, feat, wide) => { const F = PX_FAM[f], q = pxQuiet(f);
+        return hubFamTile({k: f, z: F.z, ic: I(F.ic), feat, tag: F.tag, t: F.t, d: F.d, hint: (q ? "Sessiz mod · " : "") + pxFamHint(f, E), cls: [q ? "pxquiet" : "", wide ? "pxwide" : ""].join(" ").trim()}); };
+      list.innerHTML = `<div class="ghfams">${konus && !kq ? tile("konus", 1) : ""}${small.map((f, i) => tile(f, 0, small.length % 2 && i === small.length - 1)).join("")}${konus && kq ? tile("konus", 1) : ""}</div>`;
+      list.querySelectorAll("[data-fam]").forEach(b => b.onclick = () => { sfx("tap"); pxOpenFamily(b.dataset.fam); });
+    } else {
+      const st = pxState();
+      const ks = vv === "fav" ? favs : E.filter(e => st.precent[e.id]).sort((a, b) => st.precent[b.id] - st.precent[a.id]).slice(0, 8);
+      list.innerHTML = ks.length ? `<div class="ghlist">${ks.map(e => pxCard(e, {fam: 1})).join("")}</div>`
+        : hubEmpty(vv === "fav" ? "think" : "wave", vv === "fav"
+          ? "Henüz favorin yok. Bir aileyi aç, sevdiğin etkinlikte <b>☆</b> işaretine dokun."
+          : "Henüz bir şey yapmadın. Yukarıdaki önerilerden biriyle başla!");
+      pxBind(list, E, pxRedraw);
+    }
+  };
+  drawList();
+  hubChipsBind($("#view"), k => { PX.view = k; try { localStorage.setItem("pxView", k); } catch(e) {} drawList(); });
+  $$("#view .ghrec").forEach(b => b.onclick = () => { const e = E.find(x => x.id === b.dataset.k); if (e) pxRun(e); });
+  $$("#view [data-gq]").forEach(b => b.onclick = () => { sfx("tap"); pxActAdd("gedsche"); const q = b.dataset.gq; try { q === "ask" ? open(renderQA) : gh[+q].fn(); } catch(e) { console.error(e); } });
+  const hb = $("#pxhid"); if (hb) hb.onclick = () => hubHiddenSheet({title: "Gizlenen etkinlikler", desc: "Geri getirdiğin etkinlik hem ailesinde hem önerilerde yeniden görünür.",
+    rows: () => pxEntries().filter(e => pxHidden(e.id)).map(pxHidRow), un: id => { pxState().phide[id] = -Date.now(); }, unMsg: "Geri geldi",
+    after: () => { if (tab === "practice" && !screen) pxRedraw(); }});
   $("#pset").onclick = pSheet;
   if (rs) { $("#pxres").onclick = () => { sfx("tap"); rs.run(); }; $("#pxresx").onclick = () => { pxResumeDrop(); const c = $(".pxres"); if (c) c.remove(); toast("Tamam, baştan başlarsın"); }; }
   $("#go").onclick = () => {
@@ -6156,6 +6425,23 @@ function renderPracticeTab(){
     startSession({items: its, mode: !sel.length ? "mix" : sel.length === 1 ? sel[0] : "pick", modes: sel, title: mt + " · " + PSRC[o.psrc].t});
   };
 }
+// aile ekranı: başlık + o ailenin etkinlikleri (★ favori, son yapılma, Gizle; en altta gizlenenler)
+function pxOpenFamily(f){
+  if (!PX_FAM[f]) return go("practice");
+  const draw = () => {
+    const F = PX_FAM[f], all = pxEntries(), fe = all.filter(e => e.fam === f), E = fe.filter(e => !pxHidden(e.id)), hid = fe.filter(e => pxHidden(e.id));
+    const w = pxActWeek(f), q = pxQuiet(f);
+    setTop(F.t, true);
+    $("#view").innerHTML = hubFamView({cls: "pxgh", hero: {z: F.z, ic: I(F.ic), t: F.t, d: F.d, feat: f === "konus", meta: `${E.length} etkinlik${w ? ` · bu hafta ${w}` : ""}`},
+      note: q ? `<p class="pxqn">${I(f === "dinle" || noListen() ? "pxSpkOff" : "pxMicOff")}<span>Sessiz mod açık: bu ailedeki bazı etkinlikler ses ister. Bugün ekranından kapatabilirsin.</span></p>` : "",
+      cards: E.map(e => pxCard(e, {hide: 1})), empty: "Bu ailedeki bütün etkinlikleri gizledin.", hidden: hid.map(pxHidRow)});
+    pxBind($("#view"), all, redraw, f);
+  };
+  const redraw = () => { const y = scrollY; draw(); scrollTo(0, y); };
+  open(draw);
+}
+// alt menüden sekmeye dokununca aile ekranına dönme hafızası silinsin (geri oku ise aileye döner)
+$$(".nav button").forEach(b => b.addEventListener("click", () => { PX.ret = null; }, true));
 function pOkMode(k){
   const m = MODES[k], isW = S.opt.psrc === "wd";
   return !!m && (!["hear","dictate","speak"].includes(k) || m.need()) && (isW ? m.k !== "s" : m.k !== "w");
@@ -6516,15 +6802,12 @@ const GH = {view: "all", ret: null};
 try { GH.view = localStorage.getItem("ghView") || "all"; } catch(e) {}
 // yeni durum anahtarları: favori ve gizli (işaretli zaman damgası, eksi = geri alındı), son oynama
 const ghState = () => { S.gfav = S.gfav || {}; S.ghide = S.ghide || {}; S.grecent = S.grecent || {}; return S; };
-HOOKS.merge.push((m, b) => {
-  ["gfav", "ghide"].forEach(k => { m[k] = m[k] || {}; Object.entries(b[k] || {}).forEach(([id, t]) => { if (Math.abs(t) > Math.abs(m[k][id] || 0)) m[k][id] = t; }); });
-  m.grecent = m.grecent || {}; Object.entries(b.grecent || {}).forEach(([id, t]) => { if (t > (m.grecent[id] || 0)) m.grecent[id] = t; });
-});
+HOOKS.merge.push((m, b) => hubMerge(m, b, ["gfav", "ghide"], "grecent"));
 const ghFam = k => { const g = GAMES[k] || {}; return GH_FAM[g.f] ? g.f : GH_MAP[k] || ({d:"art", s:"sent", n:"num", w:"mean"})[g.g] || "mean"; };
 // oyunun rengi: ailenin renginden başlayıp sırayla (efektli modda kartlar renk renk; oyunun içi de aynı renk)
 const ghZ = k => { const f = ghFam(k), i = ghFamGames(f, true).indexOf(k); return (GH_FAM[f].z + Math.max(0, i)) % 8; };
-const ghFav = k => (ghState().gfav[k] || 0) > 0;
-const ghHidden = k => (ghState().ghide[k] || 0) > 0;
+const ghFav = k => hubOn(ghState().gfav, k);
+const ghHidden = k => hubOn(ghState().ghide, k);
 const ghVisible = () => Object.keys(GAMES).filter(k => !ghHidden(k));
 // bir ailenin oyunları: listedeki sırayla, sonra o aileye kayıtlı diğerleri
 function ghFamGames(f, withHidden){
@@ -6537,15 +6820,7 @@ function ghMissFam(r){
   const k = Object.keys(GAMES).find(x => GAMES[x].t === r.src);
   return k ? ghFam(k) : null;
 }
-// "bugün", "dün", "3 gün önce"…
-function ghAgo(ts){
-  if (!ts) return "";
-  const d0 = new Date(); d0.setHours(0, 0, 0, 0);
-  const d = new Date(ts); d.setHours(0, 0, 0, 0);
-  const n = Math.round((d0 - d) / 864e5);
-  return n <= 0 ? "bugün" : n === 1 ? "dün" : n < 7 ? n + " gün önce" : n < 30 ? Math.round(n / 7) + " hafta önce" : "uzun zaman önce";
-}
-const ghHash = s => { let h = 7; for (const c of s) h = (h * 31 + c.charCodeAt(0)) >>> 0; return h; };
+const ghAgo = hubAgo, ghHash = hubHash;
 // önerilen 3 oyun: hatalarının en çok olduğu aile, bir doğal konuşma oyunu, günün oyunu
 function ghRecs(){
   const st = ghState(), vis = ghVisible(), day = dayNo(), out = [], has = k => out.some(o => o.k === k);
@@ -6571,44 +6846,24 @@ function ghRecs(){
   }
   return out.slice(0, 3);
 }
-const ghFx = () => (S.opt.gmode || "fx") === "fx";
+const ghFx = hubFx;
 const ghNew = k => S.games[k] === undefined && !ghState().grecent[k];
 const ghDot = k => ghNew(k) ? `<span class="ghdot" role="img" aria-label="Yeni" title="Hiç oynamadın"></span>` : "";
 const ghRec = (k, g) => S.games[k] !== undefined ? `🏆 ${S.games[k]} ${g.u}` : "";
-const GH_EYE = '<svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 3l18 18M10.6 5.1A10 10 0 0 1 12 5c5 0 9 4.5 10 7a13 13 0 0 1-3 4.1M6.6 6.6C4.3 8 2.7 10.2 2 12c1 2.5 5 7 10 7a9.7 9.7 0 0 0 5.4-1.6M9.9 9.9a3 3 0 0 0 4.2 4.2"/></svg>';
 // oyun kartı (aile ekranı, favoriler, son oynananlar)
 function ghCard(k, o){
-  const g = GAMES[k], f = ghFam(k), br = BRAND[k] || g.t, rec = ghRec(k, g), fav = ghFav(k);
-  return `<div class="ghg z${ghZ(k)}" data-g="${k}">
-    <button class="ghgo" data-play="${k}" aria-label="${esc(br)}: oyna">
-      <i class="ghgi">${I(g.ic)}</i>
-      <span class="ghgt"><b>${esc(br)}</b>
-        <span class="ghsub">${br.replace("!", "") !== g.t ? `<span>${esc(g.t)}</span>` : ""}${rec ? `<em class="ghrc">${rec}</em>` : ghNew(k) ? `<em class="ghnw">${ghDot(k)}Yeni</em>` : ""}</span>
-        <span class="ghd">${esc(g.d)}</span>
-        ${o && o.ago && ghState().grecent[k] ? `<span class="ghago">${I("clock", "ln")} ${ghAgo(S.grecent[k])}</span>` : ""}
-      </span>
-    </button>
-    <span class="ghact">
-      <button class="ghstar${fav ? " on" : ""}" data-fav="${k}" aria-pressed="${fav}" aria-label="${fav ? "Favorilerden çıkar" : "Favorilere ekle"}">${fav ? "★" : "☆"}</button>
-      ${o && o.hide ? `<button class="ghhide" data-hide="${k}" aria-label="${esc(br)} oyununu gizle">${GH_EYE}Gizle</button>` : ""}
-    </span>
-  </div>`;
+  const g = GAMES[k], br = BRAND[k] || g.t, rec = ghRec(k, g);
+  return hubCard({k, z: ghZ(k), ic: I(g.ic), t: br, play: br + ": oyna", d: g.d, fav: ghFav(k), hide: o && o.hide ? br + " oyununu gizle" : "",
+    sub: `${br.replace("!", "") !== g.t ? `<span>${esc(g.t)}</span>` : ""}${rec ? `<em class="ghrc">${rec}</em>` : ghNew(k) ? `<em class="ghnw">${ghDot(k)}Yeni</em>` : ""}`,
+    ago: o && o.ago && ghState().grecent[k] ? ghAgo(S.grecent[k]) : ""});
 }
 // kartlardaki ★ ve Gizle düğmeleri; Oyna
 function ghBind(root, redraw, fam){
-  root.querySelectorAll("[data-play]").forEach(b => b.onclick = () => { sfx("tap"); GH.ret = fam || null; GAMES[b.dataset.play].run(); });
-  root.querySelectorAll("[data-fav]").forEach(b => b.onclick = e => {
-    e.stopPropagation(); const k = b.dataset.fav, on = !ghFav(k);
-    ghState().gfav[k] = on ? Date.now() : -Date.now(); save(); sfx("tap"); buzz(8);
-    toast(on ? "★ Favorilere eklendi" : "Favorilerden çıkarıldı");
-    redraw();
-  });
-  root.querySelectorAll("[data-hide]").forEach(b => b.onclick = e => {
-    e.stopPropagation(); const k = b.dataset.hide;
-    ghState().ghide[k] = Date.now(); save(); buzz(8);
-    toast(`${BRAND[k] || GAMES[k].t} gizlendi. Oyun merkezinin altından geri getirebilirsin.`);
-    redraw();
-  });
+  hubBind(root, {redraw,
+    play: k => { GH.ret = fam || null; GAMES[k].run(); },
+    fav: k => hubSet(ghState().gfav, k, !ghFav(k)),
+    hide: k => { ghState().ghide[k] = Date.now(); return `${BRAND[k] || GAMES[k].t} gizlendi. Oyun merkezinin altından geri getirebilirsin.`; },
+    un: k => { ghState().ghide[k] = -Date.now(); }, unMsg: "Oyun geri geldi"});
 }
 function ghFamHint(f){
   const ks = ghFamGames(f), st = ghState();
@@ -6618,12 +6873,7 @@ function ghFamHint(f){
 function ghFamTile(f, feat){
   const F = GH_FAM[f], n = ghFamGames(f).length;
   if (!n) return "";
-  return `<button class="ghfam z${F.z}${feat ? " ghfeat" : ""}" data-fam="${f}" style="--d:${(ghHash(f) % 50) / 10}s">
-    <i class="ghfi">${I(F.ic)}</i>
-    ${feat ? `<span class="ghtag">Gerçek hayat Almancası</span>` : ""}
-    <b>${F.t}</b><span class="ghfd">${feat ? F.d : F.d}</span>
-    <span class="ghfh">${ghFamHint(f)}</span>
-  </button>`;
+  return hubFamTile({k: f, z: F.z, ic: I(F.ic), feat, tag: "Gerçek hayat Almancası", t: F.t, d: F.d, hint: ghFamHint(f)});
 }
 function renderGames(){
   // oyundan geri dönüldüyse ve oyunu bir aile ekranından açtıysan oraya dön
@@ -6634,19 +6884,12 @@ function renderGames(){
   const fx = ghFx(), recs = ghRecs(), hid = Object.keys(GAMES).filter(ghHidden);
   const favs = ghVisible().filter(ghFav);
   const v = GH.view === "fav" || GH.view === "recent" ? GH.view : "all";
-  const recCard = r => { const g = GAMES[r.k]; return `
-    <button class="ghrec z${ghZ(r.k)}${r.star ? " ghday" : ""}" data-k="${r.k}" style="--d:${(ghHash(r.k) % 40) / 10}s">
-      <span class="ghtag">${esc(r.tag)}</span>
-      <i class="ghri">${I(g.ic)}${ghDot(r.k)}</i>
-      <b>${esc(BRAND[r.k] || g.t)}</b>${BRAND[r.k] && BRAND[r.k] !== g.t ? `<small>${esc(g.t)}</small>` : ""}
-    </button>`; };
+  const recCard = r => { const g = GAMES[r.k]; return hubRec({k: r.k, z: ghZ(r.k), star: r.star, tag: r.tag, ic: I(g.ic), dot: ghDot(r.k),
+    t: BRAND[r.k] || g.t, sub: BRAND[r.k] && BRAND[r.k] !== g.t ? g.t : ""}); };
   const fams = Object.keys(GH_FAM).filter(f => f !== "talk");
   $("#view").innerHTML = `<div class="ghhub ${fx ? "fx" : "plain"}">
     ${recs.length ? `<div class="sec ghsec">Sana önerilen</div><div class="ghrecs">${recs.map(recCard).join("")}</div>` : ""}
-    <div class="ghchips" role="tablist" aria-label="Oyunları süz">
-      ${[["all", "Hepsi"], ["fav", "★ Favoriler" + (favs.length ? ` <small>${favs.length}</small>` : "")], ["recent", "Son oynadıkların"]].map(([k, t]) =>
-        `<button class="chip${v === k ? " on" : ""}" role="tab" aria-selected="${v === k}" data-view="${k}">${t}</button>`).join("")}
-    </div>
+    ${hubChips([["all", "Hepsi"], ["fav", "★ Favoriler" + (favs.length ? ` <small>${favs.length}</small>` : "")], ["recent", "Son oynadıkların"]], v, "Oyunları süz")}
     <div id="ghlist"></div>
     ${hid.length ? `<button class="linkbtn ghhid" id="ghhid">Gizlenen oyunlar (${hid.length})</button>` : ""}
     <p class="hint">Oyunlar senin kartlarından ve kelime listemizden gelir.</p>
@@ -6661,50 +6904,36 @@ function renderGames(){
       const ks = vv === "fav" ? ghVisible().filter(ghFav)
         : ghVisible().filter(k => st.grecent[k] || S.games[k] !== undefined).sort((a, b) => (st.grecent[b] || 0) - (st.grecent[a] || 0)).slice(0, 8);
       list.innerHTML = ks.length ? `<div class="ghlist">${ks.map(k => ghCard(k, {ago: vv === "recent"})).join("")}</div>`
-        : `<div class="ghempty">${typeof bat === "function" ? bat(vv === "fav" ? "think" : "wave", 64) : ""}<p>${vv === "fav"
+        : hubEmpty(vv === "fav" ? "think" : "wave", vv === "fav"
           ? "Henüz favorin yok. Bir oyun ailesini aç, sevdiğin oyunda <b>☆</b> işaretine dokun."
-          : "Henüz oyun oynamadın. Yukarıdaki önerilerden biriyle başla!"}</p></div>`;
+          : "Henüz oyun oynamadın. Yukarıdaki önerilerden biriyle başla!");
       ghBind(list, () => { const y = scrollY; renderGames(); scrollTo(0, y); });
     }
     list.querySelectorAll("[data-fam]").forEach(b => b.onclick = () => { sfx("tap"); ghOpenFamily(b.dataset.fam); });
   };
   drawList();
   $$(".ghrec").forEach(b => b.onclick = () => { sfx("tap"); GH.ret = null; GAMES[b.dataset.k].run(); });
-  $$(".ghchips .chip").forEach(b => b.onclick = () => {
-    GH.view = b.dataset.view; try { localStorage.setItem("ghView", GH.view); } catch(e) {}
-    $$(".ghchips .chip").forEach(c => { const on = c === b; c.classList.toggle("on", on); c.setAttribute("aria-selected", on); });
-    sfx("tap"); drawList();
-  });
+  hubChipsBind($("#view"), k => { GH.view = k; try { localStorage.setItem("ghView", k); } catch(e) {} drawList(); });
   const hb = $("#ghhid"); if (hb) hb.onclick = ghHiddenSheet;
 }
 // gizlenen oyunlar: alttan açılan liste, "Geri getir"
+const ghHidRow = (k, sub) => hubHidRow({k, z: ghZ(k), ic: I(GAMES[k].ic), t: BRAND[k] || GAMES[k].t, sub});
 function ghHiddenSheet(){
-  const draw = () => {
-    const hid = Object.keys(GAMES).filter(ghHidden);
-    if (!hid.length) { $("#sheet").classList.remove("show"); if (tab === "games" && !screen) { const y = scrollY; renderGames(); scrollTo(0, y); } return; }
-    $("#sheetIn").innerHTML = `<div class="ghsh"><h2>Gizlenen oyunlar</h2><p class="small muted">Geri getirdiğin oyun hem ailesinde hem önerilerde yeniden görünür.</p>
-      ${hid.map(k => { const g = GAMES[k], f = ghFam(k); return `<div class="ghhrow z${ghZ(k)}"><i class="ghgi">${I(g.ic)}</i><span><b>${esc(BRAND[k] || g.t)}</b><small>${esc(g.t)} · ${GH_FAM[f].t}</small></span><button class="btn2" data-un="${k}">Geri getir</button></div>`; }).join("")}
-      <button class="linkbtn" id="ghshx">Kapat</button></div>`;
-    $$("[data-un]").forEach(b => b.onclick = () => { ghState().ghide[b.dataset.un] = -Date.now(); save(); sfx("tap"); toast("Oyun geri geldi"); draw(); if (tab === "games" && !screen) { const y = scrollY; renderGames(); scrollTo(0, y); } });
-    $("#ghshx").onclick = () => $("#sheet").classList.remove("show");
-  };
-  draw(); $("#sheet").classList.add("show");
+  hubHiddenSheet({title: "Gizlenen oyunlar", desc: "Geri getirdiğin oyun hem ailesinde hem önerilerde yeniden görünür.",
+    rows: () => Object.keys(GAMES).filter(ghHidden).map(k => ghHidRow(k, GAMES[k].t + " · " + GH_FAM[ghFam(k)].t)),
+    un: k => { ghState().ghide[k] = -Date.now(); }, unMsg: "Oyun geri geldi",
+    after: () => { if (tab === "games" && !screen) { const y = scrollY; renderGames(); scrollTo(0, y); } }});
 }
 // aile ekranı: başlık + o ailenin oyunları (★ favori, Gizle)
 function ghOpenFamily(f){
   if (!GH_FAM[f]) return go("games");
   const draw = () => {
-    const F = GH_FAM[f], ks = ghFamGames(f), hid = ghFamGames(f, true).filter(ghHidden), fx = ghFx();
+    const F = GH_FAM[f], ks = ghFamGames(f), hid = ghFamGames(f, true).filter(ghHidden);
     const recs = ks.filter(k => S.games[k] !== undefined).length;
     setTop(F.t, true);
-    $("#view").innerHTML = `<div class="ghhub ghfamv ${fx ? "fx" : "plain"}">
-      <div class="ghhero z${F.z}${f === "talk" ? " ghfeat" : ""}"><i class="ghfi">${I(F.ic)}</i><span class="ghht"><b>${F.t}</b><span>${F.d}</span>
-        <em>${ks.length} oyun${recs ? ` · 🏆 ${recs} rekor` : ""}</em></span></div>
-      ${ks.length ? `<div class="ghlist">${ks.map(k => ghCard(k, {hide: 1})).join("")}</div>` : `<div class="ghempty"><p>Bu ailedeki bütün oyunları gizledin.</p></div>`}
-      ${hid.length ? `<div class="sec">Gizlenenler</div><div class="ghlist ghoff">${hid.map(k => `<div class="ghhrow z${ghZ(k)}"><i class="ghgi">${I(GAMES[k].ic)}</i><span><b>${esc(BRAND[k] || GAMES[k].t)}</b><small>${esc(GAMES[k].t)}</small></span><button class="btn2" data-un="${k}">Geri getir</button></div>`).join("")}</div>` : ""}
-    </div>`;
+    $("#view").innerHTML = hubFamView({hero: {z: F.z, ic: I(F.ic), t: F.t, d: F.d, feat: f === "talk", meta: `${ks.length} oyun${recs ? ` · 🏆 ${recs} rekor` : ""}`},
+      cards: ks.map(k => ghCard(k, {hide: 1})), empty: "Bu ailedeki bütün oyunları gizledin.", hidden: hid.map(k => ghHidRow(k, GAMES[k].t))});
     ghBind($("#view"), redraw, f);
-    $$("[data-un]").forEach(b => b.onclick = () => { ghState().ghide[b.dataset.un] = -Date.now(); save(); sfx("tap"); toast("Oyun geri geldi"); redraw(); });
   };
   const redraw = () => { const y = scrollY; draw(); scrollTo(0, y); };
   open(draw);
