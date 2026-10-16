@@ -1,5 +1,5 @@
 /* Almanca Günlük – çevrimdışı önbellek. Sayfa ve içerik önce ağdan denenir, yoksa önbellekten gelir. */
-const C = "almanca-gunluk-v110";
+const C = "almanca-gunluk-v107";
 const FILES = ["./", "./index.html", "./data.js", "./manifest.webmanifest", "./icon-192.png", "./icon-512.png", "./icon-maskable-512.png"];
 
 self.addEventListener("install", e => {
@@ -7,13 +7,15 @@ self.addEventListener("install", e => {
 });
 self.addEventListener("activate", e => {
   e.waitUntil(caches.keys()
-    .then(ks => Promise.all(ks.filter(k => k !== C).map(k => caches.delete(k))))
+    .then(ks => Promise.all(ks.filter(k => k !== C && !k.startsWith("gedsche-ses")).map(k => caches.delete(k))))
     .then(() => self.clients.claim()));
 });
 self.addEventListener("fetch", e => {
   if (e.request.method !== "GET") return;
   const url = new URL(e.request.url);
   if (url.origin !== location.origin) return;
+  // dinleme sesleri (audio/): sayfa kendisi indirip "gedsche-ses" önbelleğinde tutar; burada hepsi önbelleğe alınmaz
+  if (url.pathname.includes("/audio/")) return;
   e.respondWith(
     fetch(e.request).then(res => {
       const copy = res.clone();
