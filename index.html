@@ -5808,7 +5808,9 @@ const R_MODE = {
       <div id="vd"></div><div class="foot" hidden></div>`;
     const c = $("#swc"), z = $(".swz");
     speak(it.de); $("#spk").onclick = () => speak(it.de);
-    let x0 = null, dx = 0, moved = false;
+    let x0 = null, dx = 0, moved = false, ft = 0;
+    // çevir: dokunuş (pointerup) ya da yedek olarak click; ikisi aynı dokunuşta iki kez çevirmesin
+    const flip = () => { if (Date.now() - ft < 450) return; ft = Date.now(); c.classList.remove("flipping"); void c.offsetWidth; c.classList.add("flipping"); setTimeout(() => c.classList.toggle("flip"), 140); };
     const done = ok => {
       if (P.lock) return; P.lock = 1;
       c.style.transition = "transform .3s ease, opacity .3s"; c.style.transform = `translateX(${ok ? 140 : -140}%) rotate(${ok ? 18 : -18}deg)`; c.style.opacity = 0;
@@ -5816,9 +5818,9 @@ const R_MODE = {
       if (ok) setTimeout(() => { if (P && P.q[P.i] && P.q[P.i].it === it) next(); }, 320);
       else setTimeout(() => { if (!document.body.contains(c)) return; $("#vd").innerHTML = verdict(false, it); footNext(); }, 260);
     };
-    c.onpointerdown = e => { if (P.lock) return; x0 = e.clientX; dx = 0; moved = false; c.style.transition = "none"; c.setPointerCapture(e.pointerId); };
+    c.onpointerdown = e => { if (P.lock) return; x0 = e.clientX; dx = 0; moved = false; c.style.transition = "none"; try { c.setPointerCapture(e.pointerId); } catch(err) {} };
     c.onpointermove = e => {
-      if (x0 === null) return; dx = e.clientX - x0; if (Math.abs(dx) > 6) moved = true;
+      if (x0 === null) return; dx = e.clientX - x0; if (Math.abs(dx) > 14) moved = true;
       c.style.transform = `translateX(${dx}px) rotate(${dx / 18}deg)`;
       z.classList.toggle("toy", dx > 40); z.classList.toggle("ton", dx < -40);
     };
@@ -5826,8 +5828,9 @@ const R_MODE = {
       if (x0 === null) return; x0 = null; z.classList.remove("toy", "ton");
       if (Math.abs(dx) > 90) return done(dx > 0);
       c.style.transition = "transform .25s"; c.style.transform = "";
-      if (!moved) { c.classList.remove("flipping"); void c.offsetWidth; c.classList.add("flipping"); setTimeout(() => c.classList.toggle("flip"), 140); }
+      if (!moved) flip();
     };
+    c.onclick = () => { if (!P.lock && !moved) flip(); };
     $("#sy").onclick = () => done(true); $("#sn").onclick = () => done(false);
   },
   dictate(it){ typed(it, "dictate", `<div class="mid">Dinle ve yaz</div><button class="mic" id="spk" style="width:72px;height:72px;margin:6px auto">${ICON_SPK.replace('width="18" height="18"', 'width="30" height="30"')}</button>`, true); },
@@ -6094,7 +6097,9 @@ function appKbd(){
   };
   let rep;
   kb.querySelectorAll(".kk").forEach(b => {
-    b.onpointerdown = e => { e.preventDefault(); b.classList.add("on"); put(b.dataset.k); if (b.dataset.k === "⌫") rep = setTimeout(function r(){ put("⌫"); rep = setTimeout(r, 70); }, 420); };
+    // yedek: bazı telefonlarda pointerdown gelmezse click ile yaz (aynı dokunuşta iki kez yazmasın)
+    b.onclick = () => { if (Date.now() - (b._t || 0) > 700) put(b.dataset.k); };
+    b.onpointerdown = e => { e.preventDefault(); b._t = Date.now(); b.classList.add("on"); put(b.dataset.k); if (b.dataset.k === "⌫") rep = setTimeout(function r(){ put("⌫"); rep = setTimeout(r, 70); }, 420); };
     b.onpointerup = b.onpointerleave = b.onpointercancel = () => { b.classList.remove("on"); clearTimeout(rep); };
   });
   // fiziksel klavye (bilgisayar) yine çalışsın
