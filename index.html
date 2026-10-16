@@ -6849,7 +6849,9 @@ function startPlayer(s){
   const stop = () => { if (L) { L.playing = false; L.tok++; } ftAuHalt(); wake(false); ftLsBg(false); ftLsMedia(null); };
   if (typeof ftCleanup === "function") ftCleanup(stop); else onLeave = stop;
   // gerçek ses: <audio> öğesini dokunuşun içinde aç (iOS sonra kendi kendine çalmaya izin verir); ekran kapansa da çalar
-  if (L.au) ftAuUnlock(); else { wake(true); ftLsBg(true); }
+  // uzun sessiz "çapa" ses de çalar: Android, 5 saniyeden kısa seslere bildirim/kilit ekranı oynatıcısı göstermiyor
+  if (L.au) ftAuUnlock(); else wake(true);
+  ftLsBg(true);
   playCur();
 }
 function renderPlayer(){
@@ -6878,8 +6880,8 @@ function ftLsToggle(){
   L.playing = !L.playing;
   if (L.au) {
     const a = FT_LAU;
-    if (!L.playing) { L.selfPause = 1; stopSpeak(); if (a) a.pause(); renderPlayer(); return; }
-    renderPlayer();
+    if (!L.playing) { L.selfPause = 1; stopSpeak(); if (a) a.pause(); ftLsBg(false); renderPlayer(); return; }
+    ftLsBg(true); renderPlayer();
     // dosyanın ortasında durduysa kaldığı yerden devam, değilse cümle baştan
     if (a && L.cur && L.cur.fid && L.atok === L.tok && a.currentTime > 0 && !a.ended) { const p = a.play(); if (p && p.catch) p.catch(() => playCur()); ftLsPos(); }
     else playCur();
@@ -6920,8 +6922,8 @@ function ftLsPos(){
 }
 let FT_LSAU = null;
 function ftLsWav(){
-  // 1 saniye sessizlik, 8 kHz, 8 bit mono
-  const n = 8000, b = new Uint8Array(44 + n), v = new DataView(b.buffer), str = (o, t) => { for (let i = 0; i < t.length; i++) b[o + i] = t.charCodeAt(i); };
+  // 20 saniye sessizlik, 8 kHz, 8 bit mono (Android oynatıcıyı yalnız 5 sn'den uzun seslerde gösterir)
+  const n = 8000 * 20, b = new Uint8Array(44 + n), v = new DataView(b.buffer), str = (o, t) => { for (let i = 0; i < t.length; i++) b[o + i] = t.charCodeAt(i); };
   str(0, "RIFF"); v.setUint32(4, 36 + n, true); str(8, "WAVEfmt "); v.setUint32(16, 16, true); v.setUint16(20, 1, true); v.setUint16(22, 1, true);
   v.setUint32(24, 8000, true); v.setUint32(28, 8000, true); v.setUint16(32, 1, true); v.setUint16(34, 8, true); str(36, "data"); v.setUint32(40, n, true); b.fill(128, 44);
   let s = ""; for (let i = 0; i < b.length; i += 4096) s += String.fromCharCode.apply(null, b.subarray(i, i + 4096));
