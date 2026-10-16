@@ -1945,6 +1945,14 @@ mark{background:color-mix(in srgb,var(--amber) 40%,transparent);color:inherit;bo
 :root[data-look="flat"] :is(.pxrm,.pxlunit){backdrop-filter:none;-webkit-backdrop-filter:none;background:var(--solid)}
 :root[data-look="flat"] .pxrm{box-shadow:0 2px 0 var(--line)}
 @media (max-width:370px){.pxrm b{font-size:12.5px}.pxltd .btn2{font-size:14px}.pxlch{padding-left:14px}.pxlch::before{left:31px}}
+/* kelime kutuları: dokununca geri, sürükleyince sırala (ui.js tlTiles) */
+.tlrow{position:relative}
+.tlrow .wd{touch-action:none;-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}
+.tlrow .wd.tlph,body.arcade:not(.sess) .tlrow .wd.tlph{color:transparent!important;text-shadow:none!important;background:color-mix(in srgb,var(--acc) 10%,transparent)!important;border:2px dashed var(--acc)!important;box-shadow:none!important;transform:none!important}
+body.arcade:not(.sess) .tlrow .wd.tlph{border-color:var(--c1,var(--acc))!important;background:color-mix(in srgb,var(--c1,var(--acc)) 14%,transparent)!important}
+.tlrow .wd.tlgh{position:absolute;left:0;top:0;margin:0!important;z-index:40;pointer-events:none;scale:1.07;transform:none!important;box-shadow:0 12px 26px rgb(20 16 60/.28)!important;cursor:grabbing}
+.tlrow.tldrag{border-color:var(--acc)!important}
+body.tldragging,body.tldragging *{-webkit-user-select:none!important;user-select:none!important;cursor:grabbing}
 /* ================= Oyun merkezi (A3) ================= */
 .ghhub{padding-bottom:18px}
 .ghhub .sec.ghsec{margin-top:8px}
@@ -5098,6 +5106,120 @@ function badgesHtml(compact){
   return `<div class="badges ${compact ? "cmp" : ""}">${list.map(b => `<div class="bdg ${B[b.id] ? "on" : ""} ${B[b.id] === TODAY ? "new" : ""}" style="--d:${(Math.random() * 4).toFixed(2)}s" title="${esc(b.d)}"><i>${I(B[b.id] ? b.ic : "lock", B[b.id] ? "" : "ln")}</i><b>${b.t}</b>${compact ? "" : `<small>${B[b.id] ? trDate(B[b.id]) : esc(b.d)}</small>`}</div>`).join("")}</div>`;
 }
 
+/* ---------- kelime kutuları (cümle kur / sırala / hatalar / harfler): ortak davranış ----------
+   havuzdaki kutuya dokun → satıra eklenir; satırdaki kutuya dokun → havuza geri döner;
+   satırdaki kutuyu basılı tutup sürükle → sırası değişir (bırakacağın yer kesikli çerçeveyle görünür,
+   havuzun üstüne bırakırsan geri döner). Pointer Events: dokunmatik + fare, sürüklerken sayfa kaymaz.
+   o = {row, pool, arr (k listesi, yerinde değişir), label: k => metin, max, lock: () => bool, onAdd(k), onChange()} */
+function tlTiles(o){
+  const row = o.row, pool = o.pool, arr = o.arr, max = o.max || Infinity;
+  const calm = () => matchMedia("(prefers-reduced-motion: reduce)").matches;
+  let skip = 0, busy = 0;
+  const locked = () => busy || !!(o.lock && o.lock());
+  row.classList.add("tlrow");
+  const draw = () => {
+    row.innerHTML = arr.map((k, j) => `<button class="wd" data-j="${j}">${esc(o.label(k))}</button>`).join("");
+    pool.querySelectorAll(".wd[data-k]").forEach(b => b.classList.toggle("used", arr.includes(+b.dataset.k)));
+    row.querySelectorAll(".wd[data-j]").forEach(b => b.onclick = () => {
+      if (skip) { skip = 0; return; }
+      if (locked()) return;
+      arr.splice(+b.dataset.j, 1); draw();
+    });
+    if (o.onChange) o.onChange();
+  };
+  pool.querySelectorAll(".wd[data-k]").forEach(b => b.onclick = () => {
+    const k = +b.dataset.k;
+    if (locked() || arr.includes(k) || arr.length >= max) return;
+    arr.push(k); if (o.onAdd) o.onAdd(k); draw();
+  });
+  // FLIP: yer değiştiren kutular kayarak yeni yerine gider
+  const flip = (els, change) => {
+    const a = els.map(e => e.getBoundingClientRect());
+    change();
+    if (calm()) return;
+    els.forEach((e, i) => {
+      const b = e.getBoundingClientRect(), dx = a[i].left - b.left, dy = a[i].top - b.top;
+      if (!dx && !dy) return;
+      e.style.transition = "none"; e.style.translate = `${dx}px ${dy}px`;
+      void e.offsetWidth;
+      e.style.transition = "translate .18s cubic-bezier(.2,.8,.3,1)"; e.style.translate = "";
+    });
+  };
+  const start = (b, sx, sy) => {
+    const br = b.getBoundingClientRect(), g = b.cloneNode(true);
+    g.removeAttribute("data-j"); g.classList.add("tlgh"); g.setAttribute("aria-hidden", "true");
+    Object.assign(g.style, {width: br.width + "px", height: br.height + "px", boxSizing: "border-box"});
+    row.style.minHeight = row.offsetHeight + "px";   // sürüklerken satır yüksekliği oynamasın
+    row.prepend(g); b.classList.add("tlph"); row.classList.add("tldrag"); document.body.classList.add("tldragging");
+    if (typeof buzz === "function") buzz(8);
+    return {b, g, gx: sx - br.left, gy: sy - br.top, w: br.width, h: br.height, x: sx, y: sy};
+  };
+  const place = (D, x, y) => {
+    D.x = x; D.y = y;
+    const rr = row.getBoundingClientRect();
+    D.g.style.translate = `${x - D.gx - rr.left - row.clientLeft}px ${y - D.gy - rr.top - row.clientTop}px`;
+    // bırakılacak yer: parmağın altındaki kutuya göre (yerleşim koordinatları; kayma animasyonundan etkilenmez).
+    // aynı hedefte tekrar tetiklenmez → satır kayınca ileri geri zıplamaz
+    const ox = x - rr.left - row.clientLeft, oy = y - rr.top - row.clientTop, g = 5;
+    const els = [...row.querySelectorAll(".wd[data-j]")], others = els.filter(e => e !== D.b);
+    if (!others.length) return;
+    const R = e => ({l: e.offsetLeft, t: e.offsetTop, r: e.offsetLeft + e.offsetWidth, b: e.offsetTop + e.offsetHeight});
+    const inR = (r, px, py) => px >= r.l - g && px <= r.r + g && py >= r.t - g && py <= r.b + g;
+    const after = e => others[others.indexOf(e) + 1] || null;
+    const first = others[0], last = others[others.length - 1], fr = R(first), lr = R(last);
+    let key = null, ref;
+    if (inR(R(D.b), ox, oy)) { D.key = null; return; }
+    const over = others.find(e => inR(R(e), ox, oy));
+    if (over) { key = over; ref = els.indexOf(over) > els.indexOf(D.b) ? after(over) : over; }
+    else if (oy > lr.b + g || (oy >= lr.t - g && ox > lr.r)) { key = "end"; ref = null; }
+    else if (oy < fr.t - g || (oy <= fr.b + g && ox < fr.l)) { key = "start"; ref = first; }
+    else {
+      const line = others.filter(e => { const r = R(e); return oy >= r.t - g && oy <= r.b + g; }), le = line[line.length - 1];
+      if (le && ox > R(le).r) { key = "le" + le.dataset.j; ref = after(le); }
+    }
+    if (!key || key === D.key) return;
+    D.key = key;
+    let nx = D.b.nextElementSibling; while (nx && !nx.dataset.j) nx = nx.nextElementSibling;
+    if (ref === D.b || ref === nx) return;
+    flip(els, () => row.insertBefore(D.b, ref));
+  };
+  const finish = (D, cancel) => {
+    document.body.classList.remove("tldragging");
+    if (!row.isConnected) return;
+    const pr = pool.getBoundingClientRect(), rr = row.getBoundingClientRect();
+    row.classList.remove("tldrag"); row.style.minHeight = "";
+    const back = !cancel && D.y > rr.bottom + 8 && D.y >= pr.top - 8 && D.y <= pr.bottom + 8 && D.x >= pr.left - 8 && D.x <= pr.right + 8;
+    const order = cancel ? arr.slice() : [...row.querySelectorAll(".wd[data-j]")].filter(e => !(back && e === D.b)).map(e => arr[+e.dataset.j]);
+    const done = () => { busy = 0; arr.splice(0, arr.length, ...order); draw(); };
+    if (calm() || back) { D.g.remove(); return done(); }
+    busy = 1;
+    const tr = D.b.getBoundingClientRect();
+    D.g.style.transition = "translate .14s ease-out, scale .14s ease-out";
+    D.g.style.translate = `${tr.left - rr.left - row.clientLeft}px ${tr.top - rr.top - row.clientTop}px`; D.g.style.scale = "1";
+    setTimeout(done, 140);
+  };
+  row.addEventListener("pointerdown", e => {
+    const b = e.target.closest(".wd[data-j]");
+    if (!b || e.button > 0 || locked()) return;
+    skip = 0;
+    const id = e.pointerId, sx = e.clientX, sy = e.clientY; let D = null;
+    const move = ev => {
+      if (ev.pointerId !== id) return;
+      if (!D) {
+        if (Math.hypot(ev.clientX - sx, ev.clientY - sy) < 7) return;
+        if (locked()) return stop();
+        D = start(b, sx, sy);
+      }
+      ev.preventDefault(); place(D, ev.clientX, ev.clientY);
+    };
+    const up = ev => { if (ev.pointerId !== id) return; stop(); if (D) { skip = 1; setTimeout(() => skip = 0, 400); finish(D, ev.type === "pointercancel"); } };
+    const stop = () => { removeEventListener("pointermove", move); removeEventListener("pointerup", up); removeEventListener("pointercancel", up); };
+    addEventListener("pointermove", move, {passive: false}); addEventListener("pointerup", up); addEventListener("pointercancel", up);
+  });
+  draw();
+  return {draw};
+}
+
 /* ================= HATA DEFTERİ: her yerdeki yanlışlar tek yerde ================= */
 // miss(x, src): x bir kart (ITEMS'tan, id'li) ya da {de, tr, note}; src nerede yanlış yapıldığı ("Alıştırma", oyun adı…)
 // Kartlı hatalar kendi kartına bağlanır; kartsızlar (sayılar, çekimler, oyun cümleleri) "m:" kartı olarak desteye girer.
@@ -5666,13 +5788,9 @@ const R_MODE = {
       <div class="pool" id="pool">${pool.map((p, k) => `<button class="wd" data-k="${k}">${esc(p.x)}</button>`).join("")}</div>
       <div id="vd"></div>
       <div class="foot"><div class="row2"><button class="btn2" id="clr">Temizle</button><button class="cta" id="ck" disabled>Kontrol et</button></div></div>`;
-    const draw = () => {
-      $("#built").innerHTML = built.map((k, j) => `<button class="wd" data-j="${j}">${esc(pool[k].x)}</button>`).join("");
-      $$("#pool .wd").forEach(b => b.classList.toggle("used", built.includes(+b.dataset.k)));
-      $$("#built .wd").forEach(b => b.onclick = () => { if (P.lock) return; built.splice(+b.dataset.j, 1); draw(); });
-      $("#ck").disabled = built.length !== w.length;
-    };
-    $$("#pool .wd").forEach(b => b.onclick = () => { if (P.lock || built.includes(+b.dataset.k)) return; built.push(+b.dataset.k); if (!noListen()) speak(pool[+b.dataset.k].x.replace(/[.,!?;:]/g, ""), null, null, {quiet:1}); sfx("tap"); draw(); });
+    const {draw} = tlTiles({row: $("#built"), pool: $("#pool"), arr: built, max: w.length, label: k => pool[k].x, lock: () => P.lock,
+      onAdd: k => { if (!noListen()) speak(pool[k].x.replace(/[.,!?;:]/g, ""), null, null, {quiet:1}); sfx("tap"); },
+      onChange: () => { $("#ck").disabled = built.length !== w.length; }});
     $("#clr").onclick = () => { if (P.lock) return; built.length = 0; draw(); };
     $("#ck").onclick = () => {
       if (P.lock) return; P.lock = 1;
@@ -5847,13 +5965,8 @@ function startMistakes(){
         <div class="pool" id="pool">${pool.map((p, k) => `<button class="wd" data-k="${k}">${esc(p.x)}</button>`).join("")}</div>
         <div id="vd"></div>
         <div class="foot"><div class="row2"><button class="btn2" id="clr">Temizle</button><button class="cta" id="ck" disabled>Kontrol et</button></div></div>`;
-      const draw = () => {
-        $("#built").innerHTML = built.map((k, j) => `<button class="wd" data-j="${j}">${esc(pool[k].x)}</button>`).join("");
-        $$("#pool .wd").forEach(b => b.classList.toggle("used", built.includes(+b.dataset.k)));
-        $$("#built .wd").forEach(b => b.onclick = () => { if (lock) return; built.splice(+b.dataset.j, 1); draw(); });
-        $("#ck").disabled = built.length !== w.length;
-      };
-      $$("#pool .wd").forEach(b => b.onclick = () => { if (lock || built.includes(+b.dataset.k)) return; built.push(+b.dataset.k); draw(); });
+      const {draw} = tlTiles({row: $("#built"), pool: $("#pool"), arr: built, max: w.length, label: k => pool[k].x, lock: () => lock,
+        onChange: () => { $("#ck").disabled = built.length !== w.length; }});
       $("#clr").onclick = () => { if (lock) return; built.length = 0; draw(); };
       $("#ck").onclick = () => {
         if (lock) return; lock = 1;
@@ -5942,12 +6055,8 @@ Object.assign(R_MODE, {
       <div class="pool" id="pool">${sh.map((x, k) => `<button class="wd" data-k="${k}" style="min-width:42px">${esc(x.c)}</button>`).join("")}</div>
       <div id="vd"></div>
       <div class="foot"><div class="row2"><button class="btn2" id="clr">Sil</button><button class="cta" id="ck" disabled>Kontrol et</button></div></div>`;
-    const draw = () => {
-      $("#built").innerHTML = built.map(k => `<span class="wd">${esc(sh[k].c)}</span>`).join("");
-      $$("#pool .wd").forEach(b => b.classList.toggle("used", built.includes(+b.dataset.k)));
-      $("#ck").disabled = built.length !== L.length;
-    };
-    $$("#pool .wd").forEach(b => b.onclick = () => { if (P.lock || built.includes(+b.dataset.k)) return; built.push(+b.dataset.k); draw(); });
+    const {draw} = tlTiles({row: $("#built"), pool: $("#pool"), arr: built, max: L.length, label: k => sh[k].c, lock: () => P.lock,
+      onChange: () => { $("#ck").disabled = built.length !== L.length; }});
     $("#clr").onclick = () => { if (P.lock) return; built.pop(); draw(); };
     $("#ck").onclick = () => {
       if (P.lock) return; P.lock = 1;
@@ -6720,23 +6829,27 @@ function renderListen(){
     <div class="seg" id="lq">${[[0,"Kapalı"],[5,"5 cümlede bir"]].map(([k, t]) => `<button data-v="${k}" class="${(o.lq || 0) == k ? "on" : ""}">${t}</button>`).join("")}</div>
     <p class="small muted" style="margin:6px 2px 0">Açıksa ara ara durur ve “az önce ne duydun?” diye sorar. Ekrana bakamayacaksan kapalı kalsın.</p>
     <div style="margin-top:18px"><button class="cta" id="lgo">▶ Dinlemeye başla</button></div>
-    <p class="hint ftlslock">${I("lock", "ln")} Kilit ekranından da kontrol edebilirsin (telefonun izin verirse).</p>
+    <p class="hint ftlslock" id="ftlsh">${I("lock", "ln")} ${FT_AM ? FT_LSH : "Kilit ekranından da kontrol edebilirsin (telefonun izin verirse)."}</p>
     <div style="height:16px"></div>`;
   $$(".chap").forEach(b => b.onclick = () => { o.lsrc = b.dataset.k; save(); renderListen(); });
   const seg = (id, key, num) => $$(`#${id} button`).forEach(b => b.onclick = () => { o[key] = num ? +b.dataset.v : b.dataset.v; save(); renderListen(); });
   seg("ld", "ldir"); seg("lr", "lrate", 1); seg("lp", "lrep", 1); seg("lg", "lgap", 1); seg("lq", "lq", 1);
   $("#lgo").onclick = () => { const s = src.find(x => x.k === o.lsrc); if (s) startPlayer(s); };
+  // gerçek ses dosyaları (telefon uygulaması): listeyi arka planda yükle
+  if (FT_AM === null) ftAuMan().then(m => { const h = $("#ftlsh"); if (m && h && screen === renderListen) h.innerHTML = I("lock", "ln") + " " + FT_LSH; });
 }
+const FT_LSH = "Ekran kapansa da çalar, kilit ekranından yönetirsin.";
 
 let L = null;
 function startPlayer(s){
   if (noListen()) return toast("Şu an dinleyemem açık. Bugün ekranından kapatabilirsin.");
-  L = {s, list: s.items(), i:0, playing:true, tok:0};
+  L = {s, list: s.items(), i:0, playing:true, tok:0, au: !!FT_AM};
   if (!L.list.length) return toast("Liste boş");
   if (typeof ftOpen === "function") ftOpen(renderPlayer, () => open(renderListen)); else open(renderPlayer);
-  const stop = () => { if (L) { L.playing = false; L.tok++; } wake(false); ftLsBg(false); ftLsMedia(null); };
+  const stop = () => { if (L) { L.playing = false; L.tok++; } ftAuHalt(); wake(false); ftLsBg(false); ftLsMedia(null); };
   if (typeof ftCleanup === "function") ftCleanup(stop); else onLeave = stop;
-  wake(true); ftLsBg(true);
+  // gerçek ses: <audio> öğesini dokunuşun içinde aç (iOS sonra kendi kendine çalmaya izin verir); ekran kapansa da çalar
+  if (L.au) ftAuUnlock(); else { wake(true); ftLsBg(true); }
   playCur();
 }
 function renderPlayer(){
@@ -6748,29 +6861,62 @@ function renderPlayer(){
     <div class="phase">${esc(L.s.t)}</div>
     <div class="card player">
       ${it.who ? `<div class="who">${esc(it.who)}</div>` : ""}
-      <div class="de" id="pde" ${o.ldir === "trde" ? 'style="visibility:hidden"' : ""}>${esc(it.de || "")}</div>
+      <div class="de" id="pde" ${o.ldir === "trde" && !L.shown ? 'style="visibility:hidden"' : ""}>${esc(it.de || "")}</div>
       <div class="tr">${esc(it.tr || "")}</div>
     </div>
-    <div class="ctrl"><button id="pv" aria-label="Önceki">⏮</button><button class="pp" id="pp" aria-label="Oynat/Duraklat">${L.playing ? "❚❚" : "▶"}</button><button id="pn" aria-label="Sonraki">⏭</button></div>
-    <p class="hint">${LDIR.find(d => d[0] === o.ldir)[1]} · ${o.lrep}× · ${({0.7:"çok yavaş",0.85:"yavaş",1:"normal",1.15:"hızlı"})[o.lrate] || ""}. Liste bitince başa döner.</p>`;
-  $("#pp").onclick = () => { L.playing = !L.playing; L.tok++; stopSpeak(); ftLsBg(L.playing); renderPlayer(); if (L.playing) playCur(); };
-  $("#pn").onclick = () => { L.tok++; stopSpeak(); L.i = (L.i + 1) % L.list.length; renderPlayer(); if (L.playing) playCur(); };
-  $("#pv").onclick = () => { L.tok++; stopSpeak(); L.i = (L.i - 1 + L.list.length) % L.list.length; renderPlayer(); if (L.playing) playCur(); };
+    <div class="ctrl"><button id="pv" aria-label="Önceki">⏮</button><button class="pp" id="pp" aria-label="${L.playing ? "Duraklat" : "Oynat"}">${L.playing ? "❚❚" : "▶"}</button><button id="pn" aria-label="Sonraki">⏭</button></div>
+    <p class="hint">${LDIR.find(d => d[0] === o.ldir)[1]} · ${o.lrep}× · ${({0.7:"çok yavaş",0.85:"yavaş",1:"normal",1.15:"hızlı"})[o.lrate] || ""}. Liste bitince başa döner.</p>
+    ${L.au ? `<p class="hint ftlslock" style="margin-top:4px">${I("lock", "ln")} Ekranı kilitleyebilirsin, ses devam eder.</p>` : ""}`;
+  $("#pp").onclick = ftLsToggle;
+  $("#pn").onclick = () => ftLsSkip(1);
+  $("#pv").onclick = () => ftLsSkip(-1);
   ftLsMedia(it);
 }
-// K7: kilit ekranı kontrolleri (Media Session) + sessiz döngü ses: işletim sistemi oynatıcıyı gösterir, sayfa uyumaz
-const FT_LSART = () => { const l = document.querySelector('link[rel~="apple-touch-icon"], link[rel~="icon"]'); const h = l && l.href; return h ? [{src: h, sizes: "192x192", type: /\.svg|svg\+xml/.test(h) ? "image/svg+xml" : "image/png"}] : IN_CLAUDE ? [] : [{src: "icon-192.png", sizes: "192x192", type: "image/png"}, {src: "icon-512.png", sizes: "512x512", type: "image/png"}]; };
+// oynat/duraklat, ileri/geri: düğmeler ve kilit ekranı aynı işlevleri çağırır
+function ftLsToggle(){
+  if (!L) return;
+  L.playing = !L.playing;
+  if (L.au) {
+    const a = FT_LAU;
+    if (!L.playing) { L.selfPause = 1; stopSpeak(); if (a) a.pause(); renderPlayer(); return; }
+    renderPlayer();
+    // dosyanın ortasında durduysa kaldığı yerden devam, değilse cümle baştan
+    if (a && L.cur && L.cur.fid && L.atok === L.tok && a.currentTime > 0 && !a.ended) { const p = a.play(); if (p && p.catch) p.catch(() => playCur()); ftLsPos(); }
+    else playCur();
+    return;
+  }
+  L.tok++; stopSpeak(); ftLsBg(L.playing); renderPlayer(); if (L.playing) playCur();
+}
+function ftLsSkip(d){
+  if (!L) return;
+  L.tok++; stopSpeak(); if (L.au) ftAuHalt(1);
+  L.i = (L.i + d + L.list.length) % L.list.length; L.shown = 0;
+  renderPlayer(); if (L.playing) playCur();
+}
+// K7: kilit ekranı kontrolleri (Media Session); TTS'te ayrıca sessiz döngü ses: işletim sistemi oynatıcıyı gösterir, sayfa uyumaz
+const FT_LSART = () => { const l = document.querySelector('link[rel~="apple-touch-icon"], link[rel~="icon"]'); const h = l && l.href; return h ? [{src: h, sizes: /512/.test(h) ? "512x512" : "192x192", type: /\.svg|svg\+xml/.test(h) ? "image/svg+xml" : "image/png"}] : IN_CLAUDE ? [] : [{src: "icon-192.png", sizes: "192x192", type: "image/png"}, {src: "icon-512.png", sizes: "512x512", type: "image/png"}]; };
 function ftLsMedia(it){
   if (!("mediaSession" in navigator)) return;
   const ms = navigator.mediaSession, act = (a, f) => { try { ms.setActionHandler(a, f); } catch(e) {} };
-  if (!it || !L) { try { ms.metadata = null; ms.playbackState = "none"; } catch(e) {} ["play", "pause", "previoustrack", "nexttrack", "stop"].forEach(a => act(a, null)); return; }
-  try { ms.metadata = new MediaMetadata({title: L.s.t, artist: "Gedsche", album: it.de || "Gedsches Deutsch", artwork: FT_LSART()}); ms.playbackState = L.playing ? "playing" : "paused"; } catch(e) {}
-  const tap = id => () => { const b = $("#" + id); if (b && screen === renderPlayer) b.click(); };
-  act("play", () => { if (L && !L.playing) tap("pp")(); });
-  act("pause", () => { if (L && L.playing) tap("pp")(); });
-  act("nexttrack", tap("pn"));
-  act("previoustrack", tap("pv"));
-  act("stop", () => { if (L && L.playing) tap("pp")(); if (screen === renderPlayer) open(renderListen); });
+  if (!it || !L) { try { ms.metadata = null; ms.playbackState = "none"; } catch(e) {} ["play", "pause", "previoustrack", "nexttrack", "stop", "seekto"].forEach(a => act(a, null)); return; }
+  try {
+    const short = t => String(t || "").length > 90 ? String(t).slice(0, 88) + "…" : String(t || "");
+    ms.metadata = new MediaMetadata(L.au
+      ? {title: short(it.de) || L.s.t, artist: short(it.tr || it.who || L.s.t), album: L.s.t + " · Gedsche", artwork: FT_LSART()}
+      : {title: L.s.t, artist: "Gedsche", album: it.de || "Gedsches Deutsch", artwork: FT_LSART()});
+    ms.playbackState = L.playing ? "playing" : "paused";
+  } catch(e) {}
+  act("play", () => { if (L && !L.playing) ftLsToggle(); });
+  act("pause", () => { if (L && L.playing) ftLsToggle(); });
+  act("nexttrack", () => ftLsSkip(1));
+  act("previoustrack", () => ftLsSkip(-1));
+  act("stop", () => { if (L && L.playing) ftLsToggle(); if (screen === renderPlayer) open(renderListen); });
+  // ileri/geri sarma düğmeleri (seekforward/backward) bilerek yok: iOS onları görünce önceki/sonraki düğmelerini gizliyor
+  act("seekto", L.au ? d => { const a = FT_LAU; if (a && L.cur && L.cur.fid && isFinite(a.duration)) { a.currentTime = Math.max(0, Math.min(a.duration - .05, d.seekTime || 0)); ftLsPos(); } } : null);
+}
+function ftLsPos(){
+  const a = FT_LAU;
+  try { if (a && "mediaSession" in navigator && navigator.mediaSession.setPositionState && isFinite(a.duration) && a.duration > 0) navigator.mediaSession.setPositionState({duration: a.duration, playbackRate: a.playbackRate || 1, position: Math.min(a.duration, a.currentTime || 0)}); } catch(e) {}
 }
 let FT_LSAU = null;
 function ftLsWav(){
@@ -6787,23 +6933,154 @@ function ftLsBg(on){
       if (!FT_LSAU) { FT_LSAU = new Audio(ftLsWav()); FT_LSAU.loop = true; FT_LSAU.volume = 0.02; FT_LSAU.setAttribute("playsinline", ""); }
       const p = FT_LSAU.play(); if (p && p.catch) p.catch(() => {});
     } else if (FT_LSAU) FT_LSAU.pause();
-    if ("mediaSession" in navigator) navigator.mediaSession.playbackState = on ? "playing" : "paused";
+    if ("mediaSession" in navigator && !(L && L.au)) navigator.mediaSession.playbackState = on ? "playing" : "paused";
   } catch(e) {}
 }
+
+/* ---- K8: gerçek ses dosyaları (yalnız telefon uygulaması) ----
+   tools/audio_gen.py her satırı Piper TTS ile app/audio/<id>.mp3 olarak üretir; id = cyrb53("<ses>|<metin>").
+   Oynatıcı tek bir <audio> öğesiyle dosyaları arka arkaya çalar (aralar da sessiz dosyalar): ses hiç kesilmediği için
+   telefon ekranı kapansa da sürer, kilit ekranında oynatıcı görünür. Dosyası olmayan satır speechSynthesis ile okunur. */
+const FT_AUC = "gedsche-ses-v1";   // Cache API: çalınan dosyalar burada kalır (sw.js silmez)
+let FT_AM = null, FT_AMP = null, FT_LAU = null;
+const FT_AUB = new Map();          // id → Promise<blob URL | null> (en son kullanılanlar)
+function ftAuHash(s){
+  let h1 = 0xdeadbeef, h2 = 0x41c6ce57;
+  for (let i = 0, ch; i < s.length; i++) { ch = s.charCodeAt(i); h1 = Math.imul(h1 ^ ch, 2654435761); h2 = Math.imul(h2 ^ ch, 1597334677); }
+  h1 = Math.imul(h1 ^ (h1 >>> 16), 2246822507); h1 ^= Math.imul(h2 ^ (h2 >>> 13), 3266489909);
+  h2 = Math.imul(h2 ^ (h2 >>> 16), 2246822507); h2 ^= Math.imul(h1 ^ (h1 >>> 13), 3266489909);
+  return (4294967296 * (2097151 & h2) + (h1 >>> 0)).toString(36);
+}
+const ftAuCache = () => { try { return window.caches ? caches.open(FT_AUC).catch(() => null) : Promise.resolve(null); } catch(e) { return Promise.resolve(null); } };
+// manifest.json: hangi satırın dosyası var (ağdan; çevrimdışıysa önbellekten)
+function ftAuMan(){
+  if (FT_AM !== null) return Promise.resolve(FT_AM);
+  if (IN_CLAUDE || !window.fetch || typeof Audio === "undefined") { FT_AM = false; return Promise.resolve(false); }
+  return FT_AMP || (FT_AMP = (async () => {
+    const u = "audio/manifest.json", c = await ftAuCache();
+    let j = null;
+    try { const r = await fetch(u, {cache: "no-cache"}); if (r.ok) { if (c) c.put(u, r.clone()).catch(() => {}); j = await r.json(); } } catch(e) {}
+    if (!j && c) try { const r = await c.match(u); if (r) j = await r.json(); } catch(e) {}
+    FT_AM = j && j.f ? j : false; FT_AMP = null;
+    return FT_AM;
+  })());
+}
+function ftAuGet(id){
+  if (FT_AUB.has(id)) { const p = FT_AUB.get(id); FT_AUB.delete(id); FT_AUB.set(id, p); return p; }
+  const u = "audio/" + id + "." + (FT_AM.ext || "mp3");
+  const p = (async () => {
+    const c = await ftAuCache();
+    let r = null;
+    try { r = c && await c.match(u); } catch(e) {}
+    if (!r) { const n = await fetch(u); if (!n.ok) return null; r = n; if (c) await c.put(u, n.clone()).catch(() => {}); }
+    return URL.createObjectURL(await r.blob());
+  })().catch(() => null).then(x => { if (!x) FT_AUB.delete(id); return x; });
+  FT_AUB.set(id, p);
+  while (FT_AUB.size > 90) { const [k, v] = FT_AUB.entries().next().value; FT_AUB.delete(k); v.then(x => x && setTimeout(() => { try { URL.revokeObjectURL(x); } catch(e) {} }, 60000)); }
+  return p;
+}
+// bir cümle (ya da sessizlik) için oynatma adımları; dosya yoksa {tts}
+function ftAuSay(text, v, tr, rate){
+  const t = cleanSpeech(text || "").trim(); if (!t) return [];
+  const id = ftAuHash((tr ? "tr" : (v || 0) % 2 ? "df" : "dm") + "|" + t);
+  return [FT_AM && FT_AM.f[id] != null ? {fid: id, rate, text: t, v, tr} : {tts: 1, rate, text: t, v, tr}];
+}
+function ftAuSil(ms){
+  const out = [], sil = ((FT_AM && FT_AM.sil) || []).slice().sort((a, b) => b - a);
+  if (!sil.length) return [{sil: ms}];
+  if (sil.includes(ms)) return [{fid: "_s" + ms, sil: ms, rate: 1}];
+  let left = ms;
+  for (const s of sil) while (left >= s - 60) { out.push({fid: "_s" + s, sil: s, rate: 1}); left -= s; }
+  return out;
+}
+// bir kartın tüm adımları: seçenekler (yön, tekrar, ara, hız) TTS'teki akışla aynı
+function ftAuQueue(it, advance){
+  const o = S.opt, rate = o.lrate, trr = Math.min(1, rate + .1), gap = o.lgap * 1000;
+  const de = () => { let q = []; for (let r = 0; r < o.lrep; r++) { if (r) q = q.concat(ftAuSil(700)); q = q.concat(ftAuSay(it.de, it.v || 0, 0, rate)); } return q; };
+  if (o.ldir === "de") return de().concat(ftAuSil(gap), [{fn: advance}]);
+  if (o.ldir === "detr") return de().concat(it.tr ? ftAuSil(500).concat(ftAuSay(it.tr, 0, 1, trr)) : [], ftAuSil(gap), [{fn: advance}]);
+  return ftAuSay(it.tr || "", 0, 1, trr).concat(ftAuSil(Math.max(2000, gap + 1000)), [{fn: () => { L.shown = 1; const e = $("#pde"); if (e) e.style.visibility = "visible"; }}], de(), ftAuSil(gap), [{fn: advance}]);
+}
+function ftAuEl(){
+  if (FT_LAU) return FT_LAU;
+  const a = FT_LAU = document.createElement("audio");
+  a.setAttribute("playsinline", ""); a.setAttribute("webkit-playsinline", ""); a.preload = "auto"; a.id = "ftau"; a.style.display = "none";
+  document.body.appendChild(a);
+  const mine = () => L && L.au && L.cur && L.atok === L.tok;
+  a.addEventListener("ended", () => { if (mine() && L.playing) ftAuNext(L.tok); });
+  a.addEventListener("error", () => { if (!mine() || !L.playing || !a.getAttribute("src")) return; const st = L.cur; L.cur = null; ftAuTts(st, L.tok); });
+  a.addEventListener("loadedmetadata", () => { if (mine() && !L.cur.sil) ftLsPos(); });
+  a.addEventListener("ratechange", () => { if (mine()) ftLsPos(); });
+  // işletim sistemi durdurursa (arama, kulaklık çıktı…) oynatıcı da "duraklatıldı" olsun
+  a.addEventListener("pause", () => {
+    if (!L || !L.au || !a.paused || a.ended || L.selfPause || L.halting) { if (L) L.selfPause = 0; return; }
+    if (L.playing && mine() && screen === renderPlayer) { L.playing = false; renderPlayer(); }
+  });
+  a.addEventListener("play", () => { try { if (L && L.au) navigator.mediaSession.playbackState = "playing"; } catch(e) {} });
+  return a;
+}
+// ilk dokunuşta öğeyi aç: kısa sessizlik çal (iOS bundan sonra kendiliğinden çalmaya izin verir)
+function ftAuUnlock(){
+  const a = ftAuEl();
+  try { a.src = "audio/_s250.mp3"; a.playbackRate = a.defaultPlaybackRate = 1; const p = a.play(); if (p && p.catch) p.catch(() => {}); } catch(e) {}
+}
+function ftAuHalt(keep){
+  const a = FT_LAU; if (!a) return;
+  if (L) { L.cur = null; L.halting = 1; }
+  try { a.pause(); if (!keep) { a.removeAttribute("src"); a.load(); } } catch(e) {}
+  if (L) L.halting = 0;
+}
+const ftAuLive = tok => L && L.playing && L.tok === tok && screen === renderPlayer;
+function ftAuRun(q, tok){ L.q = q; L.qi = 0; ftAuNext(tok); }
+function ftAuNext(tok){
+  for (;;) {
+    if (!ftAuLive(tok)) return;
+    const st = L.q[L.qi++];
+    if (!st) return;
+    if (st.fn) { st.fn(); continue; }
+    return ftAuPlay(st, tok);
+  }
+}
+async function ftAuPlay(st, tok){
+  const url = st.fid ? await ftAuGet(st.fid) : null;
+  if (!ftAuLive(tok)) return;
+  if (!url) return ftAuTts(st, tok);
+  const a = ftAuEl(), r = st.rate || 1;
+  L.cur = st; L.atok = tok;
+  a.defaultPlaybackRate = r; a.src = url; a.playbackRate = r;
+  try { a.preservesPitch = a.webkitPreservesPitch = true; } catch(e) {}
+  const p = a.play();
+  if (p && p.catch) p.catch(e => { if (e && e.name === "AbortError") return; if (ftAuLive(tok) && L.cur === st) { L.cur = null; ftAuTts(st, tok); } });
+}
+// dosya yok ya da çalmadı: cihazın sesiyle oku (ya da sessizliği bekle)
+function ftAuTts(st, tok){
+  if (!ftAuLive(tok)) return;
+  if (st.sil) return setTimeout(() => ftAuNext(tok), st.sil);
+  speak(st.text, st.v || 0, () => ftAuNext(tok), st.tr ? {tr: 1, rate: st.rate} : {rate: st.rate});
+}
+// sonraki kartların dosyalarını şimdiden indir: geçişler anında, internet kopsa da sürer
+function ftAuAhead(){
+  if (!L || !L.au) return;
+  for (let k = 1; k <= 3; k++) { const it = L.list[(L.i + k) % L.list.length]; if (it) ftAuQueue(it, () => {}).forEach(st => st.fid && ftAuGet(st.fid)); }
+}
+
 function playCur(){
   if (!L || !L.playing || screen !== renderPlayer) return;
   const tok = ++L.tok, live = () => L && L.playing && L.tok === tok && screen === renderPlayer;
   const o = S.opt, it = L.list[L.i], gap = o.lgap * 1000, rate = o.lrate;
+  L.shown = 0;
   renderPlayer();
-  const de = n => done => speak(it.de, it.v || 0, () => { if (!live()) return; n > 1 ? setTimeout(() => live() && de(n - 1)(done), 700) : done(); }, {rate});
-  const advance = () => setTimeout(() => {
+  const next = () => {
     if (!live()) return;
     if (o.lq && L.list.length >= 5 && (L.i + 1) % o.lq === 0) return listenQuiz(tok);
     L.i = (L.i + 1) % L.list.length; playCur();
-  }, gap);
+  };
+  if (L.au) { ftAuRun(ftAuQueue(it, next), tok); ftAuAhead(); return; }
+  const de = n => done => speak(it.de, it.v || 0, () => { if (!live()) return; n > 1 ? setTimeout(() => live() && de(n - 1)(done), 700) : done(); }, {rate});
+  const advance = () => setTimeout(next, gap);
   if (o.ldir === "de") de(o.lrep)(advance);
   else if (o.ldir === "detr") de(o.lrep)(() => setTimeout(() => live() && (it.tr ? speakTR(it.tr, () => live() && advance(), Math.min(1, rate + .1)) : advance()), 500));
-  else speakTR(it.tr || "", () => setTimeout(() => { if (!live()) return; const e = $("#pde"); if (e) e.style.visibility = "visible"; de(o.lrep)(advance); }, Math.max(2000, gap + 1000)), Math.min(1, rate + .1));
+  else speakTR(it.tr || "", () => setTimeout(() => { if (!live()) return; L.shown = 1; const e = $("#pde"); if (e) e.style.visibility = "visible"; de(o.lrep)(advance); }, Math.max(2000, gap + 1000)), Math.min(1, rate + .1));
 }
 
 // ara soru: az önce duyduğunu üç seçenek arasından bul
@@ -6819,7 +7096,9 @@ function listenQuiz(tok){
     const ok = opts[+b.dataset.k] === it.de;
     b.classList.add(ok ? "good" : "bad"); if (!ok) $(`.player .opt[data-k="${opts.indexOf(it.de)}"]`).classList.add("good");
     sfx(ok ? "ok" : "bad"); if (ok) addXP(3); else miss({de: it.de, tr: it.tr}, "Dinle");
-    speak(it.de, it.v || 0, () => setTimeout(() => { if (!live()) return; L.i = (L.i + 1) % L.list.length; playCur(); }, 600));
+    const then = () => setTimeout(() => { if (!live()) return; L.i = (L.i + 1) % L.list.length; playCur(); }, 600);
+    if (L.au) ftAuRun(ftAuSay(it.de, it.v || 0, 0, S.opt.lrate).concat([{fn: then}]), tok);
+    else speak(it.de, it.v || 0, then);
   });
 }
 
@@ -7150,11 +7429,9 @@ function gBuild(){
     $("#view").innerHTML = `<div class="hud"><b>${G.sc}</b><span class="t" id="gt">${G.left}</span></div>
       <div class="card flash" style="min-height:90px"><div class="big" style="font-size:20px">${esc(it.tr)}</div></div>
       <div class="built" id="built"></div>
-      <div class="pool">${sh.map((p, k) => `<button class="wd" data-k="${k}">${esc(p.x)}</button>`).join("")}</div>
+      <div class="pool" id="pool">${sh.map((p, k) => `<button class="wd" data-k="${k}">${esc(p.x)}</button>`).join("")}</div>
       <div style="margin-top:14px" class="row2"><button class="btn2" id="sk">Geç</button><button class="btn2" id="clr">Temizle</button></div>`;
-    const redraw = () => {
-      $("#built").innerHTML = built.map(k => `<span class="wd">${esc(sh[k].x)}</span>`).join("");
-      $$(".pool .wd").forEach(b => b.classList.toggle("used", built.includes(+b.dataset.k)));
+    const check = () => {
       if (built.length === w.length) {
         const ok = norm(built.map(k => sh[k].x).join(" ")) === norm(w.join(" "));
         $("#built").style.borderColor = ok ? "var(--ok)" : "var(--bad)";
@@ -7162,8 +7439,8 @@ function gBuild(){
         later(() => { if (G.left > 0) { if (ok) G.i++; else { built.length = 0; $("#built").style.borderColor = ""; return redraw(); } draw(); } }, ok ? 500 : 700);
       }
     };
-    $$(".pool .wd").forEach(b => b.onclick = () => { if (!built.includes(+b.dataset.k) && built.length < w.length) { built.push(+b.dataset.k); redraw(); } });
-    $("#clr").onclick = () => { built.length = 0; redraw(); };
+    const {draw: redraw} = tlTiles({row: $("#built"), pool: $("#pool"), arr: built, max: w.length, label: k => sh[k].x, lock: () => built.length >= w.length, onChange: check});
+    $("#clr").onclick = () => { if (built.length >= w.length) return; built.length = 0; redraw(); };
     $("#sk").onclick = () => { miss(it, GAMES.build.t); G.i++; draw(); };
   };
   open(() => setTop("Cümle Kur", true));
@@ -9011,11 +9288,9 @@ function gOrder(){
     $("#view").innerHTML = `<div class="hud"><b>${G.sc}</b><span class="small muted">${G.i + 1}/${pool.length}</span></div>
       <div class="card flash" style="min-height:90px"><div class="big" style="font-size:20px">${esc(it.tr)}</div></div>
       <div class="built" id="built"></div>
-      <div class="pool">${sh.map((p, k) => `<button class="wd" data-k="${k}">${esc(p.x)}</button>`).join("")}</div>
+      <div class="pool" id="pool">${sh.map((p, k) => `<button class="wd" data-k="${k}">${esc(p.x)}</button>`).join("")}</div>
       <div style="margin-top:14px" class="row2"><button class="btn2" id="sk">Göster</button><button class="btn2" id="clr">Temizle</button></div>`;
-    const redraw = () => {
-      $("#built").innerHTML = built.map(k => `<span class="wd">${esc(sh[k].x)}</span>`).join("");
-      $$(".pool .wd").forEach(b => b.classList.toggle("used", built.includes(+b.dataset.k)));
+    const check = () => {
       if (built.length === w.length) {
         const ok = norm(built.map(k => sh[k].x).join(" ")) === norm(w.join(" "));
         $("#built").style.borderColor = ok ? "var(--ok)" : "var(--bad)";
@@ -9023,8 +9298,8 @@ function gOrder(){
         else { miss++; window.miss(it, GAMES.order.t); later(() => { built.length = 0; $("#built").style.borderColor = ""; redraw(); }, 700); }
       }
     };
-    $$(".pool .wd").forEach(b => b.onclick = () => { if (!built.includes(+b.dataset.k) && built.length < w.length) { built.push(+b.dataset.k); redraw(); } });
-    $("#clr").onclick = () => { built.length = 0; redraw(); };
+    const {draw: redraw} = tlTiles({row: $("#built"), pool: $("#pool"), arr: built, max: w.length, label: k => sh[k].x, lock: () => built.length >= w.length, onChange: check});
+    $("#clr").onclick = () => { if (built.length >= w.length) return; built.length = 0; redraw(); };
     $("#sk").onclick = () => { miss++; window.miss(it, GAMES.order.t); toast(plain(it)); speak(plain(it)); };
   };
   open(() => setTop("Cümle Sırala", true));
