@@ -1670,7 +1670,6 @@ mark{background:color-mix(in srgb,var(--amber) 40%,transparent);color:inherit;bo
 .pxrec .chip{min-height:36px}
 .pxrclr{width:36px;padding:0!important;display:grid;place-items:center}
 .pxrclr svg.i{width:14px;height:14px}
-.pxlseg{margin-top:12px}
 .pxscount{font-size:13px;color:var(--tx3);margin:12px 4px 0;font-weight:600}
 .pxshint{text-align:center;color:var(--tx3);margin:22px 0;font-size:14px}
 .pxsrh{display:flex;align-items:center;justify-content:space-between;margin:18px 4px 8px}
@@ -1680,27 +1679,6 @@ mark{background:color-mix(in srgb,var(--amber) 40%,transparent);color:inherit;bo
 .pxsmore svg.i{width:16px;height:16px}
 .pxnav .ptx small{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .pxsres .pxempty{margin-top:14px}
-/* Kalıp: paket çipleri */
-.pxpk{margin-top:12px;gap:6px}
-.pxpk .chip{flex:none;display:inline-flex;align-items:center;gap:1px;white-space:nowrap;padding:0 9px 0 12px;min-height:40px;font-size:13.5px}
-.pxpk .chip.on{padding:0 12px}
-.pxpk .chip.on{cursor:default}
-.pxpk .chip svg.i{width:13px;height:13px;opacity:.6;margin-right:-2px}
-/* Senaryo listesi: satır + ek düğme */
-.pxscl{padding:0}
-.pxscr{display:flex;align-items:center;border-bottom:1px solid var(--line)}
-.pxscr:last-child{border-bottom:0}
-.pxscr .chap{border-bottom:0;flex:1;min-width:0}
-.pxscr .chap .tx b{overflow-wrap:anywhere}
-.pxsca{flex:none;display:inline-flex;align-items:center;gap:5px;margin-right:10px;min-height:40px;padding:0 12px 0 8px;border-radius:99px;background:color-mix(in srgb,var(--acc) 11%,transparent);color:var(--acc);font:700 13px var(--disp);white-space:nowrap}
-.pxsca svg.i{width:22px;height:22px}
-.pxsca.more{width:44px;padding:0;justify-content:center}
-.pxsca.more svg.i{width:20px;height:20px}
-@media (max-width:380px){.pxsca:not(.more) span{display:none}.pxsca:not(.more){width:44px;padding:0;justify-content:center}}
-.pxhk{display:grid;gap:8px;margin-top:10px}
-.pxhk .btn2{width:100%;min-height:48px}
-.pxhk .btn2 svg.i{width:24px;height:24px}
-.pxrhk{margin:0 0 12px}
 /* okuyucu üst çubuğu ve yazı boyutu */
 .pxrbar{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:6px 2px 12px}
 .pxrmeta{display:flex;align-items:center;gap:7px;min-width:0;font:700 12.5px var(--body);color:var(--tx3);letter-spacing:.02em}
@@ -1712,7 +1690,8 @@ mark{background:color-mix(in srgb,var(--amber) 40%,transparent);color:inherit;bo
 .pxfs button:disabled{opacity:.32}
 .pxfs button:not(:disabled):active{background:var(--bg3)}
 .pxfs button:focus-visible{outline:2px solid var(--acc)}
-.msg.pxat{outline:2.5px solid var(--amber);outline-offset:3px;animation:pxatp 1.1s ease 2}
+.msg.pxat,.pxlch.pxat,.pxlsr.pxat,.prow.pxat,.pxltd.pxat{outline:2.5px solid var(--amber);outline-offset:3px;animation:pxatp 1.1s ease 2}
+.pxlch.pxat,.pxlsr.pxat,.prow.pxat{outline-offset:-3px;border-radius:14px;animation:none;background:color-mix(in srgb,var(--amber) 12%,transparent)}
 @keyframes pxatp{50%{outline-offset:7px}}
 .msg .de{overflow-wrap:anywhere}
 
@@ -1834,7 +1813,138 @@ mark{background:color-mix(in srgb,var(--amber) 40%,transparent);color:inherit;bo
 :root[data-fs] body.sess .wd{font-size:calc(16px*var(--pxfz))}
 :root[data-fs] body.sess .flash .big,:root[data-fs] body.sess .opt,:root[data-fs] body.sess .bub,:root[data-fs] body.sess .verdict b{overflow-wrap:anywhere}
 
-@media (prefers-reduced-motion:reduce){.pxmenu,.pxsg.open .pxsgb,.msg.pxat{animation:none!important}.pxsgc{transition:none}}
+@media (prefers-reduced-motion:reduce){.pxmenu,.pxsg.open .pxsgb,.msg.pxat,.pxltd.pxat{animation:none!important}.pxsgc,.pxluh .pch{transition:none!important}}
+
+
+/* ================= Kitaplık: merkez, raflar, okuyucu ================= */
+/* ana ekran: devam kartı (Pratik'teki Hızlı alıştırma ile aynı phero) */
+.pxlib .phero{gap:10px;margin-top:12px;padding:15px 16px 8px}
+.pxlib .phill{top:13px;right:14px;width:56px;height:56px;border-radius:18px}
+.pxlib .phill svg.i{width:40px;height:40px}
+.pxlib .phill .bat{width:46px!important;height:46px!important}
+.pxlib .phtx{padding-right:68px}
+.pxlib .phtx b{font-size:22px}
+.pxlib .phero .cta{min-height:50px}
+.pxlib .phero .linkbtn{padding:10px;color:#fff;opacity:.92}
+.pxlbar{display:block;height:6px;border-radius:9px;background:rgb(127 127 160/.22);overflow:hidden}
+.pxlbar>i{display:block;height:100%;border-radius:inherit;background:var(--acc)}
+.phero .pxlbar{margin-top:8px;max-width:210px;background:rgb(255 255 255/.28)}
+.phero .pxlbar>i{background:#fff}
+.ghhub.fx .ghfam .ghfh .pxlbar{width:46px;height:5px;background:rgb(255 255 255/.32)}
+.ghhub.fx .ghfam .ghfh .pxlbar>i{background:#fff}
+.ghhub.plain .ghfam .ghfh .pxlbar{width:46px;height:5px}
+.pxlib .ghhid{display:block;margin:16px auto 0}
+.pxlib .ghhid.pxlfl{margin-top:6px}
+.pxlib .ghempty{margin-top:4px}
+.pxlwide{width:100%;margin-top:10px}
+.pxlib #pxlv .pxsech{margin-top:20px}
+/* raf ekranları */
+.pxlsh .ghhero{margin-bottom:12px}
+.pxlsh .ghhero .ghht b{overflow-wrap:anywhere}
+.pxlcta{width:100%;margin:2px 0 6px;min-height:52px}
+.pxlcta:disabled{opacity:.5}
+.pxlsh .pxsbar{margin-top:12px}
+.pxlunit{padding:0!important;overflow:hidden;margin-top:10px}
+.pxluh{display:flex;align-items:center;gap:12px;width:100%;min-height:66px;padding:10px 12px 10px 14px;text-align:left}
+.pxluh:focus-visible{outline:3px solid var(--acc);outline-offset:-3px}
+.pxluh .ptx{flex:1;min-width:0}
+.pxluh .ptx b{display:block;font:700 16.5px/1.2 var(--disp);overflow-wrap:anywhere}
+.pxluh .ptx small{font-size:12.5px;color:var(--tx2)}
+.pxluh .pch{flex:none;transition:transform .2s}
+.pxlunit.open .pxluh .pch{transform:rotate(90deg)}
+.pxlunit:not(.open) .pxlub{display:none}
+.pxlunit .pxlub > .plist{border-top:1px solid var(--line);padding:0}
+.pxlring{flex:none;width:44px;height:44px;border-radius:50%;display:grid;place-items:center;background:conic-gradient(var(--acc) calc(var(--p)*1%),color-mix(in srgb,var(--tx3) 22%,transparent) 0)}
+.pxlring>span{width:35px;height:35px;border-radius:50%;display:grid;place-items:center;background:var(--solid);font:800 12.5px var(--disp);color:var(--tx)}
+.pxlring.done{background:#22C55E}
+.pxlring.done>span{background:#22C55E;color:#fff;font-size:17px}
+.pxlch{position:relative;display:flex;align-items:center;gap:12px;width:100%;min-height:62px;padding:8px 12px 8px 18px;text-align:left}
+.pxlch::before{content:"";position:absolute;left:35px;top:0;bottom:0;width:3px;background:color-mix(in srgb,var(--tx3) 22%,transparent)}
+.pxlch:last-child::before{bottom:50%}
+.pxlch.done::before{background:#22C55E}
+.pxlnd{position:relative;z-index:1;flex:none;width:38px;height:38px;border-radius:50%;display:grid;place-items:center;font:800 15px var(--disp);background:var(--solid);color:var(--tx2);box-shadow:inset 0 0 0 2px color-mix(in srgb,var(--tx3) 35%,transparent)}
+.pxlch.done .pxlnd{background:#22C55E;color:#fff;box-shadow:0 3px 0 #15803D}
+.pxlch.next .pxlnd,.pxlch.part .pxlnd{background:var(--acc);color:#fff;box-shadow:0 0 0 5px color-mix(in srgb,var(--acc) 22%,transparent),0 3px 0 var(--acc-s)}
+.pxlch .tx{flex:1;min-width:0}
+.pxlch .tx b{display:block;font:700 15.5px/1.2 var(--disp);overflow-wrap:anywhere}
+.pxlch .tx>span{font-size:12.5px;color:var(--tx2)}
+.pxlch .tx .pxlbar{margin-top:6px;max-width:150px}
+.pxlst{flex:none;font:800 11.5px var(--body);padding:4px 10px;border-radius:99px;background:color-mix(in srgb,var(--tx3) 14%,transparent);color:var(--tx2);white-space:nowrap}
+.pxlch.next .pxlst,.pxlch.part .pxlst{background:var(--acc);color:#fff}
+.pxlch.done .pxlst,.pxlst.g{background:color-mix(in srgb,#22C55E 16%,transparent);color:#15803D}
+.pxlst.a{background:color-mix(in srgb,#F59E0B 18%,transparent);color:#B45309}
+:root[data-theme="dark"] .pxlch.done .pxlst,:root[data-theme="dark"] .pxlst.g{color:#4ADE80}
+:root[data-theme="dark"] .pxlst.a{color:#FBBF24}
+.pxlnote{text-align:left;margin:0 4px}
+/* senaryo satırı */
+.pxlsr{display:flex;align-items:center;gap:4px;border-bottom:1px solid var(--line)}
+.pxlsr:last-child{border-bottom:0}
+.pxlsr .chap{border:0;flex:1;min-width:0;padding:11px 4px 11px 14px;min-height:60px}
+.pxlsr .chap .no{border-radius:12px}
+.pxlsr .chap.read .no{background:#22C55E;color:#fff}
+.pxlsr .chap .tx b{overflow-wrap:anywhere}
+.pxlsel{display:inline-block;margin-left:2px;font:800 11px var(--body);font-style:normal;padding:2px 7px;border-radius:99px;background:color-mix(in srgb,var(--acc) 14%,transparent);color:var(--acc);white-space:nowrap}
+:root[data-theme="dark"] .pxlsel{color:color-mix(in srgb,var(--acc) 55%,#fff)}
+.pxlmore{flex:none;width:44px;height:44px;margin-right:6px;border-radius:12px;display:grid;place-items:center;color:var(--tx3)}
+.pxlmore:focus-visible{outline:3px solid var(--acc)}
+.pxltd{padding:16px!important;margin-top:4px}
+.pxltd .k{font:700 11px var(--body);letter-spacing:.1em;color:var(--acc)}
+:root[data-theme="dark"] .pxltd .k{color:color-mix(in srgb,var(--acc) 55%,#fff)}
+.pxltd .h{font:800 20px/1.2 var(--disp);margin-top:2px;overflow-wrap:anywhere}
+.pxltd .s{font-size:13.5px;color:var(--tx2);margin:4px 0 12px}
+.pxltd .row2{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.pxltd .row2.one{grid-template-columns:1fr}
+.pxltd .row2 .cta,.pxltd .row2 .btn2{min-height:50px}
+.pxltd .btn2{gap:6px;padding:0 10px;line-height:1.15}
+.pxltd .btn2 svg.il{width:24px;height:24px;flex:none}
+.pxlsh .ghchips{flex-wrap:wrap;margin:16px 0 4px}
+.pxlsh .ghchips.pxlsub{margin-top:6px}
+.pxlsh .legend{flex-wrap:wrap;margin-top:10px}
+.pxlhint{text-align:left;margin:8px 4px 0}
+.pxlrows{border-top:1px solid var(--line)}
+.pxlsh .pxsmore.pxlfut{border-top:1px solid var(--line)}
+.pxlsh .pxsmore[aria-expanded="true"] svg.i{transform:rotate(90deg)}
+.pxlfl .plist{border-top:1px solid var(--line);padding:0}
+.pxlsh > .linkbtn,#pxlshb > .linkbtn{margin-top:14px}
+/* kural satırı */
+.pxlgr .ptx{flex:1;min-width:0}
+.pxltag{display:inline-block;margin-top:4px;font:800 10.5px var(--body);font-style:normal;padding:2px 8px;border-radius:99px;background:color-mix(in srgb,var(--acc) 12%,transparent);color:var(--acc)}
+:root[data-theme="dark"] .pxltag{color:color-mix(in srgb,var(--acc) 55%,#fff)}
+.pxlgr .pxlst{margin-left:6px}
+/* okuyucu */
+.pxrbar .pxrr{display:flex;align-items:center;gap:2px;flex:none}
+.pxrbar .pxlstar{width:44px;height:44px;border-radius:12px;font-size:22px;color:var(--tx3);display:grid;place-items:center}
+.pxrbar .pxlstar.on{color:#F59E0B}
+.pxrbar .pxlstar:focus-visible{outline:3px solid var(--acc)}
+.pxlpos{display:inline-flex;align-items:center;gap:6px;min-height:40px;margin:0 2px 10px}
+.pxlpos svg.i{width:16px;height:16px}
+.pxrmodes{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin:12px 0 12px}
+.pxrmodes.c2{grid-template-columns:repeat(2,minmax(0,1fr))}
+.pxrm{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;min-height:86px;padding:8px 4px;border-radius:18px;text-align:center;background:var(--bg2);border:1.5px solid var(--glass-b);box-shadow:0 6px 18px -14px rgb(30 30 90/.45)}
+.pxrm:active{transform:translateY(2px)}
+.pxrm:focus-visible{outline:3px solid var(--acc);outline-offset:2px}
+.pxrm svg.il{width:36px;height:36px}
+.pxrm b{font:700 13.5px/1.15 var(--disp);overflow-wrap:anywhere}
+.pxrm small{font-size:11px;color:var(--tx2);line-height:1.15}
+.pxrm1{width:100%;margin:12px 0;gap:8px}
+.pxrm1 svg.il{width:28px;height:28px}
+.pxrqn{margin:8px 2px 4px}
+.pxrnote{display:inline-block;font:800 10.5px var(--body);letter-spacing:.04em;padding:2px 7px;border-radius:7px;background:color-mix(in srgb,#F59E0B 18%,transparent);color:#B45309;margin-right:6px;vertical-align:1px}
+:root[data-theme="dark"] .pxrnote{color:#FBBF24}
+#pxrk [data-a="open"]{display:none}
+.foot .row2 .btn2,.foot .row2 .cta{display:flex;align-items:center;justify-content:center;gap:7px}
+.foot .row2 .btn2 svg.i,.foot .row2 .cta svg.i{width:18px;height:18px}
+.foot .row2 .btn2:disabled{opacity:.45}
+/* arama: tür çipleri, senaryo replikleri */
+.pxlscope{margin:8px 0 2px;gap:6px;flex-wrap:wrap}
+.pxlscope .chip{min-height:40px;padding:0 11px;font-size:13px}
+.pxlscope .chip small{margin-left:2px;font-weight:800;opacity:.75}
+.pxscln .pic .av,.pxscln .pic img,.pxscln .pic svg{flex:none}
+.pxscln .ptx small.pxmeta{display:block;margin-top:2px;color:var(--tx3);font-size:12px}
+/* düz görünüm */
+:root[data-look="flat"] :is(.pxrm,.pxlunit){backdrop-filter:none;-webkit-backdrop-filter:none;background:var(--solid)}
+:root[data-look="flat"] .pxrm{box-shadow:0 2px 0 var(--line)}
+@media (max-width:370px){.pxrm b{font-size:12.5px}.pxltd .btn2{font-size:14px}.pxlch{padding-left:14px}.pxlch::before{left:31px}}
 /* ================= Oyun merkezi (A3) ================= */
 .ghhub{padding-bottom:18px}
 .ghhub .sec.ghsec{margin-top:8px}
@@ -5204,7 +5314,7 @@ function pxFlagsDraw(){
   if (k === "f") {
     el.innerHTML = fv.length ? `<button class="cta" id="pxfst" style="margin-top:6px">${I("play", "ln")} Favorilerimi çalış (${fv.length})</button>
       <div class="card plist pxlist" id="pxfvl" style="margin-top:12px">${fv.map(it => pxItem(it)).join("")}</div>`
-      : `<div class="card pxempty">${I("star")}<b>Henüz favorin yok</b><span>Alıştırmada kartın ⋯ menüsünden, Kitaplık'ta bir cümleye dokunup ★ ile ekle. Sonra Pratik'te birlikte çalışırsın.</span></div>`;
+      : `<div class="card pxempty">${I("star")}<b>Henüz favorin yok</b><span>Alıştırmada kartın ⋯ menüsünden, Kitaplık'ta bir cümleye dokunup ★ ile ekle. Sonra Pratik'te birlikte çalışırsın. Kitaplık → ★ Favoriler'de de görürsün.</span></div>`;
     if ($("#pxfst")) $("#pxfst").onclick = () => startSession({items: fv, mode: "mix", title: "Favorilerim"});
     if ($("#pxfvl")) pxBindItems($("#pxfvl"));
     return;
@@ -6474,14 +6584,12 @@ function pSheet(){
 }
 function renderScenPick(){
   setTop("Canlı konuş", true);
-  const done = S.scen.done || {};
-  $("#view").innerHTML = `<p class="hint" style="text-align:left;margin:6px 2px 12px">Bir durum seç. ${SAMPLE ? "Claude karşındaki kişi olur; sen Almanca yazarsın, hatanı nazikçe düzeltir." : "Claude'a yapıştırman için hazır bir mesaj kopyalanır."}</p>
-    <div class="card">${D.scenarios.map(s => `
-      <button class="chap ${done[s.id] ? "read" : ""}" data-id="${s.id}"><span class="no">${done[s.id] ? "✓" : s.day}</span>
-        <span class="tx"><b>${esc(s.title)}</b><span>${esc(s.desc)}</span></span></button>`).join("")}</div>`;
-  $$(".chap").forEach(b => b.onclick = () => liveChat(D.scenarios.find(s => s.id === b.dataset.id)));
+  $("#view").innerHTML = `<p class="hint" style="text-align:left;margin:6px 2px 12px">Bir durum seç. ${SAMPLE ? "Claude karşındaki kişi olur; sen Almanca yazarsın, hatanı nazikçe düzeltir." : "Claude'a yapıştırman için hazır bir mesaj kopyalanır."}</p><div id="pxscp"></div><div style="height:16px"></div>`;
+  // Kitaplık → Senaryolar ile aynı satırlar ve konular
+  pxlScenRows(s => liveChat(s), {all: true, el: $("#pxscp")});
 }
 function liveChat(src){
+  if (typeof pxlSeen === "function") pxlSeen("s:" + src.id);
   if (SAMPLE) return openChat(src);
   const other = Object.entries(src.roles).find(([k]) => k !== "U")[1];
   copy(`Senaryo pratiği: ${src.title}\nDurum: ${src.desc}\nSen ${other} ol, ben kendim olarak konuşacağım. Kısa ve doğal Almanca konuş, A2 seviyesinde. Ben hata yaparsam cevabından sonra tek satırda düzelt. Başla.`);
@@ -9700,102 +9808,557 @@ function openGrammar(id){
 function renderStats(){ screen = renderProfile; renderProfile(); }
 
 /* ================= KİTAPLIK ================= */
-// Alt sekmeler: Kitap · Senaryo · Kalıp · Kelime · Kural (yazılar artık Pratik → Yaz → Yazılarım'da)
-const LIBS = [["book", "Kitap"], ["scen", "Senaryo"], ["phr", "Kalıp"], ["word", "Kelime"], ["gram", "Kural"]];
-const PXS = {q: "", open: {}, t: 0};   // arama durumu (sekme değişse de kalır)
+// Pratik ve Oyun gibi bir merkez: arama, "Okumaya devam et", öneriler, Hepsi / ★ Favoriler / Son açtıkların ve 6 raf.
+// Raflar (Kitap, Senaryolar, Kalıplar, Kelimeler, Kurallar, Kalıp paketleri) kendi ekranında açılır; geri dönünce aynı yere dönersin.
+const PXS = {q: "", open: {}, t: 0, scope: "all"};   // arama durumu (ekran değişse de kalır)
+// gezinme hafızası: stack = dönüş noktaları ({sh, y, at}), open = açık kısımlar, sq/sqo = raf içi arama, fresh = az önce bitirilen
+const PXL = {stack: [], open: {}, sq: {}, sqo: {}, fresh: null, hl: null, cur: null, fn: null, wlim: 20, fut: {}, unscan: null};
+const PXL_ARC = ["Sabah telaşı", "Market ve mutfak", "Akşam ve hafta sonu", "Ev hayatı", "Doktor, daire, aksilikler", "Dışarıda ve kutlamalar"];
+const PXL_SCT = [["Kafe, dükkân, market", ["s1", "s6", "s7", "s10", "s16", "s17"]], ["İnsanlarla", ["s2", "s3", "s4", "s5", "s20"]],
+  ["Sağlık ve kreş", ["s9", "s11", "s12", "s13"]], ["Ev ve resmi işler", ["s14", "s18", "s19"]], ["Yolda", ["s8", "s15"]]];
+const PXL_GRG = [["Cümle kurma", ["v2", "mod", "sep", "sub", "ask", "neg"]], ["İsim ve artikel", ["art", "akk", "dat", "pl", "time"]], ["Fiil ve zaman", ["conj", "perf", "prat", "pol"]]];
+const PXL_GIC = {v2: "ghV2", art: "ghFArt", akk: "target", dat: "pin", perf: "rewind", prat: "history", mod: "key", sep: "scissors", neg: "lock", sub: "puzzle", ask: "question", pol: "cup", time: "clock", pl: "people", conj: "tool"};
+const PXL_STOP = '<svg class="i ln" viewBox="0 0 24 24" aria-hidden="true"><rect x="6" y="6" width="12" height="12" rx="2.5" fill="currentColor" stroke="none"/></svg>';
+// cihazda kalan görünüm seçimleri
+const pxlGet = (k, d) => { try { return localStorage.getItem(k) || d; } catch(e) { return d; } };
+const pxlPut = (k, v) => { try { localStorage.setItem(k, v); } catch(e) {} };
+const PXLV = {home: pxlGet("pxlView", "all"), ph: pxlGet("pxlPh", "new"), wf: pxlGet("pxlWf", "all"), wc: ""};
+
+/* ---------- durum: yer favorileri, son açılanlar, okuma yeri ---------- */
+function pxlState(){ S.lfav = S.lfav || {}; S.lrecent = S.lrecent || {}; S.lpos = S.lpos || {}; S.book = S.book || {}; S.scen = S.scen || {}; return S; }
+function pxlSeen(k){
+  const r = pxlState().lrecent; r[k] = Date.now();
+  Object.keys(r).sort((a, b) => r[b] - r[a]).slice(40).forEach(x => delete r[x]);
+  save();
+}
+const pxlFavOn = k => hubOn(pxlState().lfav, k);
+function pxlFavToggle(k){ const on = hubSet(pxlState().lfav, k, !pxlFavOn(k)); save(); return on; }
+HOOKS.merge.push((m, b) => {
+  hubMerge(m, b, ["lfav"], "lrecent");
+  m.lpos = m.lpos || {};
+  Object.entries(b.lpos || {}).forEach(([k, v]) => { if (v && (v.ts || 0) > ((m.lpos[k] || {}).ts || 0)) m.lpos[k] = v; });
+});
+// alt menüden sekmeye dokununca dönüş hafızası silinir: Kitaplık her zaman ana ekranı açar
+$$(".nav button").forEach(b => b.addEventListener("click", () => { PXL.stack = []; }, true));
+
+const pxlBar = p => `<i class="pxlbar" aria-hidden="true"><i style="width:${Math.max(3, Math.min(100, Math.round(p)))}%"></i></i>`;
+const pxlFx = () => hubFx() ? "fx" : "plain";
+const pxlCh = n => D.book.chapters.find(c => c.n === +n);
+const pxlSc = id => D.scenarios.find(s => s.id === id);
+const pxlSrc = k => k[0] === "b" ? pxlCh(k.slice(2)) : k[0] === "s" ? pxlSc(k.slice(2)) : null;
+// yarım kalan satır (devam için): yoksa undefined
+function pxlLp(k){ const v = pxlState().lpos[k], src = pxlSrc(k); return v && src && v.p >= 2 && v.p < src.lines.length ? v.p : undefined; }
+const pxlShort = g => String(g.t).split(":")[0].trim();
+const pxlPacks = () => typeof C4 !== "undefined" && C4 && C4.packs ? C4.packs : null;
+const pxlRhymes = () => { const p = pxlPacks(); return (p && p.ev && p.ev.rhymes) || []; };
+function pxlRhyme(i){
+  if (typeof ftOpenRhyme === "function") return ftOpenRhyme(i);
+  const p = pxlPacks();
+  if (!p || !p.ev || typeof ftRenderRhyme !== "function" || typeof ftOpen !== "function") return typeof ftOpenPack === "function" ? ftOpenPack("ev") : toast("Bu paket henüz yok");
+  FTP = {key: "ev", g: -1, r: i, pl: {tok: 0, i: -1}};
+  ftOpen(ftRenderRhyme);
+}
+function pxlGroup(k, gi){
+  if (typeof ftOpenGroup === "function") return ftOpenGroup(k, gi);
+  if (typeof ftRenderGroup !== "function" || typeof ftOpen !== "function" || !(pxlPacks() || {})[k]) return typeof ftOpenPack === "function" ? ftOpenPack(k) : toast("Bu paket henüz yok");
+  FTP = {key: k, g: gi, r: -1, pl: {tok: 0, i: -1}};
+  ftOpen(ftRenderGroup, () => open(ftRenderPack));
+}
+
+// anahtardan kart: b:n bölüm, s:id senaryo, g:id kural, p:kd/p:ev paket, r:i tekerleme
+function pxlEnt(k){
+  const t = k.slice(2);
+  if (k[0] === "b") { const c = pxlCh(t); return c && {k, z: 3, ic: I("book"), t: `${c.n}. ${c.de}`, d: `Kitap · ${c.tr}`, run: () => openReader("book", c.n, pxlLp(k))}; }
+  if (k[0] === "s") { const s = pxlSc(t); return s && {k, z: 1, ic: I("chat"), t: s.title, d: `Senaryo${s.lvl ? " · " + s.lvl : ""} · ${s.lines.length} replik`, run: () => openReader("scen", s.id, pxlLp(k))}; }
+  if (k[0] === "g") { const g = typeof GRAMMAR !== "undefined" && GRAMMAR.find(x => x.id === t); return g && {k, z: 5, ic: I(PXL_GIC[g.id] || "key"), t: g.t, d: "Kural · " + (g.s || ""), run: () => { pxlSeen(k); openGrammar(g.id); }}; }
+  if (k[0] === "p") { const p = (pxlPacks() || {})[t]; if (!p || typeof ftOpenPack !== "function") return null; const n = (p.groups || []).reduce((a, g) => a + (g.items || []).length, 0);
+    return {k, z: t === "ev" ? 0 : 2, ic: I(t === "ev" ? "ftTeddy" : "ftTalk"), t: p.t || t, d: `Kalıp paketi · ${n} kalıp`, run: () => { pxlSeen(k); ftOpenPack(t); }}; }
+  if (k[0] === "r") { const r = pxlRhymes()[+t]; return r && {k, z: 4, ic: I("ftRhyme"), t: r.t, d: "Tekerleme" + (r.tr ? " · " + r.tr : ""), run: () => { pxlSeen(k); pxlRhyme(+t); }}; }
+  return null;
+}
+
+/* ---------- gezinme: bir şeyi açarken dönüş noktası bırak ---------- */
+function pxlGo(sh, fn, at){
+  PXL.stack.push({sh, y: scrollY, at});
+  const before = screen, n = PXL.stack.length;
+  try { fn(); } catch(e) { console.error(e); }
+  if (screen === before && PXL.stack.length === n) PXL.stack.pop();   // yeni ekran açılmadı (uyarı, kopyalama)
+}
+// şu an neredeysen (ana ekran ya da raf) oraya dönecek şekilde çalıştır
+function pxlRun(fn, at){
+  if (tab !== "library") return fn();
+  if (!screen) return pxlGo("home", fn, at);
+  if (PXL.cur && screen === PXL.fn) return pxlGo(PXL.cur, fn, at);
+  fn();
+}
 function renderLibrary(){
+  const e = PXL.stack.pop();
+  if (e && e.sh !== "home" && PXL_SH[e.sh]) return pxlOpen(e.sh, {y: e.y, at: e.at, ret: 1});
+  PXL.stack = [];
+  pxlHome(e ? e.y : 0);
+}
+// go() sayfayı en üste kaydırdıktan sonra eski yere dön; dönülen satır kısa süre yanıp söner
+function pxlRestore(y, at){
+  if (!y && !at) return;
+  const scr = screen;
+  requestAnimationFrame(() => requestAnimationFrame(() => {
+    if (screen !== scr) return;
+    if (y) scrollTo(0, y);
+    const el = at && document.querySelector(`#view [data-k="${String(at).replace(/"/g, "")}"]`);
+    if (!el) return;
+    const r = el.getBoundingClientRect();
+    if (r.top < 70 || r.bottom > innerHeight - 90) el.scrollIntoView({block: "center"});
+    el.classList.add("pxat"); setTimeout(() => el.classList.remove("pxat"), 2600);
+  }));
+}
+
+/* ---------- ana ekran ---------- */
+// devam kartı: yarım kalan (3 haftaya kadar) → sıradaki bölüm → ilk bölüm → kitap bitti
+function pxlCont(){
+  const lp = pxlState().lpos, now = Date.now(), ch = D.book.chapters;
+  const L = Object.entries(lp).filter(([, v]) => v && v.p >= 2 && v.p < v.n && now - (v.ts || 0) < 21 * 864e5).sort((a, b) => b[1].ts - a[1].ts);
+  for (const [k, v] of L) {
+    const src = pxlSrc(k); if (!src || v.p >= src.lines.length) continue;
+    return {k, kind: k[0] === "b" ? "book" : "scen", id: k[0] === "b" ? src.n : src.id, src, p: v.p, n: src.lines.length, mode: "cont"};
+  }
+  if (!ch.length) return null;
+  const read = S.book.read || {}, nr = ch.filter(c => read[c.n]).length;
+  if (nr < ch.length) { const nc = nextChapter(); return {k: "b:" + nc.n, kind: "book", id: nc.n, src: nc, n: nc.lines.length, mode: nr ? "next" : "first"}; }
+  const least = ch.slice().sort((a, b) => (read[a.n] || 0) - (read[b.n] || 0) || a.n - b.n)[0];
+  return {k: "b:" + least.n, kind: "book", id: least.n, src: least, n: least.lines.length, mode: "done"};
+}
+const pxlScDone = () => S.scen.done || {};
+const pxlNextScen = skip => D.scenarios.slice().sort((a, b) => (a.day || 0) - (b.day || 0)).find(s => !pxlScDone()[s.id] && s.id !== skip);
+// 3 öneri: ilki bugünün (ya da sıradaki) senaryosu, diğer ikisi günden güne dönen havuzdan
+function pxlRecs(C){
+  const out = [], ck = C ? C.k : "", sc0 = todaysScenario(), dr = dayRec();
+  let sc = dr.scen ? pxlNextScen() || sc0 : sc0;
+  if (sc && "s:" + sc.id === ck) sc = pxlNextScen(sc.id);
+  if (sc) out.push({k: "s:" + sc.id, z: 1, ic: I("chat"), tag: dr.scen ? "Sıradaki senaryo" : "Bugünün senaryosu", t: sc.title, sub: `${sc.lvl ? sc.lvl + " · " : ""}${sc.lines.length} replik`, star: 1,
+    run: () => openReader("scen", sc.id, pxlLp("s:" + sc.id))});
+  const pool = [], last = S.book.last;
+  const bk = last ? ITEMS.filter(i => i.src === "bk" && i.ch === last) : [];
+  if (bk.length) pool.push({k: "bk", z: 2, ic: I("layers"), tag: "Okuduğunu çalış", t: `${last}. bölümün kalıpları`, sub: bk.length + " kalıp", run: () => startSession({items: bk, mode: "mix", title: "Bölüm kalıpları"})});
+  const tp = ITEMS.filter(i => i.src === "ph" && i.d === TODAY && !S.prog[i.id]);
+  if (tp.length) pool.push({k: "phr", z: 6, ic: I("ftTalk"), tag: "Bugünün kalıpları", t: tp.length + " yeni kalıp", sub: "Kalıplar rafında", shelf: "phr"});
+  const g = typeof GRAMMAR !== "undefined" ? GRAMMAR.find(x => !(S.gram || {})[x.id]) : null;
+  if (g) pool.push({k: "g:" + g.id, z: 5, ic: I(PXL_GIC[g.id] || "key"), tag: "Sıradaki kural", t: pxlShort(g), sub: g.s || "", run: pxlEnt("g:" + g.id).run});
+  const rh = pxlRhymes();
+  if (rh.length && new Date().getHours() >= 18 && !noListen()) { const i = dayNo() % rh.length, e = pxlEnt("r:" + i); if (e) pool.push({k: e.k, z: 4, ic: e.ic, tag: "Gece'ye tekerleme", t: e.t, sub: rh[i].tr || "Birlikte söyleyin", run: e.run}); }
+  const st = pxlState(), old = Object.keys(st.lfav).filter(k => pxlFavOn(k) && Date.now() - (st.lrecent[k] || 0) > 7 * 864e5).map(pxlEnt).filter(Boolean)[0];
+  if (old) pool.push({k: old.k, z: old.z, ic: old.ic, tag: "Favorin", t: old.t, sub: "Bir süredir açmadın", run: old.run});
+  const P = pool.filter(r => r.k !== ck && !out.some(o => o.k === r.k));
+  const s0 = P.length ? dayNo() % P.length : 0;
+  for (let i = 0; i < P.length && out.length < 3; i++) out.push(P[(s0 + i) % P.length]);
+  return out;
+}
+// raf kayıtları: kutu bilgisi ve çizim
+const PXL_SH = {
+  book: {t: "Kitap", ic: "book", z: 3, d: () => `${esc(D.book.title)} · ${D.book.chapters.length} bölüm`, draw: () => pxlBook(),
+    hint: () => { const N = D.book.chapters.length, n = Object.keys(S.book.read || {}).length; return n ? `${pxlBar(n / N * 100)} ${n}/${N} okundu` : "İlk bölümle başla"; }},
+  scen: {t: "Senaryolar", ic: "chat", z: 1, d: () => "Kafe, doktor, Bürgeramt…", draw: () => pxlScen(),
+    hint: () => { const N = D.scenarios.length, n = D.scenarios.filter(s => pxlScDone()[s.id]).length; return `${pxlBar(n / Math.max(1, N) * 100)} ${n}/${N}`; }},
+  phr: {t: "Kalıplar", ic: "ftTalk", z: 2, d: () => "Her gün 10 yeni kalıp", draw: () => pxlPhr(),
+    hint: () => { const rel = pxlPhRel(), tn = rel.filter(p => p.d === TODAY).length; return rel.some(p => S.prog[p.id]) ? `${rel.length} açık · bugün ${tn}` : `bugün ${tn || 10} yeni`; }},
+  word: {t: "Kelimeler", ic: "cards", z: 3, d: () => `En sık ${WORDS().length} kelime`, draw: () => pxlWord(),
+    hint: () => { const n = WORDS().filter(w => S.prog[w.id]).length; return n ? n + " öğreniyorsun" : WORDS().length + " kelime"; }},
+  gram: {t: "Kurallar", ic: "key", z: 5, d: () => "Kısa kural + mini test", draw: () => pxlGram(),
+    hint: () => { const N = typeof GRAMMAR !== "undefined" ? GRAMMAR.length : 0, n = Object.keys(S.gram || {}).length; return `${pxlBar(n / Math.max(1, N) * 100)} ${n}/${N}`; }},
+  pack: {t: "Kalıp paketleri", ic: "ftTeddy", z: 0, d: () => "Konuşma dili, Gece ile Almanca, tekerlemeler", draw: () => pxlPack(),
+    hint: () => { const p = pxlPacks(); if (!p) return "Yakında"; const n = ["kd", "ev"].reduce((a, k) => a + ((p[k] || {}).groups || []).reduce((b, g) => b + (g.items || []).length, 0), 0); return `${n} kalıp · ${pxlRhymes().length} tekerleme`; }},
+};
+const pxlTile = k => { const f = PXL_SH[k]; return hubFamTile({k, z: f.z, ic: I(f.ic), t: f.t, d: f.d(), hint: f.hint(), feat: k === "book", tag: "Senin hikâyen", cls: k === "pack" ? "pxwide" : ""}); };
+
+function pxlHome(y){
+  PXL.cur = null; PXL.fn = null;
   setTop("Kitaplık");
-  if (!LIBS.some(([k]) => k === S.opt.lib)) S.opt.lib = "book";
-  $("#view").innerHTML = `
-    <div class="pxsbar" role="search"><span class="pxsico" aria-hidden="true">${I("pxSearch")}</span><input id="pxq" type="search" enterkeyhint="search" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="Ara: kelime, kalıp, cümle…" aria-label="Kitaplıkta ara" value="${esc(PXS.q)}"><button class="pxsx" id="pxqx" aria-label="Aramayı temizle" ${PXS.q ? "" : "hidden"}>${I("x", "ln")}</button></div>
+  pxlState();
+  const C = pxlCont(), recs = pxlRecs(C), favN = Object.keys(S.lfav).filter(pxlFavOn).length + pxFavs().length;
+  let hero = "";
+  if (C) {
+    const sc = C.kind === "scen", t = sc ? C.src.title : `${C.src.n}. ${C.src.de}`, read = (S.book.read || {})[C.src.n];
+    const k = {cont: sc ? "SENARYOYA DEVAM ET" : "OKUMAYA DEVAM ET", next: "SIRADAKİ BÖLÜM", first: "İLK BÖLÜMLE BAŞLA", done: "KİTABI BİTİRDİN"}[C.mode];
+    const sub = C.mode === "cont" ? `${esc(sc ? C.src.lvl || "Senaryo" : C.src.tr)} · ${C.p}/${C.n} replik` : C.mode === "done" ? `En az okuduğun bölüm · ${esc(C.src.tr)}` : `${esc(C.src.tr)} · ${C.n} replik`;
+    hero = `<div class="phero" data-k="${C.k}">
+      <div class="phtx"><small>${k}</small><b>${esc(t)}</b><span>${sub}</span>${C.mode === "cont" ? pxlBar(C.p / C.n * 100) : ""}</div>
+      <span class="phill">${C.mode === "done" && typeof bat === "function" ? bat("cheer", 46) : I(sc ? "chat" : "book")}</span>
+      <button class="cta" id="pxlgo">${I("play", "ln")} ${C.mode === "cont" ? "Devam et" : C.mode === "done" || read ? "Tekrar oku" : "Oku"}</button>
+      <button class="linkbtn" id="pxlpick">Başka bölüm seç</button>
+    </div>`;
+  }
+  const v = ["fav", "recent"].includes(PXLV.home) ? PXLV.home : "all", fl = pxFlags().length;
+  $("#view").innerHTML = `<div class="pxlib">
+    <div class="pxsbar" role="search"><span class="pxsico" aria-hidden="true">${I("pxSearch")}</span><input id="pxq" type="search" enterkeyhint="search" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="Ara: kelime, kalıp, cümle, kural…" aria-label="Kitaplıkta ara" value="${esc(PXS.q)}"><button class="pxsx" id="pxqx" aria-label="Aramayı temizle" ${PXS.q ? "" : "hidden"}>${I("x", "ln")}</button></div>
     <div id="pxrec" class="chips pxrec" hidden></div>
     <div id="pxsres" class="pxsres" hidden></div>
-    <div id="pxlibb"><div class="seg pxlseg" id="seg" role="tablist" aria-label="Kitaplık bölümleri">${LIBS.map(([k, t]) => `<button role="tab" data-f="${k}">${t}</button>`).join("")}</div><div id="lib"></div></div>`;
-  $$("#seg button").forEach(b => b.onclick = () => { if (S.opt.lib === b.dataset.f) return; S.opt.lib = b.dataset.f; save(); sfx("tap"); pxLibDraw(); });
+    <div id="pxlibb">${hero}
+      <div class="ghhub pxgh ${pxlFx()}">
+        ${recs.length ? `<div class="sec ghsec">Sana önerilen</div><div class="ghrecs">${recs.map(hubRec).join("")}</div>` : ""}
+        ${hubChips([["all", "Hepsi"], ["fav", "★ Favoriler" + (favN ? ` <small>${favN}</small>` : "")], ["recent", "Son açtıkların"]], v, "Kitaplığı süz")}
+        <div id="pxlv"></div>
+        ${typeof renderContentList === "function" ? `<button class="linkbtn ghhid" id="pxlcl">Kartları yönet: İçerik listesi</button>` : ""}
+        ${fl ? `<button class="linkbtn ghhid pxlfl" id="pxlfl">Garip işaretlediklerin (${fl})</button>` : ""}
+      </div>
+    </div></div>`;
   const q = $("#pxq");
-  q.oninput = () => { PXS.q = q.value; PXS.open = {}; $("#pxqx").hidden = !q.value; clearTimeout(PXS.t); PXS.t = setTimeout(pxSearchDraw, 110); pxRecentDraw(); };
+  q.oninput = () => { PXS.q = q.value; PXS.open = {}; PXS.scope = "all"; $("#pxqx").hidden = !q.value; clearTimeout(PXS.t); PXS.t = setTimeout(() => pxSearchDraw(), 110); pxRecentDraw(); };
   q.onkeydown = e => { if (e.key === "Enter") { e.preventDefault(); q.blur(); } };
   q.onfocus = pxRecentDraw;
   q.onblur = () => setTimeout(() => { const r = $("#pxrec"); if (r && document.activeElement !== $("#pxq")) r.hidden = true; }, 180);
-  $("#pxqx").onclick = () => { PXS.q = ""; q.value = ""; $("#pxqx").hidden = true; pxSearchDraw(); q.focus(); pxRecentDraw(); };
-  pxLibDraw();
+  $("#pxqx").onclick = () => { PXS.q = ""; PXS.scope = "all"; q.value = ""; $("#pxqx").hidden = true; pxSearchDraw(); q.focus(); pxRecentDraw(); };
+  if (C) {
+    $("#pxlgo").onclick = () => { sfx("tap"); pxlRun(() => openReader(C.kind, C.id, C.mode === "cont" ? C.p : undefined)); };
+    $("#pxlpick").onclick = () => { sfx("tap"); pxlOpen("book"); };
+  }
+  $$("#pxlibb .ghrec").forEach((b, i) => b.onclick = () => { const r = recs[i]; sfx("tap"); if (r.shelf) return pxlOpen(r.shelf); pxlRun(r.run); });
+  hubChipsBind($("#pxlibb"), k => { PXLV.home = k; pxlPut("pxlView", k); pxlHomeList(); });
+  if ($("#pxlcl")) $("#pxlcl").onclick = () => pxlRun(() => open(renderContentList));
+  if ($("#pxlfl")) $("#pxlfl").onclick = () => pxlRun(() => { S.opt.pxft = "g"; open(pxRenderFlags); });
+  pxlHomeList();
   pxSearchDraw();
+  if (y) pxlRestore(y);
 }
-function pxLibDraw(){
-  const f = S.opt.lib;
-  $$("#seg button").forEach(b => { b.classList.toggle("on", b.dataset.f === f); b.setAttribute("aria-selected", b.dataset.f === f ? "true" : "false"); });
-  ({book: libBook, scen: libScen, phr: libPhrases, word: libWords, gram: () => renderGrammarList($("#lib"))})[f]();
+function pxlHomeList(){
+  const el = $("#pxlv"); if (!el) return;
+  const v = ["fav", "recent"].includes(PXLV.home) ? PXLV.home : "all", st = pxlState();
+  const redraw = () => { const y = scrollY; pxlHome(); scrollTo(0, y); };
+  if (v === "all") {
+    el.innerHTML = `<div class="ghfams">${Object.keys(PXL_SH).map(pxlTile).join("")}</div>`;
+    el.querySelectorAll("[data-fam]").forEach(b => b.onclick = () => { sfx("tap"); pxlOpen(b.dataset.fam); });
+    return;
+  }
+  let html = "";
+  if (v === "fav") {
+    const places = Object.keys(st.lfav).filter(pxlFavOn).sort((a, b) => st.lfav[b] - st.lfav[a]).map(pxlEnt).filter(Boolean);
+    const cards = pxFavs().map(([id]) => BYID[id]).filter(Boolean);
+    html = (places.length ? `<div class="ghlist">${places.map(e => hubCard({k: e.k, z: e.z, ic: e.ic, t: e.t, d: e.d, fav: true, play: e.t + ": aç"})).join("")}</div>` : "") +
+      (cards.length ? `<div class="pxsech"><span>Cümleler ve kelimeler</span><em>${cards.length}</em></div>
+        <div class="card plist pxlist" id="pxlfc">${cards.slice(0, 10).map(it => pxItem(it)).join("")}</div>
+        ${cards.length > 10 ? `<button class="linkbtn" id="pxlfa">Hepsini gör (${cards.length})</button>` : ""}
+        <button class="btn2 pxlwide" id="pxlfs">${I("star")} Favorilerimi çalış (${cards.length})</button>` : "");
+    if (!html) html = hubEmpty("think", "Henüz favorin yok. Bir bölümde <b>☆</b>'a, bir cümlede <b>★ Favori</b>'ye dokun.");
+    el.innerHTML = html;
+    if ($("#pxlfc")) pxBindItems($("#pxlfc"));
+    if ($("#pxlfa")) $("#pxlfa").onclick = () => pxlRun(() => { S.opt.pxft = "f"; open(pxRenderFlags); });
+    if ($("#pxlfs")) $("#pxlfs").onclick = () => pxlRun(() => startSession({items: srcItems("fav"), mode: "mix", title: "Favorilerim"}));
+  } else {
+    const L = Object.entries(st.lrecent).sort((a, b) => b[1] - a[1]).map(([k, t]) => [pxlEnt(k), t]).filter(([e]) => e).slice(0, 8);
+    el.innerHTML = L.length ? `<div class="ghlist">${L.map(([e, t]) => hubCard({k: e.k, z: e.z, ic: e.ic, t: e.t, d: e.d, ago: hubAgo(t), fav: pxlFavOn(e.k), play: e.t + ": aç"})).join("")}</div>`
+      : hubEmpty("wave", "Henüz bir şey açmadın. Önerilerden biriyle başla!");
+  }
+  hubBind(el, {redraw, play: k => { const e = pxlEnt(k); if (e) pxlRun(e.run); }, fav: k => pxlFavToggle(k)});
 }
-function libBook(){
-  const read = S.book.read || {}, nc = nextChapter(), n = Object.keys(read).length;
-  $("#lib").innerHTML = (nc ? `
-    <div class="card hero" style="margin-top:10px"><div class="k">${esc(D.book.title)} · ${n}/${D.book.chapters.length} okundu</div>
-      <div class="h">${nc.n}. ${esc(nc.de)}</div><div class="s">${esc(nc.tr)} · ${nc.lines.length} replik</div>
-      <button class="cta" id="rd">${read[nc.n] ? "Tekrar oku" : "Oku"}</button></div>` : "") + `
-    <div class="sec">Bölümler</div>
-    <div class="card">${D.book.chapters.map(c => `
-      <button class="chap ${read[c.n] ? "read" : ""}" data-n="${c.n}"><span class="no">${read[c.n] ? "✓" : c.n}</span>
-        <span class="tx"><b>${esc(c.de)}</b><span>${esc(c.tr)}</span></span>${read[c.n] ? `<span class="cnt">${read[c.n]}×</span>` : ""}</button>`).join("")}</div>`;
-  if (nc) $("#rd").onclick = () => openReader("book", nc.n);
-  $$("#lib .chap").forEach(b => b.onclick = () => openReader("book", +b.dataset.n));
+
+/* ---------- raflar: ortak parçalar ---------- */
+function pxlOpen(sh, o){
+  o = o || {};
+  const f = PXL_SH[sh]; if (!f) return;
+  if (!o.ret && tab === "library" && !screen) PXL.stack.push({sh: "home", y: scrollY});
+  PXL.cur = sh; PXL.hl = o.at || PXL.fresh || null; PXL.fresh = null;
+  const draw = () => { setTop(f.t, true); f.draw(); };
+  PXL.fn = draw;
+  open(draw);
+  pxlRestore(o.y, PXL.hl);
+  PXL.hl = null;
 }
-// senaryoya eklenen düğmeler (HOOKS.scenario: {t, ic, fn(sc), show?(sc)})
+const pxlHero = h => `<div class="ghhub ghfamv pxgh ${pxlFx()}"><div class="ghhero z${h.z}${h.feat ? " ghfeat" : ""}"><i class="ghfi">${h.ic}</i><span class="ghht"><b>${h.t}</b><span>${h.d}</span><em>${h.meta}</em></span></div></div>`;
+// açılır kısım (Kitap kısımları, senaryo konuları, kalıp günleri ve konuları): gövde ilk açılışta çizilir
+const PXL_UB = {};
+function pxlUnit(u){
+  PXL_UB[u.k] = u.body;
+  const op = u.force || (PXL.open[u.k] !== undefined ? PXL.open[u.k] : !!u.open) || !!u.has;
+  const all = u.total && u.done >= u.total, p = u.total ? Math.round(u.done / u.total * 100) : 0;
+  return `<div class="card pxlunit${op ? " open" : ""}" data-u="${esc(u.k)}"><button class="pxluh" aria-expanded="${op}" data-uh="${esc(u.k)}">
+      <span class="pxlring${all ? " done" : ""}" style="--p:${p}" aria-hidden="true"><span>${all ? "✓" : u.done + "/" + u.total}</span></span>
+      <span class="ptx"><b>${u.t}</b><small>${u.sub}</small></span>${I("chev", "ln pch")}</button>
+    <div class="pxlub">${op ? u.body() : ""}</div></div>`;
+}
+function pxlUnitToggle(h){
+  const u = h.closest(".pxlunit"), k = u.dataset.u, on = !u.classList.contains("open"), b = u.querySelector(".pxlub");
+  if (on && !b.innerHTML.trim() && PXL_UB[k]) b.innerHTML = PXL_UB[k]();
+  u.classList.toggle("open", on); h.setAttribute("aria-expanded", on); PXL.open[k] = on; sfx("tap");
+}
+// rafın tıklamaları tek yerde: kısım aç/kapa, satıra git (data-go), ⋯ (data-more)
+function pxlBindShelf(root, go){
+  const prev = root.onclick;
+  root.onclick = e => {
+    const h = e.target.closest("[data-uh]"); if (h && root.contains(h)) return pxlUnitToggle(h);
+    const m = e.target.closest("[data-more]"); if (m && root.contains(m)) { e.stopPropagation(); S.opt.pxhint = true; const s = pxlSc(m.dataset.more); return s && pxScSheet(s); }
+    const g = e.target.closest("[data-go]"); if (g && root.contains(g)) { sfx("tap"); return go(g.dataset.go, g); }
+    if (prev) prev.call(root, e);
+  };
+}
+const pxlSecH = (t, em) => `<div class="pxsech"><span>${t}</span>${em !== undefined && em !== "" ? `<em>${em}</em>` : ""}</div>`;
+
+/* ---------- Kitap ---------- */
+function pxlChapRow(c, nc){
+  const r = (S.book.read || {})[c.n], k = "b:" + c.n, lp = pxlLp(k), nx = c === nc && !r;
+  const st = r ? r + "×" : lp ? lp + "/" + c.lines.length : nx ? "Sıradaki" : "Yeni";
+  return `<button class="pxlch${r ? " done" : ""}${nx ? " next" : ""}${lp && !r ? " part" : ""}" data-k="${k}" data-go="${k}">
+    <span class="pxlnd" aria-hidden="true">${r ? "✓" : c.n}</span>
+    <span class="tx"><b>${c.n}. ${esc(c.de)}</b><span>${esc(c.tr)} · ${c.lines.length} replik</span>${lp ? pxlBar(lp / c.lines.length * 100) : ""}</span>
+    <span class="pxlst">${st}</span></button>`;
+}
+function pxlBook(){
+  const C = D.book.chapters, read = S.book.read || {}, nb = C.filter(c => read[c.n]).length, nc = nextChapter(), cont = pxlCont();
+  const lines = C.reduce((a, c) => a + c.lines.length, 0);
+  let cta = "", run = null;
+  if (cont && cont.kind === "book" && cont.mode === "cont") { cta = `${cont.id}. bölüme devam et · ${cont.p}/${cont.n}`; run = () => openReader("book", cont.id, cont.p); }
+  else if (cont && cont.mode === "done") { cta = `Tekrar oku: ${cont.id}. ${cont.src.de}`; run = () => openReader("book", cont.id); }
+  else if (nc) { cta = `${nc.n}. bölümü oku`; run = () => openReader("book", nc.n, pxlLp("b:" + nc.n)); }
+  const units = []; for (let i = 0; i < C.length; i += 5) units.push(C.slice(i, i + 5));
+  const rc = Object.keys(read).length;
+  const bk = rc ? poolFor("bk").length : 0, bl = rc ? poolFor("bl").length : 0;
+  $("#view").innerHTML = `<div class="pxlsh">
+    ${pxlHero({z: 3, feat: 1, ic: I("book"), t: "Kitap", d: esc(D.book.title), meta: `${nb}/${C.length} okundu · ${lines} replik`})}
+    ${run ? `<button class="cta pxlcta" id="pxlcta">${I("play", "ln")} ${esc(cta)}</button>` : ""}
+    <div id="pxlbody">${units.map((u, ui) => { const d = u.filter(c => read[c.n]).length, k = "bu" + ui;
+      return pxlUnit({k, done: d, total: u.length, t: `${ui + 1}. Kısım · ${PXL_ARC[ui] || (ui + 1) + ". Kısım"}`.replace(/^(\d+)\. Kısım · \1\. Kısım$/, "$1. Kısım"),
+        sub: `${u[0].n}–${u[u.length - 1].n}. bölüm${d ? ` · ${d} okundu` : ""}`, open: u.includes(nc), has: PXL.hl && u.some(c => "b:" + c.n === PXL.hl),
+        body: () => u.map(c => pxlChapRow(c, nextChapter())).join("")}); }).join("")}
+    ${pxlSecH("Okuduklarını çalış", rc ? rc + " bölüm" : "")}
+    ${rc ? `<div class="card plist2">
+      <button class="prow" data-go="st:bk"><span class="pic">${I("layers")}</span><span class="ptx"><b>Okuduğun bölümlerin kalıpları</b><small>${bk} kalıp · karışık alıştırma</small></span>${I("chev", "ln pch")}</button>
+      <button class="prow" data-go="st:bl"><span class="pic">${I("book")}</span><span class="ptx"><b>Okuduğun cümleler</b><small>${bl} cümle · karışık alıştırma</small></span>${I("chev", "ln pch")}</button></div>`
+      : `<p class="hint pxlnote">Bölüm okudukça kalıpları burada çalışırsın.</p>`}</div>
+    <div style="height:10px"></div></div>`;
+  if (run) $("#pxlcta").onclick = () => { sfx("tap"); pxlGo("book", run); };
+  pxlBindShelf($("#pxlbody"), k => {
+    if (k === "st:bk" || k === "st:bl") return pxlGo("book", () => startSession({items: srcItems(k.slice(3)), mode: "mix", title: k === "st:bk" ? "Okuduğun bölümlerin kalıpları" : "Okuduğun cümleler"}));
+    const n = +k.slice(2); pxlGo("book", () => openReader("book", n, pxlLp(k)), k);
+  });
+}
+
+/* ---------- Senaryolar ---------- */
+function pxlScRow(s, o){
+  const done = pxlScDone()[s.id], sb = (S.scene || {})[s.id], k = "s:" + s.id, lp = pxlLp(k);
+  return `<div class="pxlsr" data-k="${k}"><button class="chap${done ? " read" : ""}" data-go="${k}"><span class="no">${done ? "✓" : s.day || ""}</span>
+      <span class="tx"><b>${esc(s.title)}</b><span>${esc(s.lvl || "")}${s.lvl ? " · " : ""}${s.lines.length} replik${done ? " · " + done + "×" : ""}${lp ? ` · ${lp}/${s.lines.length}` : ""}${sb !== undefined ? ` <em class="pxlsel">Seçimli %${sb}</em>` : ""}</span></span></button>
+      ${o && o.more ? `<button class="pxlmore" data-more="${esc(s.id)}" aria-label="Seçenekler: ${esc(s.title)}">${pxDots()}</button>` : ""}</div>`;
+}
+// konulara göre senaryo listesi; o.all: hepsi açık, ⋯ yok (Pratik → Canlı konuş); o.el verilirse oraya çizip bağlar
+function pxlScenRows(onPick, o){
+  o = o || {};
+  const known = new Set(PXL_SCT.flatMap(([, ids]) => ids)), rest = D.scenarios.filter(s => !known.has(s.id)).map(s => s.id);
+  const T = PXL_SCT.concat(rest.length ? [["Diğer", rest]] : []), sc = todaysScenario(), done = pxlScDone();
+  const html = T.map(([t, ids], ti) => {
+    const L = ids.map(pxlSc).filter(Boolean); if (!L.length) return "";
+    const d = L.filter(s => done[s.id]).length, lv = {};
+    L.forEach(s => { const v = (s.lvl || "").toLocaleLowerCase("tr"); if (v) lv[v] = (lv[v] || 0) + 1; });
+    return pxlUnit({k: (o.all ? "sa" : "su") + ti, done: d, total: L.length, t: esc(t), sub: `${L.length} senaryo${Object.keys(lv).length ? " · " + Object.entries(lv).map(([v, n]) => n + " " + v).join(", ") : ""}`,
+      open: sc && ids.includes(sc.id), force: o.all, has: PXL.hl && ids.some(id => "s:" + id === PXL.hl),
+      body: () => `<div class="pxlrows">${L.map(s => pxlScRow(s, {more: !o.all})).join("")}</div>`});
+  }).join("");
+  if (o.el) { o.el.innerHTML = html; pxlBindShelf(o.el, k => { const s = pxlSc(k.slice(2)); if (s) onPick(s); }); }
+  return html;
+}
+function pxlScen(){
+  const done = pxlScDone(), sb = S.scene || {}, N = D.scenarios.length, ns = D.scenarios.filter(s => done[s.id]).length;
+  const pl = Object.values(sb).filter(v => typeof v === "number"), avg = pl.length ? Math.round(pl.reduce((a, b) => a + b, 0) / pl.length) : 0;
+  const dt = !!dayRec().scen, sc = dt ? pxlNextScen() || todaysScenario() : todaysScenario(), hk = sc ? pxScHooks(sc) : [];
+  $("#view").innerHTML = `<div class="pxlsh">
+    ${pxlHero({z: 1, ic: I("chat"), t: "Senaryolar", d: `Gerçek hayattan ${N} durum`, meta: `${ns}/${N} yapıldı${pl.length ? " · Seçimli ort. %" + avg : ""}`})}
+    ${sc ? `<div class="card pxltd" data-k="s:${sc.id}"><div class="k">${dt ? "BUGÜN YAPTIN ✓ · SIRADAKİ" : "BUGÜNÜN SENARYOSU"}</div><div class="h">${esc(sc.title)}</div>
+      <div class="s">${esc(sc.lvl || "")}${sc.lvl ? " · " : ""}${sc.lines.length} replik · ${esc(sc.desc || "")}</div>
+      <div class="row2${hk.length ? "" : " one"}"><button class="cta" id="pxltdgo">${I("play", "ln")} Başla</button>${hk.map((h, i) => `<button class="btn2" data-h="${i}">${I(h.ic)} ${esc(h.t)}</button>`).join("")}</div></div>` : ""}
+    <div id="pxlbody">${pxlScenRows(null)}</div>
+    <div style="height:10px"></div></div>`;
+  if (sc) {
+    $("#pxltdgo").onclick = () => { sfx("tap"); pxlGo("scen", () => openReader("scen", sc.id, pxlLp("s:" + sc.id)), "s:" + sc.id); };
+    $$(".pxltd [data-h]").forEach(b => b.onclick = () => { sfx("tap"); pxlSeen("s:" + sc.id); pxlGo("scen", () => hk[+b.dataset.h].fn(sc), "s:" + sc.id); });
+  }
+  pxlBindShelf($("#pxlbody"), k => pxlGo("scen", () => openReader("scen", k.slice(2), pxlLp(k)), k));
+}
+// senaryoya eklenen düğmeler (HOOKS.scenario: {t, ic, d?, fn(sc), show?(sc)})
 function pxScHooks(sc){ return HOOKS.scenario.filter(h => { try { return h && h.fn && (!h.show || h.show(sc)); } catch(e) { return false; } }); }
+const pxlHookSub = (h, sc) => h.ic === "ftChoice" && (S.scene || {})[sc.id] !== undefined ? "En iyi %" + S.scene[sc.id] : h.d || "";
+// senaryonun bütün yolları: oku, sohbet gibi, eklentiler (Seçimli oyna), canlı konuş, kalıplar, favori
 function pxScSheet(sc){
-  const hk = pxScHooks(sc);
+  const hk = pxScHooks(sc), k = "s:" + sc.id, fav = pxlFavOn(k), its = ITEMS.filter(i => i.src === "sc" && i.sc === sc.id && /k\d+$/.test(i.id));
+  const row = (a, ic, t, s) => `<button class="prow" data-x="${a}"><span class="pic">${ic}</span><span class="ptx"><b>${esc(t)}</b>${s ? `<small>${esc(s)}</small>` : ""}</span>${I("chev", "ln pch")}</button>`;
   sheetOpen(`<div class="psheet"><h2>${esc(sc.title)}</h2><p class="small muted" style="margin:0 2px 12px">${esc(sc.desc || "")}</p>
     <div class="card plist2">
-      <button class="prow" data-x="read"><span class="pic">${I("book")}</span><span class="ptx"><b>Oku ve dinle</b><small>Rolleri seç, sesli oynat</small></span>${I("chev", "ln pch")}</button>
-      ${hk.map((h, i) => `<button class="prow" data-h="${i}"><span class="pic">${I(h.ic)}</span><span class="ptx"><b>${esc(h.t)}</b>${h.d ? `<small>${esc(h.d)}</small>` : ""}</span>${I("chev", "ln pch")}</button>`).join("")}
+      ${row("read", I("book"), "Oku ve dinle", "Rolleri seç, sesli oynat")}
+      ${row("chat", I("chat"), "Sohbet gibi oyna", "Sıra sana gelince doğru cümleyi seç")}
+      ${hk.map((h, i) => row("h" + i, I(h.ic), h.t, pxlHookSub(h, sc))).join("")}
+      ${row("live", I("ftTalk"), "Canlı konuş", SAMPLE ? "Claude ile yazış" : "Mesajı kopyala, Claude'a yapıştır")}
+      ${its.length ? row("kq", I("layers"), "Kalıplarını alıştır", its.length + " kalıp · karışık") : ""}
+      <button class="prow" data-x="fav"><span class="pic pxlsfav${fav ? " on" : ""}" aria-hidden="true">${fav ? "★" : "☆"}</span><span class="ptx"><b>${fav ? "Favoride" : "Favorilere ekle"}</b><small>${fav ? "Dokun: favorilerden çıkar" : "Kitaplık → ★ Favoriler'de durur"}</small></span></button>
     </div><button class="linkbtn" id="pxscx" style="width:100%">Kapat</button></div>`);
-  $("#sheetIn [data-x]").onclick = () => { sheetClose(); openReader("scen", sc.id); };
-  $$("#sheetIn [data-h]").forEach(b => b.onclick = () => { sheetClose(); try { hk[+b.dataset.h].fn(sc); } catch(e) { console.error(e); } });
+  const act = {
+    read: () => openReader("scen", sc.id, pxlLp(k)),
+    chat: () => { if (pxlR("scen", sc.id)) { pxlSeen(k); open(renderChatPlay); } },
+    live: () => liveChat(sc),
+    kq: () => startSession({items: its, mode: "mix", title: "Senaryo kalıpları"}),
+  };
+  hk.forEach((h, i) => act["h" + i] = () => { pxlSeen(k); h.fn(sc); });
+  $$("#sheetIn [data-x]").forEach(b => b.onclick = () => {
+    const a = b.dataset.x; sheetClose();
+    if (a === "fav") { const on = pxlFavToggle(k); sfx("tap"); return toast(on ? "★ Favorilere eklendi" : "Favorilerden çıkarıldı"); }
+    pxlRun(() => { try { act[a](); } catch(e) { console.error(e); } }, k);
+  });
   $("#pxscx").onclick = sheetClose;
 }
-function libScen(){
-  const done = S.scen.done || {}, sc = todaysScenario(), hk = sc ? pxScHooks(sc) : [];
-  $("#lib").innerHTML = (sc ? `
-    <div class="card hero" style="margin-top:10px"><div class="k">Bugünün senaryosu</div>
-      <div class="h">${esc(sc.title)}</div><div class="s">${esc(sc.desc)}</div>
-      <button class="cta" id="rd">Başla</button>
-      ${hk.length ? `<div class="pxhk">${hk.map((h, i) => `<button class="btn2" data-h="${i}">${I(h.ic)} ${esc(h.t)}</button>`).join("")}</div>` : ""}</div>` : "") + `
-    <div class="sec">Tüm senaryolar</div>
-    <div class="card pxscl">${D.scenarios.map(s => { const h = pxScHooks(s); return `<div class="pxscr">
-      <button class="chap ${done[s.id] ? "read" : ""}" data-id="${esc(s.id)}"><span class="no">${done[s.id] ? "✓" : s.day || ""}</span>
-        <span class="tx"><b>${esc(s.title)}</b><span>${esc(s.lvl || "")}${s.lvl ? " · " : ""}${s.lines.length} replik${done[s.id] ? " · " + done[s.id] + "×" : ""}</span></span></button>
-      ${h.length === 1 ? `<button class="pxsca" data-id="${esc(s.id)}" aria-label="${esc(h[0].t)}: ${esc(s.title)}">${I(h[0].ic)}<span>${esc(h[0].t)}</span></button>`
-        : h.length > 1 ? `<button class="pxsca more" data-id="${esc(s.id)}" aria-label="Seçenekler: ${esc(s.title)}">${pxDots()}</button>` : ""}
-    </div>`; }).join("")}</div>`;
-  if (sc) { $("#rd").onclick = () => openReader("scen", sc.id); $$("#lib .pxhk [data-h]").forEach(b => b.onclick = () => hk[+b.dataset.h].fn(sc)); }
-  $$("#lib .chap").forEach(b => b.onclick = () => openReader("scen", b.dataset.id));
-  $$("#lib .pxsca").forEach(b => b.onclick = () => { const s = D.scenarios.find(x => x.id === b.dataset.id); if (!s) return; const h = pxScHooks(s); if (h.length === 1 && !b.classList.contains("more")) h[0].fn(s); else pxScSheet(s); });
+
+/* ---------- Kalıplar ---------- */
+const pxlPhRel = () => ITEMS.filter(i => i.src === "ph" && i.d <= TODAY);
+const pxlPhFut = () => ITEMS.filter(i => i.src === "ph" && i.d > TODAY).sort((a, b) => a.d.localeCompare(b.d) || (a.o || 0) - (b.o || 0));
+// raf içi arama kutusu (Kalıplar, Kelimeler): aynı arama motoru, yalnızca o rafın grupları
+const pxlSBar = (sh, ph) => `<div class="pxsbar pxlsb" role="search"><span class="pxsico" aria-hidden="true">${I("pxSearch")}</span><input id="pxq2" type="search" enterkeyhint="search" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="${ph}" aria-label="${ph}" value="${esc(PXL.sq[sh] || "")}"><button class="pxsx" id="pxqx2" aria-label="Aramayı temizle" ${PXL.sq[sh] ? "" : "hidden"}>${I("x", "ln")}</button></div><div id="pxsres2" class="pxsres" hidden></div>`;
+function pxlSBind(sh, groups, hide){
+  const q = $("#pxq2"), o = {groups, el: $("#pxsres2"), hide, open: PXL.sqo[sh] = PXL.sqo[sh] || {}};
+  const draw = () => { o.q = PXL.sq[sh] || ""; pxSearchDraw(o); };
+  q.oninput = () => { PXL.sq[sh] = q.value; o.open = PXL.sqo[sh] = {}; $("#pxqx2").hidden = !q.value; clearTimeout(PXS.t); PXS.t = setTimeout(draw, 110); };
+  q.onkeydown = e => { if (e.key === "Enter") { e.preventDefault(); q.blur(); } };
+  $("#pxqx2").onclick = () => { PXL.sq[sh] = ""; q.value = ""; $("#pxqx2").hidden = true; draw(); q.focus(); };
+  draw();
 }
-function libPhrases(){
-  const ps = ITEMS.filter(i => i.src === "ph" && i.d <= TODAY), groups = {};
-  ps.forEach(p => (groups[p.d] = groups[p.d] || []).push(p));
-  const counts = [0, 0, 0]; ps.forEach(p => counts[lvl(p)]++);
-  const pk = typeof ftOpenPack === "function" && typeof C4 !== "undefined" && C4.packs ? [["kd", "Konuşma dili"], ["ev", "Gece ile Almanca"]].filter(([k]) => C4.packs[k]).map(([k, t]) => [k, C4.packs[k].t || t]) : [];
-  $("#lib").innerHTML = `
-    ${pk.length ? `<div class="chips pxpk" role="group" aria-label="Kalıp paketleri"><button class="chip on" aria-pressed="true">Günlük</button>${pk.map(([k, t]) => `<button class="chip" data-pk="${k}">${esc(t)}${I("chev", "ln")}</button>`).join("")}</div>` : ""}
-    <div class="legend" style="margin-top:12px"><span><i class="dot"></i>Yeni ${counts[0]}</span><span><i class="dot s1"></i>Öğreniyorum ${counts[1]}</span><span><i class="dot s2"></i>Oturdu ${counts[2]}</span></div>
-    ${Object.keys(groups).sort().reverse().map(d => `
-      <div class="sec">${d === TODAY ? "Bugün" : trDate(d)}</div>
-      <div class="card plist pxlist">${groups[d].map(p => pxItem(p)).join("")}</div>`).join("") || `<div class="card empty" style="margin-top:14px">Henüz kalıp yok.</div>`}
-    <p class="hint">Dokun: örneği açılır ve okunur. Basılı tut: favori ya da “garip” işareti.</p>`;
-  $$("#lib [data-pk]").forEach(b => b.onclick = () => ftOpenPack(b.dataset.pk));
-  pxBindItems($("#lib"));
-}
-// kelime listesi: sıklık sırasıyla; arama yukarıdaki ortak kutuda
-function libWords(){
-  const all = WORDS().slice().sort((a, b) => a.o - b.o);
-  let lim = 60;
-  $("#lib").innerHTML = `<p class="small muted" style="margin:12px 2px 0">${all.length} kelime, en sık kullanılan önce. Dokun: örnek cümle açılır ve okunur. Aramak için yukarıdaki kutuyu kullan.</p><div id="wl"></div>`;
-  const draw = () => {
-    $("#wl").innerHTML = `<div class="card plist pxlist" style="margin-top:10px">${all.slice(0, lim).map(w => pxItem(w)).join("")}</div>` +
-      (all.length > lim ? `<button class="btn2" id="wm" style="width:100%;margin-top:10px">Daha fazla (${all.length - lim})</button>` : "");
-    if ($("#wm")) $("#wm").onclick = () => { lim += 100; const y = scrollY; draw(); scrollTo(0, y); };
+const pxlHint = () => S.opt.pxhint ? "" : `<p class="hint pxlhint">Dokun: açılır ve okunur. Basılı tut: favori ya da “garip” işareti.</p>`;
+function pxlPhr(){
+  const rel = pxlPhRel(), fut = pxlPhFut(), my = ITEMS.filter(i => i.src === "my").slice().reverse();
+  const cnt = [0, 0, 0]; rel.forEach(p => cnt[lvl(p)]++);
+  let today = rel.filter(p => p.d === TODAY);
+  if (!today.length && rel.length) { const nd = rel.map(p => p.d).sort().pop(); today = rel.filter(p => p.d === nd); }
+  const allSeen = today.length && today.every(p => S.prog[p.id]);
+  let v = PXLV.ph; if (v === "my" && !my.length || !["new", "cat", "my"].includes(v)) v = "new";
+  $("#view").innerHTML = `<div class="pxlsh">
+    ${pxlHero({z: 2, ic: I("ftTalk"), t: "Kalıplar", d: "Her gün 10 yeni kalıp", meta: `${rel.length} açık · ${cnt[2]} oturdu · ${fut.filter(p => !isPinned(p.id)).length} sırada`})}
+    ${rel.length ? `<button class="cta pxlcta" id="pxlcta">${I("play", "ln")} ${allSeen ? "Açık kalıpları tekrar et" : `Bugünün ${today.length} kalıbını çalış`}</button>` : ""}
+    ${pxlSBar("phr", "Kalıplarda ara…")}
+    <div id="pxlshb">
+      ${hubChips([["new", "Yeni gelenler"], ["cat", "Konular"]].concat(my.length ? [["my", `Benim <small>${my.length}</small>`]] : []), v, "Kalıpları süz")}
+      <div class="legend"><span><i class="dot"></i>Yeni ${cnt[0]}</span><span><i class="dot s1"></i>Öğreniyorum ${cnt[1]}</span><span><i class="dot s2"></i>Oturdu ${cnt[2]}</span></div>
+      ${pxlHint()}
+      <div id="pxlbody"></div>
+      ${pxlPacks() && typeof ftOpenPack === "function" ? `<button class="linkbtn" id="pxlpk">Kalıp paketleri: Konuşma dili, Gece ile Almanca ›</button>` : ""}
+      ${my.length ? "" : `<button class="linkbtn" id="pxlsay">Kendi cümleni ekle: Nasıl derim? ›</button>`}
+      <div style="height:10px"></div>
+    </div></div>`;
+  const body = $("#pxlbody");
+  const draw = vv => {
+    if (vv === "new") {
+      const days = {}; rel.forEach(p => (days[p.d] = days[p.d] || []).push(p));
+      const ds = Object.keys(days).sort().reverse(), td = ds[0];
+      body.innerHTML = !ds.length ? `<div class="card empty" style="margin-top:14px">Henüz kalıp yok.</div>` :
+        pxlSecH(td === TODAY ? "Bugün" : trDate(td), days[td].length) + `<div class="card plist pxlist">${days[td].map(p => pxItem(p)).join("")}</div>` +
+        (ds.length > 1 ? pxlSecH("Önceki günler", ds.length - 1) : "") +
+        ds.slice(1).map(d => { const L = days[d], k = L.filter(p => S.prog[p.id]).length;
+          return pxlUnit({k: "pd" + d, done: k, total: L.length, t: esc(trDate(d)), sub: `${L.length} kalıp${k ? ` · ${k} öğreniyorsun` : ""}`,
+            body: () => `<div class="plist pxlist">${L.map(p => pxItem(p)).join("")}</div>`}); }).join("");
+    } else if (vv === "cat") {
+      const cats = {}; rel.concat(fut).forEach(p => { const c = p.cat || "Diğer"; (cats[c] = cats[c] || {r: [], f: []})[p.d <= TODAY ? "r" : "f"].push(p); });
+      body.innerHTML = Object.entries(cats).sort((a, b) => (b[1].r.length + b[1].f.length) - (a[1].r.length + a[1].f.length)).map(([c, x], i) =>
+        pxlUnit({k: "pc" + c, done: x.r.filter(p => lvl(p) > 0).length, total: x.r.length || 0, t: esc(c), sub: `${x.r.length} açık${x.f.length ? ` · ${x.f.length} sırada` : ""}`,
+          body: () => `${x.r.length ? `<div class="plist pxlist">${x.r.map(p => pxItem(p)).join("")}</div>` : ""}
+            ${x.f.length ? `<button class="pxsmore pxlfut" data-fut="${esc(c)}" aria-expanded="false">Sırada bekleyenler (${x.f.length})${I("chev", "ln")}</button><div class="pxlfl" hidden></div>` : ""}`})).join("");
+      body.querySelectorAll(".pxlring").forEach(r => { if (r.textContent.trim() === "0/0") r.firstElementChild.textContent = "0"; });
+    } else {
+      body.innerHTML = `<div class="card plist pxlist">${my.map(p => pxItem(p)).join("")}</div>`;
+    }
   };
-  draw(); pxBindItems($("#lib"));
+  // sırada bekleyenler: 30'ar tane
+  const futDraw = (btn, more) => {
+    const c = btn.dataset.fut, box = btn.nextElementSibling, L = pxlPhFut().filter(p => (p.cat || "Diğer") === c);
+    const lim = PXL.fut[c] = more ? (PXL.fut[c] || 30) + 30 : PXL.fut[c] || 30;
+    box.innerHTML = `<div class="plist pxlist">${L.slice(0, lim).map(p => pxItem(p, {meta: trDate(p.d) + " açılır"})).join("")}</div>${L.length > lim ? `<button class="pxsmore" data-futm="${esc(c)}">Daha fazla (${L.length - lim})${I("chev", "ln")}</button>` : ""}`;
+  };
+  draw(v);
+  pxBindItems(body);
+  pxlBindShelf(body, () => {});
+  const itemClick = body.onclick;
+  body.onclick = e => {
+    const f = e.target.closest("[data-fut]");
+    if (f) { const on = f.getAttribute("aria-expanded") !== "true"; f.setAttribute("aria-expanded", on); f.nextElementSibling.hidden = !on; if (on) futDraw(f); sfx("tap"); return; }
+    const m = e.target.closest("[data-futm]");
+    if (m) { const y = scrollY; futDraw(m.closest(".pxlfl").previousElementSibling, true); scrollTo(0, y); return; }
+    itemClick.call(body, e);
+  };
+  hubChipsBind($("#pxlshb"), k => { PXLV.ph = k; pxlPut("pxlPh", k); const y = scrollY; draw(k); scrollTo(0, y); });
+  if ($("#pxlcta")) $("#pxlcta").onclick = () => { sfx("tap"); pxlGo("phr", () => allSeen ? startSession({items: srcItems("ph", 10), mode: "mix", title: "Açık kalıplar"}) : startSession({items: today, mode: "mix", title: "Bugünün kalıpları"})); };
+  if ($("#pxlpk")) $("#pxlpk").onclick = () => { sfx("tap"); PXL.stack.push({sh: "phr", y: scrollY}); pxlOpen("pack", {ret: 1}); };
+  if ($("#pxlsay")) $("#pxlsay").onclick = () => pxlGo("phr", () => open(renderSay));
+  pxlSBind("phr", ["ph", "my"], $("#pxlshb"));
+}
+
+/* ---------- Kelimeler ---------- */
+function pxlWord(){
+  const all = WORDS().slice().sort((a, b) => a.o - b.o), learn = all.filter(w => S.prog[w.id]).length;
+  const fv = all.filter(w => pxIsFav(w.id)).length, kn = k => all.filter(w => w.kind === k).length;
+  const views = [["all", "Hepsi"], ["n", `İsim <small>${kn("n")}</small>`], ["v", `Fiil <small>${kn("v")}</small>`], ["a", `Sıfat <small>${kn("a")}</small>`]]
+    .concat(learn ? [["seen", `Öğrendiklerim <small>${learn}</small>`]] : [], fv ? [["fav", `★ <small>${fv}</small>`]] : []);
+  if (!views.some(([k]) => k === PXLV.wf)) PXLV.wf = "all";
+  const filt = () => { const f = PXLV.wf; return all.filter(w => f === "all" ? true : f === "seen" ? S.prog[w.id] : f === "fav" ? pxIsFav(w.id) : w.kind === f && (f !== "n" || !PXLV.wc || w.cat === PXLV.wc)); };
+  $("#view").innerHTML = `<div class="pxlsh">
+    ${pxlHero({z: 3, ic: I("cards"), t: "Kelimeler", d: `En sık kullanılan ${all.length} kelime`, meta: learn ? learn + " öğreniyorsun" : "En sık kullanılan önce"})}
+    <button class="cta pxlcta" id="pxlcta"></button>
+    ${pxlSBar("word", "Kelimelerde ara…")}
+    <div id="pxlshb">
+      <div id="pxlwf1">${hubChips(views, PXLV.wf, "Kelime türü")}</div>
+      <div id="pxlwf2"></div>
+      ${pxlHint()}
+      <div id="pxlbody"></div>
+      <div style="height:10px"></div>
+    </div></div>`;
+  const body = $("#pxlbody");
+  const draw = () => {
+    const L = filt(), lim = PXL.wlim, fresh = L.filter(w => !S.prog[w.id]);
+    $("#pxlcta").innerHTML = `${I("play", "ln")} ${fresh.length ? "10 yeni kelime öğren" : "Öğrendiklerini tekrar et"}`;
+    $("#pxlcta").disabled = !L.length;
+    $("#pxlwf2").innerHTML = PXLV.wf === "n" && typeof W_CATS !== "undefined" ? `<div class="ghchips pxlsub" role="tablist" aria-label="Konu">${[["", "Hepsi"]].concat(Object.entries(W_CATS)).map(([k, t]) => `<button class="chip${PXLV.wc === k ? " on" : ""}" role="tab" aria-selected="${PXLV.wc === k}" data-wc="${k}">${esc(t)}</button>`).join("")}</div>` : "";
+    $$("#pxlwf2 [data-wc]").forEach(b => b.onclick = () => { PXLV.wc = b.dataset.wc; PXL.wlim = 20; sfx("tap"); const y = scrollY; draw(); scrollTo(0, y); });
+    body.innerHTML = L.length ? `<div class="card plist pxlist">${L.slice(0, lim).map(w => pxItem(w)).join("")}</div>` +
+      (L.length > lim ? `<button class="btn2 pxlwide" id="pxlwm">Daha fazla (${L.length - lim})</button>` : "") : hubEmpty("think", "Bu süzgeçte kelime yok.");
+    if ($("#pxlwm")) $("#pxlwm").onclick = () => { PXL.wlim += 50; const y = scrollY; draw(); scrollTo(0, y); };
+  };
+  draw(); pxBindItems(body);
+  hubChipsBind($("#pxlwf1"), k => { PXLV.wf = k; PXLV.wc = ""; pxlPut("pxlWf", k); PXL.wlim = 20; const y = scrollY; draw(); scrollTo(0, y); });
+  $("#pxlcta").onclick = () => {
+    const L = filt(), fresh = L.filter(w => !S.prog[w.id]);
+    const its = fresh.length ? fresh.slice(0, 10) : shuffle(L.slice()).slice(0, 10);
+    sfx("tap"); pxlGo("word", () => startSession({items: its, mode: "mix", title: fresh.length ? "Yeni kelimeler" : "Kelime tekrarı"}));
+  };
+  pxlSBind("word", ["wd"], $("#pxlshb"));
+}
+
+/* ---------- Kurallar ---------- */
+function pxlGramRow(g){
+  const sc = (S.gram || {})[g.id], n = (g.q || []).length || 2, k = "g:" + g.id;
+  const pill = sc === undefined ? `<span class="pxlst">Yeni</span>` : `<span class="pxlst ${sc >= n ? "g" : sc > 0 ? "a" : ""}">${sc}/${n}</span>`;
+  return `<button class="prow pxlgr" data-k="${k}" data-go="${k}"><span class="pic">${I(PXL_GIC[g.id] || "key")}</span>
+    <span class="ptx"><b>${esc(g.t)}</b><small>${esc(g.s || "")}</small>${g.mode ? `<em class="pxltag">Alıştırma var</em>` : ""}</span>${pill}</button>`;
+}
+function pxlGram(){
+  const G = typeof GRAMMAR !== "undefined" ? GRAMMAR : [], gs = S.gram || {}, nd = G.filter(g => gs[g.id] !== undefined).length, nm = G.filter(g => g.mode).length;
+  const nx = G.find(g => gs[g.id] === undefined), low = G.slice().sort((a, b) => (gs[a.id] || 0) - (gs[b.id] || 0))[0];
+  const tgt = nx || low;
+  const known = new Set(PXL_GRG.flatMap(([, ids]) => ids)), rest = G.filter(g => !known.has(g.id)).map(g => g.id);
+  $("#view").innerHTML = `<div class="pxlsh">
+    ${pxlHero({z: 5, ic: I("key"), t: "Kurallar", d: `${G.length} kısa kural, her birinde mini test`, meta: `${nd}/${G.length} tamam${nm ? ` · ${nm} kuralda alıştırma var` : ""}`})}
+    ${tgt ? `<button class="cta pxlcta" id="pxlcta">${I("play", "ln")} ${nx ? "Sıradaki kural" : "Tekrar et"}: ${esc(pxlShort(tgt))}</button>` : ""}
+    <div id="pxlbody">${PXL_GRG.concat(rest.length ? [["Diğer kurallar", rest]] : []).map(([t, ids]) => {
+      const L = ids.map(id => G.find(g => g.id === id)).filter(Boolean); if (!L.length) return "";
+      return pxlSecH(esc(t), `${L.filter(g => gs[g.id] !== undefined).length}/${L.length}`) + `<div class="card plist2">${L.map(pxlGramRow).join("")}</div>`; }).join("")}</div>
+    <div style="height:10px"></div></div>`;
+  const run = id => pxlGo("gram", () => { pxlSeen("g:" + id); openGrammar(id); }, "g:" + id);
+  if (tgt) $("#pxlcta").onclick = () => { sfx("tap"); run(tgt.id); };
+  pxlBindShelf($("#pxlbody"), k => run(k.slice(2)));
+}
+
+/* ---------- Kalıp paketleri ---------- */
+function pxlPack(){
+  const P = pxlPacks(), rh = pxlRhymes();
+  const pk = P && typeof ftOpenPack === "function" ? ["kd", "ev"].filter(k => P[k]) : [];
+  const total = pk.reduce((a, k) => a + (P[k].groups || []).reduce((b, g) => b + (g.items || []).length, 0), 0);
+  $("#view").innerHTML = `<div class="pxlsh">
+    ${pxlHero({z: 0, ic: I("ftTeddy"), t: "Kalıp paketleri", d: "Hazır kalıplar ve tekerlemeler", meta: pk.length ? `${total} kalıp · ${rh.length} tekerleme` : "Yakında"})}
+    <div class="ghhub pxgh ${pxlFx()}" id="pxlpks">${pk.length ? `<div class="ghlist">${pk.map(k => { const p = P[k], gr = p.groups || [], n = gr.reduce((b, g) => b + (g.items || []).length, 0);
+      return hubCard({k: "p:" + k, z: k === "ev" ? 0 : 2, ic: I(k === "ev" ? "ftTeddy" : "ftTalk"), t: p.t || k, d: `${n} kalıp · ${gr.length} grup`, sub: `<span>${esc(gr.slice(0, 3).map(g => g.g).join(", "))}…</span>`, fav: pxlFavOn("p:" + k), play: (p.t || k) + ": aç"}); }).join("")}</div>`
+      : hubEmpty("think", "Kalıp paketleri yakında burada.")}</div>
+    ${rh.length ? pxlSecH("Tekerlemeler ve şarkılar", rh.length) + `<div class="card plist2" id="pxlbody">${rh.map((r, i) => `<button class="prow" data-k="r:${i}" data-go="r:${i}"><span class="pic">${I("ftRhyme")}</span><span class="ptx"><b lang="de">${esc(r.t)}</b><small>${esc(r.tr || "")}${r.tr ? " · " : ""}${(r.lines || []).length} satır</small></span>${I("chev", "ln pch")}</button>`).join("")}</div>` : ""}
+    <div style="height:10px"></div></div>`;
+  const redraw = () => { const y = scrollY; pxlPack(); scrollTo(0, y); };
+  hubBind($("#pxlpks"), {redraw, play: k => { const e = pxlEnt(k); if (e) pxlGo("pack", e.run, k); }, fav: k => pxlFavToggle(k)});
+  if ($("#pxlbody")) pxlBindShelf($("#pxlbody"), k => pxlGo("pack", pxlEnt(k).run, k));
 }
 
 /* ================= ORTAK SATIR: cümle ve kelimeler (Kitaplık, arama, favoriler) ================= */
@@ -9826,7 +10389,7 @@ function pxAct(it, a, btn){
     save(); buildItems(); sfx("tap"); return pxItemSync(it.id);
   }
   if (a === "open") { pxRecentAdd(); return it.src === "sc" ? openReader("scen", it.sc, pxLineOf(it)) : openReader("book", it.ch, pxLineOf(it)); }
-  if (a === "more") return cardMenu(it, btn);
+  if (a === "more") { S.opt.pxhint = true; return cardMenu(it, btn); }
 }
 function pxItemSync(id){
   $$(".pxi").forEach(r => {
@@ -9860,8 +10423,9 @@ function pxBindItems(root){
     if (on) { speak(it.ex ? it.de + ". " + it.ex : it.de); if (root.id === "pxsres") pxRecentAdd(); }
   };
   root.onkeydown = e => { if ((e.key === "Enter" || e.key === " ") && e.target.classList && e.target.classList.contains("pxi")) { e.preventDefault(); e.target.click(); } };
-  pxLongPress(root, el => el.closest(".pxi"), row => { const it = BYID[row.dataset.id]; if (it) cardMenu(it, row.querySelector(".de") || row); });
+  pxLongPress(root, el => el.closest(".pxi"), row => { S.opt.pxhint = true; const it = BYID[row.dataset.id]; if (it) cardMenu(it, row.querySelector(".de") || row); });
 }
+
 
 /* ================= ARAMA: tüm içerikte, Almanca ya da Türkçe, umlautsuz da bulur ================= */
 const PX_FOLD = {"ä":"a", "ö":"o", "ü":"u", "ß":"ss", "ı":"i", "ş":"s", "ğ":"g", "ç":"c", "é":"e", "è":"e", "ê":"e", "à":"a", "â":"a", "î":"i", "û":"u", "ô":"o", "İ":"i", "I":"i", "’":"'"};
@@ -9878,7 +10442,6 @@ function pxHl(text, qv){
   for (const q of qv) { const i = f.indexOf(q); if (i >= 0) { const a = map[i], b = map[i + q.length - 1] + 1; return esc(text.slice(0, a)) + `<mark>${esc(text.slice(a, b))}</mark>` + esc(text.slice(b)); } }
   return esc(text);
 }
-const PX_GRP = [["wd", "Kelimeler"], ["ph", "Günlük kalıplar"], ["kd", "Konuşma dili"], ["ev", "Gece ile Almanca"], ["my", "Benim cümlelerim"], ["book", "Kitap"], ["sc", "Senaryolar"]];
 let PX_IDX = null;
 function pxIndex(){
   if (PX_IDX && PX_IDX.src === ITEMS_ALL) return PX_IDX;
@@ -9903,36 +10466,88 @@ function pxMetaOf(it){
   return "";
 }
 // bölüm, senaryo ve kural başlıkları: dokununca açılır
+// arama türü çipleri: kapsam → sonuç grupları (bölüm/konu satırları kendi türüyle: n.sc)
+const PXL_SCOPE = [["all", "Hepsi"], ["wd", "Kelime"], ["ph", "Kalıp"], ["book", "Kitap"], ["sc", "Senaryo"], ["gram", "Kural"], ["pack", "Paket"]];
+const PXL_SG = {wd: ["wd"], ph: ["ph", "kd", "ev", "my"], book: ["book"], sc: ["sc", "scl"], gram: [], pack: []};
+const pxlScope = (scope, g) => scope === "all" || (PXL_SG[scope] || []).includes(g);
+// eşleşmenin çevresinden kısa parça
+function pxlSnip(text, qv){
+  text = String(text || ""); const f = pxF(text);
+  for (const q of qv) { const i = f.indexOf(q); if (i >= 0) { let a = Math.max(0, i - 24); if (a) { const sp = text.indexOf(" ", a); if (sp > 0 && sp < i) a = sp + 1; } const b = Math.min(text.length, i + q.length + 36); return (a ? "…" : "") + text.slice(a, b).trim() + (b < text.length ? "…" : ""); } }
+  return text.slice(0, 60);
+}
+// bölüm, senaryo ve kural başlıkları: dokununca açılır
 function pxNavHits(qv){
   const out = [], hit = (...ts) => ts.some(t => qv.some(q => pxF(t).includes(q)));
-  D.book.chapters.forEach(c => { if (hit(c.de, c.tr)) out.push({ic: "book", t: `${c.n}. ${c.de}`, s: "Kitap bölümü · " + c.tr, run: () => openReader("book", c.n)}); });
-  D.scenarios.forEach(s => { if (hit(s.title, s.desc || "")) out.push({ic: "chat", t: s.title, s: "Senaryo · " + (s.desc || ""), run: () => openReader("scen", s.id)}); });
-  if (typeof GRAMMAR !== "undefined" && typeof openGrammar === "function") GRAMMAR.forEach(g => { if (hit(g.t, g.s || "")) out.push({ic: g.ic || "key", t: g.t, s: "Kural · " + (g.s || ""), run: () => openGrammar(g.id)}); });
-  return out.slice(0, 8);
+  D.book.chapters.forEach(c => { if (hit(c.de, c.tr)) out.push({sc: "book", ic: "book", t: `${c.n}. ${c.de}`, s: "Kitap bölümü · " + c.tr, run: () => openReader("book", c.n, pxlLp("b:" + c.n))}); });
+  D.scenarios.forEach(s => { if (hit(s.title, s.desc || "")) out.push({sc: "sc", ic: "chat", t: s.title, s: "Senaryo · " + (s.desc || ""), run: () => openReader("scen", s.id, pxlLp("s:" + s.id))}); });
+  if (typeof GRAMMAR !== "undefined" && typeof openGrammar === "function") GRAMMAR.forEach(g => {
+    const run = () => { pxlSeen("g:" + g.id); openGrammar(g.id); };
+    if (hit(g.t, g.s || "")) out.push({sc: "gram", ic: PXL_GIC[g.id] || "key", t: g.t, s: "Kural · " + (g.s || ""), run});
+    else { const tx = [g.r || ""].concat((g.ex || []).flatMap(e => [e[0], e[1]])).find(t => hit(t)); if (tx) out.push({sc: "gram", ic: PXL_GIC[g.id] || "key", t: g.t, s: "Kural · " + pxlSnip(tx, qv), run}); }
+  });
+  const x = pxlNavX(qv);
+  return x.filter(n => n.shelf).concat(out, x.filter(n => !n.shelf));
 }
-function pxSearchDraw(){
-  const el = $("#pxsres"), lb = $("#pxlibb"); if (!el || !lb) return;
-  const q = PXS.q.trim(), qv = pxQv(q);
-  if (!q) { el.hidden = true; el.innerHTML = ""; lb.hidden = false; return; }
+// ek kaynaklar: raf adları, paket grupları, tekerlemeler
+const PXL_WORDS = [["kelime", "word"], ["kalip", "phr"], ["kural", "gram"], ["gramer", "gram"], ["paket", "pack"], ["tekerleme", "pack"], ["sarki", "pack"], ["senaryo", "scen"], ["kitap", "book"], ["bolum", "book"], ["favori", "fav"]];
+function pxlNavX(qv){
+  const out = [], hit = t => qv.some(q => pxF(t).includes(q)), seen = new Set();
+  PXL_WORDS.forEach(([w, sh]) => { if (seen.has(sh) || !qv.some(q => q.length >= 3 && (w.startsWith(q) || q.startsWith(w)))) return; seen.add(sh);
+    if (sh === "fav") out.push({sc: "shelf", ic: "star", t: "★ Favorilerim", s: "Kitaplık · yıldızladığın yerler ve cümleler", shelf: 1, run: () => { PXLV.home = "fav"; pxlPut("pxlView", "fav"); PXS.q = ""; PXS.scope = "all"; pxlHome(); }});
+    else out.push({sc: "shelf", ic: PXL_SH[sh].ic, t: PXL_SH[sh].t, s: "Kitaplık rafı · " + PXL_SH[sh].d().replace(/&amp;/g, "&"), shelf: 1, run: () => pxlOpen(sh)}); });
+  const P = pxlPacks();
+  if (P) ["kd", "ev"].forEach(k => ((P[k] || {}).groups || []).forEach((g, gi) => { if (hit(g.g)) out.push({sc: "pack", ic: k === "ev" ? "ftTeddy" : "ftTalk", t: `${P[k].t || k}: ${g.g}`, s: `Kalıp paketi · ${(g.items || []).length} kalıp`, run: () => { pxlSeen("p:" + k); pxlGroup(k, gi); }}); }));
+  pxlRhymes().forEach((r, i) => { const ln = (r.lines || []).find(l => hit(l[0]) || hit(l[1] || ""));
+    if (hit(r.t) || hit(r.tr || "") || ln) out.push({sc: "pack", ic: "ftRhyme", t: r.t, s: "Tekerleme · " + (ln ? ln[0] : r.tr || ""), run: () => { pxlSeen("r:" + i); pxlRhyme(i); }}); });
+  return out;
+}
+// senaryolarda karşı tarafın replikleri (kartlarda yok): [{sc, i, de, tr, who, f}]
+let PXL_SCL = null;
+function pxlSclHits(qv){
+  if (!PXL_SCL) { PXL_SCL = []; D.scenarios.forEach(s => s.lines.forEach((l, i) => { if (l[0] !== "U") PXL_SCL.push({s, i, de: l[1], tr: l[2] || "", who: s.roles[l[0]] || l[0], fd: pxF(l[1]), ft: pxF(l[2] || "")}); })); }
+  const out = [];
+  PXL_SCL.forEach(x => { let b = 99; qv.forEach(q => { const d = x.fd.indexOf(q); if (d >= 0) b = Math.min(b, pxBound(x.fd, d) ? 1 : 3); const t = x.ft.indexOf(q); if (t >= 0) b = Math.min(b, pxBound(x.ft, t) ? 2 : 4); }); if (b < 99) out.push([b, x]); });
+  return out.sort((a, b) => a[0] - b[0] || a[1].de.length - b[1].de.length);
+}
+const PX_GRP = [["wd", "Kelimeler"], ["ph", "Günlük kalıplar"], ["kd", "Konuşma dili"], ["ev", "Gece ile Almanca"], ["my", "Benim cümlelerim"], ["book", "Kitap"], ["sc", "Senaryolar"], ["scl", "Senaryo replikleri"]];
+// o yoksa ana ekranın kutusu; raflar {q, groups, el, hide, open} verir
+function pxSearchDraw(o){
+  const home = !o;
+  o = o || {q: PXS.q, el: $("#pxsres"), hide: $("#pxlibb"), open: PXS.open};
+  const el = o.el, lb = o.hide; if (!el || !lb) return;
+  const q = String(o.q || "").trim(), qv = pxQv(q), redraw = () => { const y = scrollY; pxSearchDraw(home ? undefined : o); scrollTo(0, y); };
+  if (!q) { el.hidden = true; el.innerHTML = ""; lb.hidden = false; if (home) PXS.scope = "all"; return; }
   el.hidden = false; lb.hidden = true;
   if (pxF(q).replace(/\s/g, "").length < 2) { el.innerHTML = `<p class="pxshint">Bir harf daha yaz…</p>`; return; }
-  const res = {}; let total = 0;
-  pxIndex().forEach(x => { const sc = pxScore(x, qv); if (sc < 99) { (res[x.g] = res[x.g] || []).push([sc, x.it]); total++; } });
+  const res = {};
+  pxIndex().forEach(x => { if (o.groups && !o.groups.includes(x.g)) return; const sc = pxScore(x, qv); if (sc < 99) (res[x.g] = res[x.g] || []).push([sc, x.it]); });
   Object.values(res).forEach(a => a.sort((p, r) => p[0] - r[0] || p[1].de.length - r[1].de.length));
-  const nav = pxNavHits(qv);
-  if (!total && !nav.length) {
+  if (!o.groups) { const s = pxlSclHits(qv); if (s.length) res.scl = s; }
+  const nav = o.groups ? [] : pxNavHits(qv), total = Object.values(res).reduce((a, r) => a + r.length, 0) + nav.length;
+  if (!total) {
     el.innerHTML = `<div class="card pxempty">${bat("think", 70)}<b>“${esc(q)}” bulunamadı</b><span>Almanca ya da Türkçe dene. Umlaut yazman gerekmez: <i>schon</i> yazınca <i>schön</i> de çıkar.</span><button class="btn2" id="pxsask">${bat("happy", 26)} Gedsche'ye sor</button></div>`;
     $("#pxsask").onclick = () => { open(renderQA); const f = $("#fin"); if (f) { f.value = `“${q}” Almancada nasıl denir?`; } };
     return;
   }
-  const lim = g => PXS.open[g] ? 80 : 4;
-  el.innerHTML = `<p class="pxscount">${total + nav.length} sonuç</p>` +
-    (nav.length ? `<div class="pxsrh"><span>Bölümler ve konular</span><b>${nav.length}</b></div><div class="card plist2">${nav.map((n, i) => `<button class="prow pxnav" data-n="${i}"><span class="pic">${I(n.ic)}</span><span class="ptx"><b>${pxHl(n.t, qv)}</b><small>${esc(n.s)}</small></span>${I("chev", "ln pch")}</button>`).join("")}</div>` : "") +
-    PX_GRP.filter(([g]) => res[g]).map(([g, t]) => `<div class="pxsrh"><span>${t}</span><b>${res[g].length}</b></div>
-      <div class="card plist pxlist">${res[g].slice(0, lim(g)).map(([, it]) => pxItem(it, {hl: qv, meta: pxMetaOf(it)})).join("")}
-      ${res[g].length > lim(g) ? `<button class="pxsmore" data-g="${g}">Tümünü göster · ${res[g].length}${I("chev", "ln")}</button>` : ""}</div>`).join("");
-  $$("#pxsres .pxnav").forEach(b => b.onclick = () => { pxRecentAdd(); nav[+b.dataset.n].run(); });
-  $$("#pxsres .pxsmore").forEach(b => b.onclick = () => { PXS.open[b.dataset.g] = 1; const y = scrollY; pxSearchDraw(); scrollTo(0, y); });
+  const scope = home && (PXS.scope === "all" || PXL_SCOPE.some(([k]) => k === PXS.scope)) ? PXS.scope : "all";
+  const cnt = k => k === "all" ? total : Object.entries(res).reduce((a, [g, r]) => a + (pxlScope(k, g) ? r.length : 0), 0) + nav.filter(n => n.sc === k).length;
+  const navS = nav.filter(n => scope === "all" || n.sc === scope), navLim = scope !== "all" || o.open.nav ? navS.length : 12;
+  const lim = g => scope !== "all" || o.open[g] ? 80 : 4;
+  const chips = home ? PXL_SCOPE.filter(([k]) => k === "all" || cnt(k)) : [];
+  const exact = (res.wd || [])[0] && res.wd[0][0] === -1;
+  el.innerHTML = `<p class="pxscount">${scope === "all" ? total : cnt(scope)} sonuç</p>` +
+    (chips.length > 2 ? `<div class="chips pxlscope" role="tablist" aria-label="Sonuç türü">${chips.map(([k, t]) => `<button class="chip${scope === k ? " on" : ""}" role="tab" aria-selected="${scope === k}" data-scope="${k}">${t}${k === "all" ? "" : ` <small>${cnt(k)}</small>`}</button>`).join("")}</div>` : "") +
+    (navS.length ? `<div class="pxsrh"><span>Bölümler ve konular</span><b>${navS.length}</b></div><div class="card plist2">${navS.slice(0, navLim).map(n => `<button class="prow pxnav" data-n="${nav.indexOf(n)}"><span class="pic">${I(n.ic)}</span><span class="ptx"><b>${pxHl(n.t, qv)}</b><small>${esc(n.s)}</small></span>${I("chev", "ln pch")}</button>`).join("")}
+      ${navS.length > navLim ? `<button class="pxsmore" data-g="nav">Tümünü göster · ${navS.length}${I("chev", "ln")}</button>` : ""}</div>` : "") +
+    PX_GRP.filter(([g]) => res[g] && pxlScope(scope, g)).map(([g, t]) => `<div class="pxsrh"><span>${t}</span><b>${res[g].length}</b></div>` + (g === "scl"
+      ? `<div class="card plist2">${res.scl.slice(0, lim(g)).map(([, x]) => `<button class="prow pxscln" data-sc="${esc(x.s.id)}" data-i="${x.i}"><span class="pic">${typeof avatar === "function" ? avatar(x.who, 36) : I("chat")}</span><span class="ptx"><b>${pxHl(x.de, qv)}</b><small>${pxHl(x.tr, qv)}</small><small class="pxmeta">Senaryo · ${esc(x.s.title)} · ${esc(x.who)}</small></span>${I("chev", "ln pch")}</button>`).join("")}`
+      : `<div class="card plist pxlist">${res[g].slice(0, lim(g)).map(([, it], i) => { const h = pxItem(it, {hl: qv, meta: pxMetaOf(it)}); return g === "wd" && i === 0 && exact ? h.replace('class="pi pxi"', 'class="pi pxi open"').replace('aria-expanded="false"', 'aria-expanded="true"') : h; }).join("")}`) +
+      `${res[g].length > lim(g) ? `<button class="pxsmore" data-g="${g}">Tümünü göster · ${res[g].length}${I("chev", "ln")}</button>` : ""}</div>`).join("");
+  el.querySelectorAll(".pxnav").forEach(b => b.onclick = () => { pxRecentAdd(); const n = nav[+b.dataset.n]; sfx("tap"); n.shelf ? n.run() : pxlRun(n.run); });
+  el.querySelectorAll(".pxscln").forEach(b => b.onclick = () => { pxRecentAdd(); sfx("tap"); pxlRun(() => openReader("scen", b.dataset.sc, +b.dataset.i)); });
+  el.querySelectorAll(".pxsmore").forEach(b => b.onclick = () => { o.open[b.dataset.g] = 1; redraw(); });
+  el.querySelectorAll("[data-scope]").forEach(b => b.onclick = () => { PXS.scope = b.dataset.scope; sfx("tap"); redraw(); });
   pxBindItems(el);
 }
 // son aramalar (kutu boşken odaklanınca)
@@ -9944,61 +10559,102 @@ function pxRecentDraw(){
   el.hidden = false;
   el.innerHTML = `<span class="pxrl">Son aramalar</span>${r.map((x, i) => `<button class="chip" data-i="${i}">${esc(x)}</button>`).join("")}<button class="chip pxrclr" data-c="1" aria-label="Son aramaları temizle">${I("x", "ln")}</button>`;
   el.onpointerdown = e => e.preventDefault();   // dokunurken kutu odağını kaybetmesin
-  $$("#pxrec [data-i]").forEach(b => b.onclick = () => { const v = r[+b.dataset.i]; q.value = PXS.q = v; PXS.open = {}; $("#pxqx").hidden = false; el.hidden = true; pxSearchDraw(); q.blur(); });
+  $$("#pxrec [data-i]").forEach(b => b.onclick = () => { const v = r[+b.dataset.i]; q.value = PXS.q = v; PXS.open = {}; PXS.scope = "all"; $("#pxqx").hidden = false; el.hidden = true; pxSearchDraw(); q.blur(); });
   $("#pxrec [data-c]").onclick = () => { S.opt.pxrs = []; save(); el.hidden = true; };
 }
 
 /* okuyucu: hepsini dinle / bir rolü sen oyna */
 let R = null;
-// at: bu satıra kaydır ve vurgula (arama sonucu, kaldığın yer)
-function openReader(kind, id, at){
+// R'yi kur (okuyucuyu açmadan): sohbet gibi oyna da bunu kullanır
+function pxlR(kind, id, at){
   const src = kind === "book" ? D.book.chapters.find(c => c.n === id) : D.scenarios.find(s => s.id === id);
-  if (!src) return;
+  if (!src) return null;
   const roles = kind === "book" ? D.book.roles : src.roles;
   const keys = Object.keys(roles);
-  R = {kind, id, src, roles, keys, me: kind === "scen" ? "U" : null, play:-1, waiting:false, pos: at > 0 ? at : 0, at};
+  return R = {kind, id, src, roles, keys, me: kind === "scen" ? "U" : null, play:-1, waiting:false, pos: at > 0 ? at : 0, at, at0: at};
+}
+const pxlKey = () => R ? (R.kind === "book" ? "b:" : "s:") + R.id : "";
+// at: bu satıra kaydır ve vurgula (arama sonucu, kaldığın yer)
+function openReader(kind, id, at){
+  if (!pxlR(kind, id, at)) return;
+  pxlSeen(pxlKey());
   open(renderReader);
 }
-// okuyucudan çıkınca: bitmediyse kaldığın yeri kaydet
+// okuyucudan çıkınca: bitmediyse kaldığın yeri kaydet (Bugün/Pratik için S.resume, Kitaplık için S.lpos)
 function pxReaderSave(){
   if (!R || R.fin || !R.src) return;
-  const total = R.src.lines.length, done = Math.min(total, R.pos || 0);
+  const total = R.src.lines.length, done = Math.min(total, R.pos || 0), k = pxlKey(), lp = pxlState().lpos, old = lp[k];
   const mine = S.resume && S.resume.kind === "reader" && S.resume.reader && S.resume.reader.kind === R.kind && S.resume.reader.id === R.id;
-  if (done >= total) { if (mine) delete S.resume; return; }
+  if (done >= total) { lp[k] = {p: 0, n: total, ts: Date.now()}; if (mine) delete S.resume; save(); return; }
   if (done < 2) return;   // daha başındaydı: kayıt gerekmez (eski kayıt kalır)
+  lp[k] = {p: Math.max(done, old && old.p > 0 && old.p < total ? old.p : 0), n: total, ts: Date.now()};
   S.resume = {kind: "reader", day: TODAY, title: R.kind === "book" ? `${R.src.n}. ${R.src.de}` : R.src.title, reader: {kind: R.kind, id: R.id, pos: done}, done, total};
+  save();
 }
 /* yazı boyutu: Ayarlar → Görünüm ile aynı ayar (S.opt.fs) */
 const PX_FS = ["m", "l", "xl"], PX_FST = {m: "Normal", l: "Büyük", xl: "En büyük"};
 function pxFsStep(d){ const i = Math.max(0, Math.min(2, PX_FS.indexOf(S.opt.fs || "m") + d)); if (PX_FS[i] === (S.opt.fs || "m")) return; S.opt.fs = PX_FS[i]; save(); applyTheme(); pxFsPaint(); toast("Yazı boyutu: " + PX_FST[S.opt.fs]); }
 function pxFsPaint(){ const i = Math.max(0, PX_FS.indexOf(S.opt.fs || "m")); if ($("#pxfsm")) $("#pxfsm").disabled = i <= 0; if ($("#pxfsp")) $("#pxfsp").disabled = i >= 2; }
 const pxFsHtml = () => `<div class="pxfs" role="group" aria-label="Yazı boyutu"><button id="pxfsm" aria-label="Yazıyı küçült"><span>A</span><small>−</small></button><button id="pxfsp" aria-label="Yazıyı büyüt"><span>A</span><small>+</small></button></div>`;
+// Sesli oynat / Durdur düğmesi
+function pxlPlayBtn(on){ const b = $("#play"); if (b) { b.innerHTML = on ? `${PXL_STOP} Durdur` : `${I("play", "ln")} Sesli oynat`; b.setAttribute("aria-pressed", !!on); } }
+// aşağı kaydırdıkça kaldığın yer ilerler (sessiz okuma da sayılır)
+function pxlScan(){
+  let raf = 0;
+  const f = () => { if (raf) return; raf = requestAnimationFrame(() => {
+    raf = 0; if (!R || screen !== renderReader) return;
+    const lim = innerHeight * .55; let last = -1;
+    $$(".msgs .msg").forEach(m => { if (m.getBoundingClientRect().top < lim) last = +m.dataset.i; });
+    if (last >= 0) R.pos = Math.max(R.pos || 0, last + 1);
+  }); };
+  addEventListener("scroll", f, {passive: true});
+  return () => { removeEventListener("scroll", f); if (raf) cancelAnimationFrame(raf); };
+}
 function renderReader(){
-  const {kind, src, roles, keys} = R;
+  const {kind, src, roles, keys} = R, key = pxlKey(), fav = pxlFavOn(key);
   setTop(kind === "book" ? src.n + ". " + src.de : src.title, true);
-  const hk = kind === "scen" ? pxScHooks(src) : [];
+  const hk = kind === "scen" ? pxScHooks(src) : [], lp = pxlState().lpos[key];
+  const lpChip = (R.at0 === undefined || R.at0 === null) && lp && lp.p >= 2 && lp.p < src.lines.length;
+  const modes = [{ic: "chat", t: "Sohbet gibi", s: "Sırası gelince seç", fn: () => { stopSpeak(); R.play = -1; open(renderChatPlay); }}]
+    .concat(hk.map(h => ({ic: h.ic, t: h.t, s: pxlHookSub(h, src), fn: () => { stopSpeak(); h.fn(src); }})))
+    .concat(kind === "scen" ? [{ic: "ftTalk", t: "Canlı konuş", s: SAMPLE ? "Claude ile" : "Claude'a kopyala", fn: () => liveChat(src)}] : []);
+  const nid = i => (kind === "book" ? "b" + src.n + "." : src.id + ".") + i;
+  const kIds = (src.k || []).map((k, j) => kind === "book" ? `k${src.n}.${j}` : `${src.id}k${j}`);
   $("#view").innerHTML = `
-    <div class="pxrbar"><span class="pxrmeta">${kind === "book" ? `${I("book")} Kitap · ${src.n}. bölüm` : `${I("chat")} Senaryo${src.lvl ? " · " + esc(src.lvl) : ""}`} · ${src.lines.length} replik</span>${pxFsHtml()}</div>
+    <div class="pxrbar"><span class="pxrmeta">${kind === "book" ? `${I("book")} Kitap · ${src.n}. bölüm` : `${I("chat")} Senaryo${src.lvl ? " · " + esc(src.lvl) : ""}`} · ${src.lines.length} replik</span>
+      <span class="pxrr"><button class="pxlstar${fav ? " on" : ""}" id="pxlstar" aria-pressed="${fav}" aria-label="${fav ? "Favorilerden çıkar" : "Favorilere ekle"}">${fav ? "★" : "☆"}</button>${pxFsHtml()}</span></div>
+    ${lpChip ? `<button class="chip pxlpos" id="pxlpos">${I("history", "ln")} Kaldığın yer: ${lp.p}. replik ›</button>` : ""}
     ${kind === "scen" ? `<div class="card desc">${esc(src.desc)}</div>` : ""}
-    <button class="cta chatgo" id="cplay">${I("chat")} Sohbet gibi oyna</button>
-    ${hk.length ? `<div class="pxhk pxrhk">${hk.map((h, i) => `<button class="btn2" data-h="${i}">${I(h.ic)} ${esc(h.t)}</button>`).join("")}</div>` : ""}
+    ${modes.length === 1 ? `<button class="btn2 pxrm1" data-m="0">${I("chat")} Sohbet gibi oyna</button>`
+      : `<div class="pxrmodes${modes.length === 2 || modes.length >= 4 ? " c2" : ""}">${modes.map((m, i) => `<button class="pxrm" data-m="${i}">${I(m.ic)}<b>${esc(m.t)}</b>${m.s ? `<small>${esc(m.s)}</small>` : ""}</button>`).join("")}</div>`}
     <div class="seg" id="roles"><button data-r="" class="${!R.me ? "on" : ""}">Sadece oku</button>
       ${keys.map(k => `<button data-r="${k}" class="${R.me === k ? "on" : ""}">${roles[k] === "Sen" ? "Kendi rolüm" : "Ben: " + esc(roles[k])}</button>`).join("")}</div>
     <p class="hint">${R.me ? (SR && !noSpeak() ? "Sesli oynat'a bas. Sıra sende gelince mikrofon açılır: Türkçesine bakıp Almancasını söyle, uygulama kontrol eder." : "Senin repliklerin gizli: Türkçesine bakıp Almancasını söyle, sonra dokunup kontrol et.") : "Bir cümleye dokun: Türkçesi açılır ve okunur."}</p>
+    ${noListen() ? `<p class="pxqn pxrqn">${I("pxSpkOff")}<span>Sessiz mod: dokununca Türkçesi açılır, ses çalmaz.</span></p>` : ""}
     <div class="msgs">${src.lines.map((l, i) => `
       <button class="msg ${l[0] === (R.me || (kind === "book" ? "A" : "U")) ? "me" : ""} ${R.me && l[0] === R.me ? "hide" : ""}" data-i="${i}">
-        <div class="who">${avatar(roles[l[0]] || l[0], 22)}${esc(roles[l[0]] || l[0])}</div><div class="de">${esc(l[1])}</div><div class="tr">${esc(l[2])}</div>${(BYID[(kind === "book" ? "b" + src.n + "." : src.id + ".") + i] || {}).note ? `<div class="tr">💡 ${esc(BYID[(kind === "book" ? "b" + src.n + "." : src.id + ".") + i].note)}</div>` : ""}</button>`).join("")}</div>
-    ${src.k && src.k.length ? `<div class="sec">Bu bölümün kalıpları</div><div class="card klist">${src.k.map(k => `<div><b>${esc(k[0])}</b><span>${esc(k[1])}</span></div>`).join("")}</div>
-      <button class="btn2" id="kq" style="width:100%;margin-top:10px">Bu kalıpları alıştır</button>` : ""}
+        <div class="who">${avatar(roles[l[0]] || l[0], 22)}${esc(roles[l[0]] || l[0])}</div><div class="de">${esc(l[1])}</div><div class="tr">${esc(l[2])}</div>${(BYID[nid(i)] || {}).note ? `<div class="tr"><span class="pxrnote">İPUCU</span>${esc(BYID[nid(i)].note)}</div>` : ""}</button>`).join("")}</div>
+    ${kIds.length ? `${pxlSecH(kind === "book" ? "Bu bölümün kalıpları" : "Bu senaryonun kalıpları", kIds.length)}
+      <div class="card plist pxlist" id="pxrk">${kIds.map((id, j) => BYID[id] ? pxItem(BYID[id]) : `<div class="pi"><span class="pxib"><div class="de">${esc(src.k[j][0])}</div><div class="tr">${esc(src.k[j][1])}</div></span></div>`).join("")}</div>
+      <button class="btn2 pxlwide" id="kq">${I("layers")} Bu kalıpları alıştır</button>` : ""}
     ${src.vary ? `<div class="tip"><b>Sonra:</b> ${esc(src.vary)}</div>` : ""}
-    ${kind === "scen" ? `<button class="btn2" id="live" style="width:100%;margin-top:12px">💬 Claude ile canlı konuş</button>` : ""}
-    <div class="foot ffoot"><div class="row2"><button class="btn2" id="play">▶ Sesli oynat</button><button class="cta" id="fin">Bitirdim ✓</button></div></div>`;
+    <div class="foot ffoot"><div class="row2"><button class="btn2" id="play" ${noListen() ? "disabled" : ""}></button><button class="cta" id="fin">${I("check", "ln")} Bitirdim</button></div></div>`;
+  pxlPlayBtn(R.play >= 0);
   const recStop = () => { R.tok = (R.tok || 0) + 1; if (R.rec) try { R.rec.abort(); } catch(e) {} };
-  onLeave = () => { recStop(); pxReaderSave(); };
+  if (PXL.unscan) PXL.unscan();
+  const unscan = PXL.unscan = pxlScan();
+  onLeave = () => { recStop(); unscan(); if (PXL.unscan === unscan) PXL.unscan = null; pxReaderSave(); };
   pxFsPaint(); $("#pxfsm").onclick = () => pxFsStep(-1); $("#pxfsp").onclick = () => pxFsStep(1);
-  $$("#view .pxrhk [data-h]").forEach(b => b.onclick = () => { stopSpeak(); recStop(); try { hk[+b.dataset.h].fn(src); } catch(e) { console.error(e); } });
-  pxLongPress($(".msgs"), el => el.closest(".msg"), b => { const it = BYID[(kind === "book" ? "b" + src.n + "." : src.id + ".") + b.dataset.i]; if (it) cardMenu(it, b.querySelector(".de") || b); });
-  $$("#roles button").forEach(b => b.onclick = () => { stopSpeak(); recStop(); R.me = b.dataset.r || null; R.play = -1; renderReader(); });
+  $("#pxlstar").onclick = () => {
+    const on = pxlFavToggle(key), b = $("#pxlstar"); sfx("tap"); buzz(8);
+    b.textContent = on ? "★" : "☆"; b.classList.toggle("on", on); b.setAttribute("aria-pressed", on); b.setAttribute("aria-label", on ? "Favorilerden çıkar" : "Favorilere ekle");
+    toast(on ? "★ Favorilere eklendi · Kitaplık → ★ Favoriler" : "Favorilerden çıkarıldı");
+  };
+  if ($("#pxlpos")) $("#pxlpos").onclick = () => { const el = document.querySelector(`.msg[data-i="${lp.p}"]`) || document.querySelector(`.msg[data-i="${lp.p - 1}"]`); $("#pxlpos").remove(); if (el) { el.scrollIntoView({block: "center", behavior: "smooth"}); el.classList.add("pxat"); setTimeout(() => el.classList.remove("pxat"), 2600); } };
+  $$("#view [data-m]").forEach(b => b.onclick = () => { recStop(); sfx("tap"); try { modes[+b.dataset.m].fn(); } catch(e) { console.error(e); } });
+  pxLongPress($(".msgs"), el => el.closest(".msg"), b => { S.opt.pxhint = true; const it = BYID[nid(b.dataset.i)]; if (it) cardMenu(it, b.querySelector(".de") || b); });
+  if ($("#pxrk")) pxBindItems($("#pxrk"));
+  $$("#roles button").forEach(b => b.onclick = () => { stopSpeak(); recStop(); R.me = b.dataset.r || null; R.play = -1; const y = scrollY; renderReader(); scrollTo(0, y); });
   $$(".msg").forEach(b => b.onclick = () => {
     if (pxLongFired) return;
     const i = +b.dataset.i, l = src.lines[i];
@@ -10009,13 +10665,17 @@ function renderReader(){
     speak(l[1], keys.indexOf(l[0]));
   });
   $("#play").onclick = () => {
-    if (R.play >= 0) { stopSpeak(); recStop(); R.play = -1; R.waiting = false; $("#play").textContent = "▶ Sesli oynat"; clearCur(); return; }
-    R.play = 0; $("#play").textContent = "■ Durdur"; playStep();
+    if (R.play >= 0) { stopSpeak(); recStop(); R.play = -1; R.waiting = false; pxlPlayBtn(false); clearCur(); return; }
+    R.play = 0; pxlPlayBtn(true); playStep();
   };
-  $("#fin").onclick = () => { stopSpeak(); readerDone(); toast("Kaydedildi ✓"); go(tab); };
-  $("#cplay").onclick = () => { stopSpeak(); R.play = -1; open(renderChatPlay); };
-  if ($("#kq")) $("#kq").onclick = () => startSession({items: kind === "book" ? ITEMS.filter(i => i.src === "bk" && i.ch === src.n) : ITEMS.filter(i => i.sc === src.id), mode:"mix", title:"Bölüm kalıpları"});
-  if ($("#live")) $("#live").onclick = () => liveChat(src);
+  $("#fin").onclick = () => {
+    stopSpeak(); const k0 = R.kind, s0 = R.src;
+    readerDone();
+    const nx = k0 === "book" ? nextChapter() : null;
+    toast(k0 === "book" ? `${s0.n}. bölüm okundu ✓${nx && nx.n !== s0.n ? ` · sıradaki: ${nx.n}. ${nx.de}` : ""}` : "Senaryo kaydedildi ✓");
+    go(tab);
+  };
+  if ($("#kq")) $("#kq").onclick = () => startSession({items: kIds.map(id => BYID[id]).filter(Boolean), mode:"mix", title: kind === "book" ? "Bölüm kalıpları" : "Senaryo kalıpları"});
   // kaldığın yerden / aramadan gelince: o satıra git
   if (R.at !== undefined && R.at !== null) {
     const el = document.querySelector(`.msg[data-i="${R.at}"]`); R.at = null;
@@ -10028,7 +10688,7 @@ function playStep(){
   clearCur();
   const i = R.play, l = R.src.lines[i];
   R.pos = Math.max(R.pos || 0, l ? i : R.src.lines.length);
-  if (!l) { R.play = -1; const b = $("#play"); if (b) b.textContent = "▶ Sesli oynat"; return; }
+  if (!l) { R.play = -1; pxlPlayBtn(false); return; }
   const el = document.querySelector(`.msg[data-i="${i}"]`);
   el.scrollIntoView({block:"center", behavior:"smooth"});
   if (R.me && l[0] === R.me) { el.classList.add("wait"); R.waiting = true; if (SR && !noSpeak()) readerListen(el, i); return; }  // sıra sende: söyle, sonra balona dokun
@@ -10036,10 +10696,11 @@ function playStep(){
   speak(l[1], R.keys.indexOf(l[0]), () => { if (R && R.play === i) { R.play++; setTimeout(playStep, 350); } });
 }
 function readerDone(){
-  const {kind, src} = R;
+  pxlState(); const {kind, src} = R;
   R.fin = 1; if (S.resume && S.resume.kind === "reader" && S.resume.reader && S.resume.reader.kind === kind && S.resume.reader.id === R.id) delete S.resume;
   if (kind === "book") { S.book.read = S.book.read || {}; S.book.read[src.n] = (S.book.read[src.n] || 0) + 1; S.book.last = src.n; mark("book"); }
   else { S.scen.done = S.scen.done || {}; S.scen.done[src.id] = (S.scen.done[src.id] || 0) + 1; mark("scen"); }
+  const k = pxlKey(); pxlState().lpos[k] = {p: 0, n: src.lines.length, ts: Date.now()}; PXL.fresh = k;
   save(); checkBadges();
 }
 
@@ -10108,7 +10769,7 @@ function renderChatPlay(){
     readerDone();
     if (C.n && C.ok === C.n) addXP(10);
     celebrate({title:"Sohbet bitti!", sub: kind === "book" ? `${src.n}. bölüm: ${src.de}` : src.title, xp:(S.xp || 0) - C.xp0, pct: C.n ? Math.round(C.ok / C.n * 100) : undefined,
-      time: mmss(Date.now() - C.t0), icon:"chat", btn:"Kitaplığa dön", fn: () => go("library")});
+      time: mmss(Date.now() - C.t0), icon:"chat", btn: tab === "library" ? "Kitaplığa dön" : tab === "today" ? "Bugün'e dön" : "Geri dön", fn: () => go(tab)});
   };
   setTimeout(step, 300);
 }
