@@ -2691,6 +2691,28 @@ a.ftsya.wait{opacity:.6}
 .ftmic.sm svg.i.ln{width:32px;height:32px}
 .ftredo{width:100%;margin-top:14px;min-height:54px}
 .ftredo svg.i{width:22px;height:22px}
+/* ---------- ses kaydı (rec.js) ---------- */
+.rccard .de{font-size:22px}
+.rccmp{display:flex;gap:8px;justify-content:center;margin:4px 0 12px}
+.rcpl{display:flex;align-items:center;gap:6px;padding:10px 14px;border-radius:16px;background:var(--acc-d);color:var(--acc);font-weight:700;font-size:14px}
+.rcpl svg.i{width:18px;height:18px}
+.rcpl.on{background:var(--acc);color:#fff}
+.rccmp .rcpl{flex:1 1 0;justify-content:center;min-width:0}
+.rcnav{margin-top:6px}.rcnav [hidden]{display:none}
+.rcold{width:100%;margin-top:8px}
+.rclist{padding:4px 14px}
+.rcsent{display:flex;align-items:center;gap:10px;width:100%;text-align:left;padding:12px 0;border-top:1px solid var(--line)}
+.rcsent:first-child{border-top:0}
+.rcsent span{display:grid;flex:1;min-width:0}.rcsent b{font-size:15.5px;color:var(--tx)}.rcsent small{font-size:12.5px;color:var(--tx3)}
+.rcsent svg.i{width:18px;height:18px;color:var(--tx3);flex:none}
+.rctakes{display:grid;max-height:46vh;overflow:auto}
+.rcrow{display:flex;align-items:center;gap:12px;padding:8px 4px;border-top:1px solid var(--line);border-radius:12px;transition:background .2s}
+.rcrow.now{background:var(--acc-d)}
+.rcrow .ftplay{padding:0;justify-content:center}
+.rcrow span{display:grid;flex:1;min-width:0}.rcrow b{font-size:15px;color:var(--tx)}.rcrow small{font-size:12.5px;color:var(--tx3)}
+.rcdel{width:36px;height:36px;display:grid;place-items:center;border-radius:50%;color:var(--tx3)}
+.rcdel svg.i{width:16px;height:16px}
+.ftmic[disabled]{opacity:.85}
 </style>
 </head>
 <body>
@@ -12704,6 +12726,225 @@ function ftMStop(cancel){
   if (cancel) FTM.cancel = 1;
   try { FTM.mr.stop(); } catch(e) {} if (cancel) try { FTM.stream.getTracks().forEach(t => t.stop()); } catch(e) {}
 }
+
+/* ================= SES KAYDI (Pratik › Konuş) =================
+   İki tür: "Oku ve kaydet" (cümleyi oku, kaydedilsin) · "Dinle, tekrarla" (önce Gedsche söyler, sonra sen; kayıt kendiliğinden başlar).
+   Her kayıt cihazda saklanır (IndexedDB "gedsche-kayit", depo "takes": {id, sid, de, tr, m, at, sec, blob}).
+   "Kayıtlarım": cümle cümle eski kayıtlar; model sesle sırayla dinleyip kıyaslarsın. Yalnız telefondaki uygulamada (mikrofon). */
+const RC_MODES = {read: "Oku ve kaydet", echo: "Dinle, tekrarla"};
+let RC = null;        // oturum: {items, i, m, st: idle|model|rec|done, stream, mr, t0, take, tok}
+let RC_AU = null;     // çalan ses: {a, u, b (düğme), own (URL bizim mi)}
+
+function rcDB(){
+  return rcDB.p = rcDB.p || new Promise((res, rej) => {
+    try {
+      const r = indexedDB.open("gedsche-kayit", 1);
+      r.onupgradeneeded = () => { const st = r.result.createObjectStore("takes", {keyPath: "id"}); st.createIndex("sid", "sid"); };
+      r.onsuccess = () => res(r.result); r.onerror = () => rej(r.error);
+    } catch(e) { rej(e); }
+  }).catch(e => { rcDB.p = null; throw e; });
+}
+const rcTx = (mode, fn) => rcDB().then(db => new Promise((res, rej) => { const t = db.transaction("takes", mode), r = fn(t.objectStore("takes")); t.oncomplete = () => res(r && r.result); t.onerror = () => rej(t.error); }));
+const rcPut = v => rcTx("readwrite", st => st.put(v));
+const rcDel = id => rcTx("readwrite", st => st.delete(id));
+const rcAll = () => rcTx("readonly", st => st.getAll()).then(l => (l || []).sort((a, b) => a.at - b.at));
+const rcFor = sid => rcTx("readonly", st => st.index("sid").getAll(sid)).then(l => (l || []).sort((a, b) => a.at - b.at));
+const rcWhen = t => { const d = new Date(t), k = ymd(d); return (k === TODAY ? "Bugün" : trDate(k)) + " " + pad(d.getHours()) + ":" + pad(d.getMinutes()); };
+
+/* ---------- çalma: kendi kaydın ya da model ses (gerçek ses dosyası varsa o, yoksa cihazın sesi) ---------- */
+function rcStopAu(){
+  stopSpeak();
+  if (RC_AU) { try { RC_AU.a.onended = null; RC_AU.a.pause(); if (RC_AU.own) URL.revokeObjectURL(RC_AU.u); } catch(e) {} RC_AU = null; }
+  $$(".rcpl.on").forEach(b => b.classList.remove("on"));
+}
+function rcPlayUrl(u, own, btn, done){
+  try {
+    const a = new Audio(u); RC_AU = {a, u, b: btn, own};
+    if (btn) btn.classList.add("on");
+    const end = () => { if (!RC_AU || RC_AU.a !== a) return; rcStopAu(); if (done) done(); };
+    a.onended = end; a.onerror = end;
+    a.play().catch(end);
+  } catch(e) { if (done) done(); }
+}
+const rcPlayBlob = (blob, btn, done) => rcPlayUrl(URL.createObjectURL(blob), true, btn, done);
+async function rcPlayModel(it, btn, done){
+  if (btn) btn.classList.add("on");
+  let u = null;
+  try { const m = await ftAuMan(); const st = m && ftAuSay(it.de, it.v || 0, 0, 1)[0]; if (st && st.fid) u = await ftAuGet(st.fid); } catch(e) {}
+  if (btn && !btn.isConnected) return;
+  if (u) return rcPlayUrl(u, false, btn, done);
+  speak(it.de, it.v || 0, () => { if (btn) btn.classList.remove("on"); if (done) done(); });
+}
+// toggle: aynı düğmeye yeniden basınca dur
+const rcTog = (btn, fn) => { const on = btn.classList.contains("on"); rcStopAu(); if (!on) fn(); };
+// sırayla: model, sonra kayıtlar (eskiden yeniye)
+function rcChain(it, takes, btn){
+  rcStopAu(); let k = -1; const tok = (rcChain.tok = (rcChain.tok || 0) + 1);
+  const label = $("#rcnow");
+  const step = () => {
+    if (rcChain.tok !== tok || (btn && !btn.isConnected)) return;
+    if (btn && btn.closest("#sheet") && !$("#sheet").classList.contains("show")) return rcStopAu();
+    k++;
+    $$(".rcrow").forEach(r => r.classList.toggle("now", +r.dataset.k === k - 1));
+    if (k === 0) { if (label) label.textContent = "Model ses"; return rcPlayModel(it, null, () => setTimeout(step, 500)); }
+    const t = takes[k - 1];
+    if (!t) { if (label) label.textContent = ""; if (btn) btn.classList.remove("on"); $$(".rcrow").forEach(r => r.classList.remove("now")); return; }
+    if (label) label.textContent = rcWhen(t.at);
+    rcPlayBlob(t.blob, null, () => setTimeout(step, 500));
+  };
+  if (btn) btn.classList.add("on");
+  step();
+}
+
+/* ---------- oturum ---------- */
+function startRec(src, m, items){
+  if (!ftCanRec()) return toast("Ses kaydı telefondaki uygulamada çalışır");
+  if (!items) {
+    items = srcItems(src || "ph", 12).filter(it => it.src !== "wd" && it.de);
+    if (!items.length) items = srcItems("ph", 12);
+  }
+  if (!items.length) return toast("Bu kaynakta cümle yok");
+  RC = {items, i: 0, m: m || S.opt.rcm || "read", st: "idle", tok: 0, n: 0};
+  open(renderRec);
+  ftCleanup(rcEnd);
+}
+function rcEnd(){
+  if (!RC) return;
+  RC.tok++; rcStopAu(); clearTimeout(RC.tm); clearInterval(RC.ti);
+  if (RC.mr && RC.mr.state === "recording") { RC.cancel = 1; try { RC.mr.stop(); } catch(e) {} }
+  if (RC.stream) try { RC.stream.getTracks().forEach(t => t.stop()); } catch(e) {}
+  if (RC.n) { mark("rec"); } else save();
+  RC = null; wake(false);
+}
+function renderRec(){
+  if (!RC) return;
+  setTop("Ses kaydı", true);
+  const it = RC.items[RC.i], st = RC.st, echo = RC.m === "echo";
+  const lab = st === "model" ? "Dinle…" : st === "rec" ? "Kaydediliyor… bitince dokun" : st === "done" ? "Kaydedildi ✓" : echo ? "Dokun: önce Gedsche söyler, sonra sen" : "Dokun ve cümleyi oku";
+  $("#view").innerHTML = `
+    <div class="seg" id="rcm" style="margin-top:6px">${Object.entries(RC_MODES).map(([k, t]) => `<button data-v="${k}" class="${RC.m === k ? "on" : ""}">${t}</button>`).join("")}</div>
+    <div class="ptop"><div class="pbar"><i style="width:${RC.i / RC.items.length * 100}%"></i></div><span class="small muted">${RC.i + 1}/${RC.items.length}</span></div>
+    <div class="card player rccard">
+      <div class="de" lang="de">${esc(it.de)}</div>
+      <div class="tr">${esc(it.tr || "")}</div>
+    </div>
+    <div class="ftmicw ${st === "rec" ? "on" : ""}">
+      <button class="ftmic" id="rcmic" aria-label="${st === "rec" ? "Kaydı durdur" : "Kayda başla"}" ${st === "model" ? "disabled" : ""}><i class="ftring" aria-hidden="true"></i><i class="ftring r2" aria-hidden="true"></i>${st === "rec" ? '<span class="ftstop"></span>' : st === "model" ? I("spk", "ln") : I("mic", "ln")}</button>
+      <div class="ftmicl" id="rcl">${st === "rec" ? `<b id="rct">0:00</b> · ` : ""}${lab}</div>
+    </div>
+    ${st === "done" ? `<div class="rccmp">
+      <button class="rcpl" id="rcme">${I("play", "ln")}<span>Benim</span></button>
+      <button class="rcpl" id="rcmo">${I("spk", "ln")}<span>Model</span></button>
+      <button class="rcpl" id="rcab">${I("swap", "ln")}<span>Arka arkaya</span></button>
+    </div>` : ""}
+    <div class="row2 rcnav"><button class="btn2" id="rcagain" ${st === "done" ? "" : "hidden"}>Tekrar kaydet</button><button class="cta" id="rcnext">${RC.i + 1 < RC.items.length ? "Sonraki" : "Bitir"}</button></div>
+    <button class="linkbtn rcold" id="rcold" hidden></button>
+    <button class="linkbtn" id="rclist" style="width:100%">${I("folder")} Kayıtlarım</button>`;
+  $$("#rcm button").forEach(b => b.onclick = () => { if (RC.st === "rec" || RC.st === "model") rcAbort(); RC.m = S.opt.rcm = b.dataset.v; save(); RC.st = "idle"; renderRec(); });
+  $("#rcmic").onclick = () => RC.st === "rec" ? rcStopRec() : RC.st === "model" ? null : rcGo();
+  $("#rcnext").onclick = () => { rcAbort(); if (RC.i + 1 >= RC.items.length) { const n = RC.n; open(renderRecList); toast(n ? n + " kayıt saklandı ✓" : "Bitti"); return; } RC.i++; RC.st = "idle"; RC.take = null; renderRec(); };
+  if ($("#rcagain")) $("#rcagain").onclick = () => { rcStopAu(); RC.st = "idle"; rcGo(); };
+  $("#rclist").onclick = () => ftOpen(renderRecList, () => open(renderRec));
+  if (st === "done" && RC.take) {
+    $("#rcme").onclick = () => rcTog($("#rcme"), () => rcPlayBlob(RC.take.blob, $("#rcme")));
+    $("#rcmo").onclick = () => rcTog($("#rcmo"), () => rcPlayModel(it, $("#rcmo")));
+    $("#rcab").onclick = () => rcTog($("#rcab"), () => { const b = $("#rcab"); b.classList.add("on"); rcPlayModel(it, null, () => setTimeout(() => b.isConnected && b.classList.contains("on") && rcPlayBlob(RC.take.blob, b), 400)); });
+  }
+  // bu cümlenin eski kayıtları
+  rcFor(it.id).then(l => { const b = $("#rcold"); if (!b || !RC || RC.items[RC.i] !== it) return; const n = l.length - (st === "done" ? 1 : 0); if (n > 0) { b.hidden = false; b.innerHTML = `${I("history")} Bu cümlenin eski kayıtları (${n})`; b.onclick = () => { rcAbort(); rcSheet(it); }; } }).catch(() => {});
+}
+function rcAbort(){
+  if (!RC) return;
+  RC.tok++; rcStopAu(); clearTimeout(RC.tm);
+  if (RC.st === "rec") rcStopRec(true);
+  if (RC.st === "model") RC.st = "idle";
+}
+// akış: (dinle-tekrarla'da önce model) → kayıt
+function rcGo(){
+  const tok = ++RC.tok, it = RC.items[RC.i];
+  rcStopAu();
+  if (RC.m === "echo") {
+    RC.st = "model"; renderRec();
+    rcPlayModel(it, null, () => { if (!RC || RC.tok !== tok || screen !== renderRec) return; setTimeout(() => RC && RC.tok === tok && rcStartRec(tok, true), 250); });
+  } else rcStartRec(tok);
+}
+async function rcStartRec(tok, auto){
+  if (!RC) return;
+  if (!RC.stream || !RC.stream.active) {
+    try { RC.stream = await navigator.mediaDevices.getUserMedia({audio: {echoCancellation: true, noiseSuppression: true}}); }
+    catch(e) { RC.st = "idle"; renderRec(); return toast(e && e.name === "NotAllowedError" ? "Mikrofona izin verilmedi. Tarayıcı ayarlarından izin verip tekrar dene." : "Mikrofon açılamadı."); }
+  }
+  if (!RC || RC.tok !== tok) return;
+  const type = ["audio/webm;codecs=opus", "audio/mp4", "audio/webm", "audio/ogg"].find(t => MediaRecorder.isTypeSupported && MediaRecorder.isTypeSupported(t)) || "";
+  let mr; try { mr = type ? new MediaRecorder(RC.stream, {mimeType: type}) : new MediaRecorder(RC.stream); } catch(e) { RC.st = "idle"; renderRec(); return toast("Bu tarayıcı ses kaydedemiyor"); }
+  const chunks = [], it = RC.items[RC.i], m = RC.m;
+  RC.mr = mr; RC.cancel = 0; RC.st = "rec"; RC.t0 = Date.now(); wake(true);
+  mr.ondataavailable = e => { if (e.data && e.data.size) chunks.push(e.data); };
+  mr.onstop = () => {
+    if (!RC || RC.mr !== mr) return;
+    clearInterval(RC.ti); clearTimeout(RC.tm);
+    if (RC.cancel) { RC.st = "idle"; return; }
+    const sec = Math.max(1, Math.round((Date.now() - RC.t0) / 100) / 10);
+    const take = {id: Date.now().toString(36) + Math.random().toString(36).slice(2, 6), sid: it.id, de: it.de, tr: it.tr || "", m, at: Date.now(), sec, blob: new Blob(chunks, {type: mr.mimeType || type || "audio/webm"})};
+    RC.take = take; RC.st = "done"; RC.n++;
+    addXP(2); sfx("ok");
+    rcPut(take).catch(() => toast("Kayıt saklanamadı: tarayıcı depolamaya izin vermiyor"));
+    if (screen === renderRec) renderRec();
+  };
+  mr.start(250); buzz(12);
+  renderRec();
+  RC.ti = setInterval(() => { const el = $("#rct"); if (!RC || RC.st !== "rec") return; if (el) el.textContent = ftMMSS((Date.now() - RC.t0) / 1000); }, 250);
+  // dinle-tekrarla: cümlenin uzunluğuna göre kendiliğinden durur; oku-kaydet: en çok 30 sn
+  const words = String(it.de).split(/\s+/).length;
+  RC.tm = setTimeout(() => RC && RC.mr === mr && rcStopRec(), auto ? Math.min(15000, 2200 + words * 650) : 30000);
+}
+function rcStopRec(cancel){
+  if (!RC || !RC.mr || RC.mr.state !== "recording") return;
+  if (cancel) RC.cancel = 1;
+  clearTimeout(RC.tm); clearInterval(RC.ti);
+  try { RC.mr.stop(); } catch(e) {}
+  wake(false);
+}
+
+/* ---------- Kayıtlarım ---------- */
+function renderRecList(){
+  setTop("Kayıtlarım", true);
+  $("#view").innerHTML = `<p class="hint" style="margin-top:4px">Her cümlenin kayıtları burada. Bir cümleye dokun, eski kayıtlarını model sesle sırayla dinle.</p><div id="rcls" class="card rclist"><p class="small muted">Yükleniyor…</p></div>
+    <button class="cta" id="rcnew" style="width:100%;margin-top:12px">${I("mic", "ln")} Yeni kayıt</button>`;
+  $("#rcnew").onclick = () => startRec(S.opt.psrc === "mist" ? "ph" : S.opt.psrc);
+  rcAll().then(all => {
+    const box = $("#rcls"); if (!box || !box.isConnected) return;
+    const g = {}; all.forEach(t => (g[t.sid] = g[t.sid] || []).push(t));
+    const rows = Object.values(g).sort((a, b) => b[b.length - 1].at - a[a.length - 1].at);
+    box.innerHTML = rows.length ? rows.map((l, i) => { const t = l[l.length - 1]; return `<button class="rcsent" data-i="${i}"><span><b lang="de">${esc(t.de)}</b><small>${l.length} kayıt · son ${rcWhen(t.at)}</small></span>${I("chev", "ln")}</button>`; }).join("")
+      : `<p class="small muted">Henüz kayıt yok. "Yeni kayıt" ile başla; her kayıt burada saklanır.</p>`;
+    $$(".rcsent").forEach(b => b.onclick = () => { const l = rows[+b.dataset.i], t = l[0]; rcSheet(BYID[t.sid] || {id: t.sid, de: t.de, tr: t.tr}); });
+  }).catch(() => { const box = $("#rcls"); if (box) box.innerHTML = `<p class="small muted">Bu tarayıcı kayıtları saklayamıyor.</p>`; });
+}
+function rcSheet(it){
+  rcStopAu();
+  rcFor(it.id).then(l => {
+    sheetOpen(`<div class="psheet rcsheet">
+      <h2 lang="de" style="font-size:19px">${esc(it.de)}</h2>
+      <p class="small muted" style="margin:-4px 2px 10px">${esc(it.tr || "")}</p>
+      <div class="rccmp"><button class="rcpl" id="rcsm">${I("spk", "ln")}<span>Model</span></button><button class="rcpl" id="rcsa">${I("play", "ln")}<span>Hepsini sırayla</span></button></div>
+      <div class="small muted" id="rcnow" style="min-height:18px;text-align:center"></div>
+      <div class="rctakes">${l.length ? l.map((t, k) => `<div class="rcrow" data-k="${k}"><button class="ftplay rcpl" data-k="${k}" aria-label="Kaydı çal">${I("play", "ln")}</button><span><b>${rcWhen(t.at)}</b><small>${RC_MODES[t.m] || ""} · ${String(t.sec).replace(".", ",")} sn${k === l.length - 1 && l.length > 1 ? " · en yeni" : k === 0 && l.length > 1 ? " · ilk" : ""}</small></span><button class="rcdel" data-k="${k}" aria-label="Sil">${I("x", "ln")}</button></div>`).join("") : `<p class="small muted">Bu cümle için kayıt yok.</p>`}</div>
+      <div class="row2" style="margin-top:12px"><button class="btn2" id="rcsx">Kapat</button><button class="cta" id="rcsr">${I("mic", "ln")} Yeniden kaydet</button></div>
+    </div>`);
+    $("#rcsm").onclick = () => rcTog($("#rcsm"), () => rcPlayModel(it, $("#rcsm")));
+    $("#rcsa").onclick = () => { const b = $("#rcsa"); if (b.classList.contains("on")) { rcChain.tok++; rcStopAu(); $$(".rcrow").forEach(r => r.classList.remove("now")); $("#rcnow").textContent = ""; return; } rcChain(it, l, b); };
+    $$(".rctakes .rcpl").forEach(b => b.onclick = () => { rcChain.tok = (rcChain.tok || 0) + 1; rcTog(b, () => rcPlayBlob(l[+b.dataset.k].blob, b)); });
+    $$(".rcdel").forEach(b => b.onclick = () => { if (!confirm("Bu kayıt silinsin mi?")) return; rcStopAu(); rcDel(l[+b.dataset.k].id).then(() => { rcSheet(it); if (screen === renderRecList) renderRecList(); }); });
+    $("#rcsx").onclick = () => { rcChain.tok = (rcChain.tok || 0) + 1; rcStopAu(); sheetClose(); };
+    $("#rcsr").onclick = () => { rcChain.tok = (rcChain.tok || 0) + 1; rcStopAu(); sheetClose(); startRec(null, null, [BYID[it.id] || it]); };
+  }).catch(() => toast("Kayıtlar açılamadı"));
+}
+
+HOOKS.practice.push({sec: "konus", id: "ftrec", o: 25, ic: "ftRec", t: "Ses kaydı",
+  show: () => ftCanRec(),
+  d: () => "Oku ya da dinleyip tekrarla, kaydet, eski kayıtlarınla kıyasla",
+  fn: () => startRec(S.opt.psrc === "mist" ? "ph" : S.opt.psrc)});
 
 /* ================= Ö4: MESAJLAR — gerçek hayattan gelen mesajlara cevap yaz ================= */
 const ftMsgList = () => (ftC4("msgs") || []).filter(m => m && m.id && m.de);
